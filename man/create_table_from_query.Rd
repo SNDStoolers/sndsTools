@@ -28,7 +28,4 @@ Création d'une table à partir d'une requête SQL.
 La fonction crée une table sous Oracle à partir d'une requête SQL.
 Si la table \code{output_table_name} existe déjà, elle est écrasée si
 le paramètre \code{overwrite} est TRUE.
-Le cas où l'on voudrait créer une table appelée \code{output_table_name} à partir
-d'une requête qui utilise une table déjà existante du même nom est pris
-en charge par la création d'une table temporaire.
 }

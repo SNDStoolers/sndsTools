@@ -26,7 +26,7 @@ connect_duckdb <- function() {
     "Le code ne s'exécute pas sur le portail CNAM. Initialisation d'une connexion duckdb en mémoire."
   )
   conn <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
-  #TODO: remove this line (it is included in PR42)
+
   # generate fake user_synonyms table for testing: used in all er_prs_f functions
   user_synonyms <- data.frame(
     SYNONYM_NAME = c("ER_PRS_F_2009", "ER_PRS_F_2010")
@@ -122,9 +122,9 @@ create_table_or_insert_from_query <- function(conn = NULL,
 #' @export
 get_first_non_archived_year <- function(conn) {
   user_synonyms <- DBI::dbGetQuery(
-      conn,
-      "SELECT synonym_name FROM user_synonyms WHERE synonym_name LIKE 'ER_PRS_F_%'"
-    )
+    conn,
+    "SELECT synonym_name FROM user_synonyms WHERE synonym_name LIKE 'ER_PRS_F_%'"
+  )
   max_archived_year <-
     sub("ER_PRS_F_", "", x = user_synonyms$SYNONYM_NAME, fixed = TRUE) |>
     as.numeric() |>
