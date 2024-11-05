@@ -26,6 +26,8 @@ authors:
     href: https://info.m2dou.fr/
   Thomas Soeiro: 
     href: https://github.com/ThomasSoeiro
+  Marc Dibling:
+    href: https://github.com/MarcDibling
 reference:
 - title: Extraction SNDS
   desc: Fonctions pour extraire les données de soins individuelles à partir du SNDS.
@@ -42,3 +44,5 @@ reference:
   - connect_duckdb
   - connect_oracle
   - gather_table_stats
+  - retrieve_all_psa_from_idt
+  - retrieve_all_psa_from_psa
