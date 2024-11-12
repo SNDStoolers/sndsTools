@@ -1,0 +1,21 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/contribuer.html</loc></url>
+<url><loc>/articles/gouvernance.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/paresnds.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/connect_duckdb.html</loc></url>
+<url><loc>/reference/connect_oracle.html</loc></url>
+<url><loc>/reference/create_table_from_query.html</loc></url>
+<url><loc>/reference/create_table_or_insert_from_query.html</loc></url>
+<url><loc>/reference/extract_drug_dispenses.html</loc></url>
+<url><loc>/reference/extract_hospital_consultations.html</loc></url>
+<url><loc>/reference/extract_long_term_disease.html</loc></url>
+<url><loc>/reference/get_first_non_archived_year.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/insert_into_table_from_query.html</loc></url>
+</urlset>
+
