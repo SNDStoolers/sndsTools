@@ -59,7 +59,7 @@
 #' retrieve_patient_ids(conn, "SAMP")
 #'
 #' Sample data (BEN_NIR_PSA and BEN_RNG_GEM)
-#'   sample_2 <- tbl(conn, "IR_BEN_R") %>%
+#' tbl(conn, "IR_BEN_R") %>%
 #'   select(BEN_NIR_PSA, BEN_RNG_GEM) %>%
 #'   head(10) %>%
 #'   collect() %>%
@@ -68,11 +68,11 @@
 #' retrieve_patient_ids(conn, "SAMP", check_arc_table = FALSE)
 #'
 #' # Sample data (BEN_IDT_ANO only)
-#' 	tbl(conn, "IR_BEN_R") %>%
-#' 	select(BEN_IDT_ANO) %>%
-#' 	head(10) %>%
-#' 	collect() %>%
-#' 	dbWriteTable(conn, "SAMP", ., overwrite = TRUE)
+#' tbl(conn, "IR_BEN_R") %>%
+#'   select(BEN_IDT_ANO) %>%
+#'   head(10) %>%
+#'   collect() %>%
+#'   dbWriteTable(conn, "SAMP", ., overwrite = TRUE)
 #'
 #' retrieve_patient_ids(conn, "SAMP", "TEST_SAVE_ORACLE")
 #' @export
