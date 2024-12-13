@@ -97,7 +97,7 @@ retrieve_patient_ids <- function(conn = NULL,
       select(BEN_IDT_ANO) %>%
       distinct()
   } else if ("BEN_NIR_PSA" %in% (tbl(conn, ben_table_name) %>% colnames())) {
-		# Consider BEN_RNG_GEM for join if available
+    # Consider BEN_RNG_GEM for join if available
     join_cond <- ifelse(
       all(c("BEN_NIR_PSA", "BEN_RNG_GEM") %in% (tbl(conn, ben_table_name) %>%
         colnames())),
