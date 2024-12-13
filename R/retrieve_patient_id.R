@@ -78,10 +78,10 @@
 #' @export
 
 retrieve_patient_ids <- function(conn = NULL,
-				 check_arc_table = TRUE,
+				 												 check_arc_table = TRUE,
                                  ben_table_name = NULL,
                                  output_table_name = NULL) {
-	conn <- connect_oracle() # Connect to database
+  conn <- connect_oracle() # Connect to database
 
   # Check table format (ORACLE table)
   if (is.character(ben_table_name) && dbExistsTable(conn, ben_table_name)) {
