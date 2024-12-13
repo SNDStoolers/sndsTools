@@ -22,7 +22,7 @@
 #' 4. birth_date_variation : permet d'identifier les BEN_IDT_ANO
 #' présentant des inconsistances au niveau de la date de naissance.
 #' 5. sex_variation : permet d'identifier les BEN_IDT_ANO
-#' présentant inconsistences relatives aux codes sexe.
+#' présentant inconsistances relatives aux codes sexe.
 #'
 #' @details
 #' @param ben_table_name Character Obligatoire. Nom de la table d'entrée
