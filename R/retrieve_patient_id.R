@@ -1,4 +1,4 @@
-#' Extraction des identifiants patients (IDT et PSA).
+#' Gestion des identifiants patients (IDT et PSA).
 #' @description
 #' Cette fonction vise à extraire la clé de jointure la plus fine
 #' (les BEN_NIR_PSA+BEN_RNG_GEM) pour un identifiant patient donné (BEN_IDT_ANO)
@@ -9,7 +9,7 @@
 #' A partir d'une table avec BEN_NIR_PSA, la fonction retournera
 #' l'ensemble des BEN_NIR_PSA+BEN_RNG_GEM associés au BEN_IDT_ANO.
 #'
-#' La table en sortie est une copie des référentiels IR_BEN_R et IR_BEN_R_ARC
+#' La table en sortie est une copie de(s) référentiel(s) IR_BEN_R (et IR_BEN_R_ARC)
 #' relatifs aux BEN_IDT_ANO impliqués et enregistrée sous Oracle ou retournée
 #' sous la forme d'un tibble.
 #'
@@ -23,13 +23,14 @@
 #' présentant des inconsistances au niveau de la date de naissance.
 #' 5. sex_variation : permet d'identifier les BEN_IDT_ANO
 #' présentant inconsistences relatives aux codes sexe.
+#'
 #' @details
 #' @param ben_table_name Character Obligatoire. Nom de la table d'entrée
-#' 		comprenant au moins la variable BEN_NIR_PSA ou BEN_IDT_ANO.
+#'   comprenant au moins la variable BEN_NIR_PSA ou BEN_IDT_ANO.
 #' @param check_arc_table Logical Optionnel. Si TRUE (par défaut), les tables IR_BEN_R_ARC sont
-#' 		également consultées pour la recherche des BEN_IDT_ANO et des critères de sélection.
+#'   également consultées pour la recherche des BEN_IDT_ANO et des critères de sélection.
 #' @param output_table_name Character Optionnel. Si fourni, les résultats seront
-#' 		sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en 
+#'   sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en 
 #' sortie est retournée sous la forme d'un tibble.
 #' @param conn DBI connection Une connexion à la base de données Oracle.
 #'   Si non fournie, une connexion est établie par défaut.
@@ -78,13 +79,13 @@
 #' @export
 
 retrieve_patient_ids <- function(conn = NULL,
-				 												 check_arc_table = TRUE,
+				 check_arc_table = TRUE,
                                  ben_table_name = NULL,
                                  output_table_name = NULL) {
   conn <- connect_oracle() # Connect to database
 
   # Check table format (ORACLE table)
-  if (is.character(ben_table_name) && dbExistsTable(conn, ben_table_name)) {
+  if (is.character(ben_table_name) & dbExistsTable(conn, ben_table_name)) {
     # pass
   } else {
     stop("ben_table_name must be a character name of an existing ORACLE table")
