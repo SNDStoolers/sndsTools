@@ -84,6 +84,7 @@ extract_long_term_disease <- function(
     excl_etm_nat = c("11", "12", "13"),
     patients_ids = NULL,
     output_table_name = NULL,
+    overwrite = FALSE,
     conn = NULL) {
   stopifnot(
     !is.null(start_date),
@@ -142,7 +143,7 @@ extract_long_term_disease <- function(
     print(glue::glue("Extracting LTD status for ALD numbers \
     {paste(ald_numbers, collapse = ',')}..."))
   }
-  if (is.null(icd_cod_starts_with) & is.null(ald_numbers)) {
+  if (is.null(icd_cod_starts_with) && is.null(ald_numbers)) {
     print(glue::glue("Extracting LTD status for all ICD 10 codes..."))
   }
 
@@ -175,14 +176,14 @@ extract_long_term_disease <- function(
 
   query <- imb_r |>
     dplyr::filter(
-      sql(date_condition),
+      dbplyr::sql(date_condition),
       !(IMB_ETM_NAT %in% excl_etm_nat)
     )
 
-  if (!is.null(icd_cod_starts_with) | !is.null(ald_numbers)) {
+  if (!is.null(icd_cod_starts_with) || !is.null(ald_numbers)) {
     query <- query |>
       dplyr::filter(
-        sql(codes_conditions)
+        dbplyr::sql(codes_conditions)
       )
   }
 
@@ -197,7 +198,7 @@ extract_long_term_disease <- function(
   query <- query |>
     dplyr::select(
       BEN_NIR_PSA,
-      all_of(cols_to_select)
+      dplyr::all_of(cols_to_select)
     ) |>
     dplyr::distinct()
 
@@ -210,7 +211,7 @@ extract_long_term_disease <- function(
       dplyr::inner_join(patients_ids_table, by = "BEN_NIR_PSA") |>
       dplyr::select(
         BEN_IDT_ANO,
-        all_of(cols_to_select)
+        dplyr::all_of(cols_to_select)
       ) |>
       dplyr::distinct()
   }
