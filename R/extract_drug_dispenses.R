@@ -53,7 +53,7 @@
 #'   invisible. Dans les deux cas les colonnes de la table de sortie sont :
 #'   - BEN_NIR_PSA : Colonne présente uniquement si les identifiants
 #'   patients (`patients_ids`) ne sont pas fournis. Identifiant SNDS,
-#'   ausi appelé pseudo-NIR.
+#'   aussi appelé pseudo-NIR.
 #'   - BEN_IDT_ANO : Colonne présente uniquement si les identifiants
 #'   patients (`patients_ids`) sont fournis. Numéro d’inscription
 #'   au répertoire (NIR) anonymisé.
