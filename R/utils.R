@@ -115,7 +115,7 @@ create_table_or_insert_from_query <- function(conn = NULL,
 #'
 #' @export
 get_first_non_archived_year <- function(conn) {
-  user_synonyms <- dbGetQuery(
+  user_synonyms <- DBI::dbGetQuery(
       conn,
       "SELECT synonym_name FROM user_synonyms WHERE synonym_name LIKE 'ER_PRS_F_%'"
     )
@@ -131,9 +131,9 @@ get_first_non_archived_year <- function(conn) {
 #' @param table Chaine de caractère indiquant le nom d'une table
 #' @references https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_STATS.html#GUID-CA6A56B9-0540-45E9-B1D7-D78769B7714C
 gather_table_stats <- function(conn, table) {
-  user <- dbGetQuery(conn, "SELECT user FROM dual")
-  user <- dbQuoteIdentifier(conn, user$USER)
-  dbExecute(
+  user <- DBI::dbGetQuery(conn, "SELECT user FROM dual")
+  user <- DBI::dbQuoteIdentifier(conn, user$USER)
+  DBI::dbExecute(
     conn,
     "BEGIN DBMS_STATS.GATHER_TABLE_STATS(:1, :2); END;",
     data = data.frame(user, table)
