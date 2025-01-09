@@ -26,6 +26,12 @@ connect_duckdb <- function() {
     "Le code ne s'exécute pas sur le portail CNAM. Initialisation d'une connexion duckdb en mémoire."
   )
   conn <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
+  #TODO: remove this line (it is included in PR42)
+  # generate fake user_synonyms table for testing: used in all er_prs_f functions
+  user_synonyms <- data.frame(
+    SYNONYM_NAME = c("ER_PRS_F_2009", "ER_PRS_F_2010")
+  )
+  DBI::dbWriteTable(conn, "user_synonyms", user_synonyms)
   return(conn)
 }
 
