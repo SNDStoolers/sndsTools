@@ -85,6 +85,7 @@ le cas contraire, les ALD de tous les patients sont extraites.</p>
 <span>  excl_etm_nat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"11"</span>, <span class="st">"12"</span>, <span class="st">"13"</span><span class="op">)</span>,</span>
 <span>  patients_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  conn <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -133,15 +134,19 @@ et notamment le Programme #1 pour la référence de ce filtre.</p></dd>
 <dd><p>data.frame Optionnel. Un data.frame contenant les
 paires d'identifiants des patients pour lesquels les délivrances de
 médicaments doivent être extraites. Les colonnes de ce data.frame
-doivent être "ben_idt_ano" et "ben_nir_psa" (en minuscules). Les
-"ben_nir_psa" doivent être tous les "ben_nir_psa" associés aux
-"ben_idt_ano" fournis.</p></dd>
+doivent être "BEN_IDT_ANO" et "BEN_NIR_PSA". Les "BEN_NIR_PSA" doivent
+être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.</p></dd>
 
 
 <dt id="arg-output-table-name">output_table_name<a class="anchor" aria-label="anchor" href="#arg-output-table-name"></a></dt>
 <dd><p>Character Optionnel. Si fourni, les résultats seront
 sauvegardés dans une table portant ce nom dans la base de données au lieu
 d'être retournés sous forme de data frame.</p></dd>
+
+
+<dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
+<dd><p>Logical. Indique si la table <code>output_table_name</code>
+doit être écrasée dans le cas où elle existe déjà.</p></dd>
 
 
 <dt id="arg-conn">conn<a class="anchor" aria-label="anchor" href="#arg-conn"></a></dt>
@@ -173,12 +178,12 @@ au répertoire (NIR) anonymisé.</p></li>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">start_date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2010-01-01"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">end_date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2010-01-03"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">starts_with_codes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N04A"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">icd_cod_starts_with</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"G20"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">dispenses</span> <span class="op">&lt;-</span> <span class="fu"><a href="extract_drug_dispenses.html">extract_drug_dispenses</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">long_term_disease</span> <span class="op">&lt;-</span> <span class="fu">extract_long_term_disease</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span></span>
 <span class="r-in"><span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span></span>
-<span class="r-in"><span>  starts_with_codes <span class="op">=</span> <span class="va">starts_with_codes</span></span></span>
+<span class="r-in"><span>  icd_cod_starts_with <span class="op">=</span> <span class="va">icd_cod_starts_with</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
