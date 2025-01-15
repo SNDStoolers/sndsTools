@@ -1,10 +1,13 @@
 ## Build the package documentation
 docs-r:
 	Rscript -e 'library(devtools);pkgload::load_all();devtools::document();devtools::check(error_on="error")'
+	Rscript -e 'library(devtools);pkgload::load_all();devtools::document();devtools::check(error_on="error")'
 
 
 ## Build the package website
 docs-html:
+	Rscript -e 'library(devtools);pkgload::load_all();devtools::document();devtools::check(error_on="error")'
+	Rscript -e 'pkgdown::clean_site();devtools::install();pkgdown::build_site()'
 	Rscript -e 'library(devtools);pkgload::load_all();devtools::document();devtools::check(error_on="error")'
 	Rscript -e 'pkgdown::clean_site();devtools::install();pkgdown::build_site()'
 
@@ -32,3 +35,14 @@ style:
 ## Test the package
 test:
 	Rscript -e 'devtools::test()'
+
+## Auto-test (only code or tests that change)
+autotest:
+	Rscript -e 'devtools::load_all();testthat::auto_test(code_path = "R/", test_path = "tests/testthat/")'
+
+testf: 
+	Rscript -e 'devtools::load_all();testthat::test_file("${FILE}")'
+
+## Move binary to the right place
+mv-binary:
+	Rscript -e 'file.copy(from="~/Citrix_documents/IMPORT/sndsTools_0.0.0.1.tar.gz", to="~/sasdata1/prg/", overwrite = TRUE)'
