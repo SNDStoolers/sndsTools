@@ -257,6 +257,7 @@ extract_drug_dispenses <- function(
         dplyr::distinct()
     }
 
+    query <- query |> dbplyr::sql_render()
     if (DBI::dbExistsTable(conn, output_table_name)) {
       DBI::dbExecute(
         conn,
