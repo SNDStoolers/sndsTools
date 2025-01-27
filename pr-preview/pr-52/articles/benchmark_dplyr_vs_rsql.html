@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Gouvernance • sndsTools</title>
+<title>Benchmarking dplyr vs RSQL • sndsTools</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Gouvernance">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Benchmarking dplyr vs RSQL">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -58,61 +58,28 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Gouvernance</h1>
+      <h1>Benchmarking dplyr vs RSQL</h1>
+                        <h4 data-toc-skip class="author">Matthieu
+Doutreligne</h4>
             
+            <h4 data-toc-skip class="date">2025-01-27</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/strayMat/sndsTools/tree/main/vignettes/gouvernance.Rmd" class="external-link"><code>vignettes/gouvernance.Rmd</code></a></small>
-      <div class="d-none name"><code>gouvernance.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/strayMat/sndsTools/tree/main/vignettes/benchmark_dplyr_vs_rsql.Rmd" class="external-link"><code>vignettes/benchmark_dplyr_vs_rsql.Rmd</code></a></small>
+      <div class="d-none name"><code>benchmark_dplyr_vs_rsql.Rmd</code></div>
     </div>
 
     
     
 <div class="section level2">
-<h2 id="gouvernance">Gouvernance<a class="anchor" aria-label="anchor" href="#gouvernance"></a>
+<h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
 </h2>
-<p>Cet effort de développement d’un paquet R pour les données du SNDS
-est un projet communautaire basé sur le consensus et l’investissement
-personnel de ses membres. Tout utilisateur ayant un intérêt dans le
-projet peut rejoindre la communauté, contribuer au projet et à ses
-orientations futures. Ce document précise comment la participation a
-lieu, comment trouver / gagner sa place dans le projet, et quels sont
-les différents rôles et responsabilités.</p>
-<p>Actuellement, le paquet essaye de fonctionner avec deux types de
-contributeurs :</p>
-<div class="section level3">
-<h3 id="les-contributeurs">Les contributeurs<a class="anchor" aria-label="anchor" href="#les-contributeurs"></a>
-</h3>
-<p>Les contributeurs classiques faisant des issues, des reviews et des
-propositions de nouvelles fonctionnalités (pull requests). Chaque
-nouvelle fonctionnalité avant d’être intégré doit être revue par un core
-contributeur</p>
+<p>Y-a-t-il une différence de performance sur le portail entre manipuler
+les données avec la syntaxe <code>dplyr</code> ou en injectant du SQL
+directement dans une requête de <code><a href="https://dbi.r-dbi.org/reference/dbExecute.html" class="external-link">DBI::dbExecute</a></code> ?</p>
 </div>
-<div class="section level3">
-<h3 id="les-core-contributeurs">Les core contributeurs<a class="anchor" aria-label="anchor" href="#les-core-contributeurs"></a>
-</h3>
-<p>Les core contributors sont particulièrement investis dans le projet.
-Ils ont des accès larges sur le dépôt. Ce sont eux seulement qui
-valident l’intégration de nouvelles fonctionnalités (pull requests) et
-peuvent fermer les issues.</p>
-</div>
-<div class="section level3">
-<h3 id="devenir-un-contributeur">Devenir un contributeur<a class="anchor" aria-label="anchor" href="#devenir-un-contributeur"></a>
-</h3>
-<p>Tout utilisateur peut être contributeur en faisant <a href="https://github.com/strayMat/sndsTools/issues" class="external-link">une nouvelle
-issue</a>, <a href="https://github.com/strayMat/sndsTools/pulls" class="external-link">une
-pull request</a>, ou en effectuant une revue sur une pull request
-existante. Le <a href="contribuer.html">guide de contribution</a>
-détaille les différentes manières de contribuer.</p>
-</div>
-<div class="section level3">
-<h3 id="devenir-un-core-contributeur">Devenir un core contributeur<a class="anchor" aria-label="anchor" href="#devenir-un-core-contributeur"></a>
-</h3>
-<p>Après une ou deux pull requests ou reviews de la part d’un nouveau
-contributeur, sur demande de ce dernier, les core contributeurs décident
-collégialement de l’intégrer au projet. Le nombre de core contributeur
-n’est pas limité. Le projet est en phase très précoce, et accueille à
-bras ouverts de nouveaux core contributeurs 🤗.</p>
-</div>
+<div class="section level2">
+<h2 id="description-du-benchmark">Description du Benchmark<a class="anchor" aria-label="anchor" href="#description-du-benchmark"></a>
+</h2>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
