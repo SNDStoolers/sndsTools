@@ -39,4 +39,5 @@ reference:
   - create_table_from_query
   - connect_duckdb
   - connect_oracle
+  - gather_table_stats
 

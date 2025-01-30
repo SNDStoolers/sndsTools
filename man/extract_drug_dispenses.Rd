@@ -16,8 +16,7 @@ extract_drug_dispenses(
 )
 }
 \arguments{
-\item{start_date}{Date. La date de début de l
-a période
+\item{start_date}{Date. La date de début de la période
 des délivrances des médicaments à extraire.}
 
 \item{end_date}{Date La date de fin de la période
@@ -55,7 +54,7 @@ invisible. Dans les deux cas les colonnes de la table de sortie sont :
 \itemize{
 \item BEN_NIR_PSA : Colonne présente uniquement si les identifiants
 patients (\code{patients_ids}) ne sont pas fournis. Identifiant SNDS,
-ausi appelé pseudo-NIR.
+aussi appelé pseudo-NIR.
 \item BEN_IDT_ANO : Colonne présente uniquement si les identifiants
 patients (\code{patients_ids}) sont fournis. Numéro d’inscription
 au répertoire (NIR) anonymisé.
@@ -89,10 +88,10 @@ extraites.
 }
 \details{
 Pour être à flux constant sur l'ensemble des années,
-il faut utiliser dis_dtd_lag_months = 27.
+il faut utiliser dis_dtd_lag_months = 27
 Cela rallonge le temps d'extraction alors que l'impact sur
-l'extraction est minime car la Cnam extime que 99 \% des soins sont
-remontés à 6 mois c'est-à-dire pour dis_dtd_lag_months = 6).
+l'extraction est minime car la Cnam estime que 99 \% des soins sont
+remontés à 6 mois c'est-à-dire pour dis_dtd_lag_months = 6
 Voir https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir
 }
 \examples{

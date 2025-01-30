@@ -12,6 +12,7 @@ extract_long_term_disease(
   excl_etm_nat = c("11", "12", "13"),
   patients_ids = NULL,
   output_table_name = NULL,
+  overwrite = FALSE,
   conn = NULL
 )
 }
@@ -45,13 +46,15 @@ et notamment le Programme #1 pour la référence de ce filtre.}
 \item{patients_ids}{data.frame Optionnel. Un data.frame contenant les
 paires d'identifiants des patients pour lesquels les délivrances de
 médicaments doivent être extraites. Les colonnes de ce data.frame
-doivent être "ben_idt_ano" et "ben_nir_psa" (en minuscules). Les
-"ben_nir_psa" doivent être tous les "ben_nir_psa" associés aux
-"ben_idt_ano" fournis.}
+doivent être "BEN_IDT_ANO" et "BEN_NIR_PSA". Les "BEN_NIR_PSA" doivent
+être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.}
 
 \item{output_table_name}{Character Optionnel. Si fourni, les résultats seront
 sauvegardés dans une table portant ce nom dans la base de données au lieu
 d'être retournés sous forme de data frame.}
+
+\item{overwrite}{Logical. Indique si la table \code{output_table_name}
+doit être écrasée dans le cas où elle existe déjà.}
 
 \item{conn}{DBI connection Une connexion à la base de données Oracle.
 Si non fournie, une connexion est établie par défaut.}
@@ -94,12 +97,12 @@ le cas contraire, les ALD de tous les patients sont extraites.
 \dontrun{
 start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-01-03")
-starts_with_codes <- c("N04A")
+icd_cod_starts_with <- c("G20")
 
-dispenses <- extract_drug_dispenses(
+long_term_disease <- extract_long_term_disease(
   start_date = start_date,
   end_date = end_date,
-  starts_with_codes = starts_with_codes
+  icd_cod_starts_with = icd_cod_starts_with
 )
 }
 }
