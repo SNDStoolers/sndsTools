@@ -44,7 +44,7 @@ end_date sont extraites."></head><body>
 
     <div class="ref-description section level2">
     <p>Cette fonction permet d'extraire les consultations à l'hôpital en MCO. Les
-consultations dont les dates EXE_SOI_DTD sont comprises entre start_date et
+consultations dont les dates <code>EXE_SOI_DTD</code> sont comprises entre start_date et
 end_date sont extraites.</p>
     </div>
 
@@ -91,9 +91,9 @@ prestations sont disponibles sur la page <a href="https://documentation-snds.hea
 <dt id="arg-patient-ids-filter">patient_ids_filter<a class="anchor" aria-label="anchor" href="#arg-patient-ids-filter"></a></dt>
 <dd><p>data.frame Optionnel. Un data.frame contenant les
 paires d'identifiants des patients pour lesquels les consultations doivent
-être extraites. Les colonnes de ce data.frame doivent être "BEN_IDT_ANO" et
-"BEN_NIR_PSA" (en majuscules). Les "BEN_NIR_PSA" doivent être tous les
-"BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis. Si <code>patients_ids</code> n'est pas
+être extraites. Les colonnes de ce data.frame doivent être <code>BEN_IDT_ANO</code> et
+<code>BEN_NIR_PSA</code> (en majuscules). Les <code>BEN_NIR_PSA</code> doivent être tous les
+<code>BEN_NIR_PSA</code> associés aux <code>BEN_IDT_ANO</code> fournis. Si <code>patients_ids</code> n'est pas
 fourni, les consultations de tous les patients sont extraites.</p></dd>
 
 
@@ -114,12 +114,13 @@ une connexion est établie avec oracle.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Un data.frame contenant les consultations. Les colonnes sont les
-suivantes :</p><ul><li><p>BEN_IDT_ANO : Identifiant bénéficiaire anonymisé (seulement si patient_ids
+suivantes :</p><ul><li><p><code>BEN_IDT_ANO</code> : Identifiant bénéficiaire anonymisé (seulement si</p></li>
+<li><p>patient_ids
 non nul)</p></li>
-<li><p>NIR_ANO_17 : NIR anonymisé</p></li>
-<li><p>EXE_SOI_DTD : Date de la délivrance</p></li>
-<li><p>ACT_COD : Code de l'acte</p></li>
-<li><p>EXE_SPE : Code de spécialité du professionnel de soin prescripteur</p></li>
+<li><p><code>NIR_ANO_17</code> : NIR anonymisé</p></li>
+<li><p><code>EXE_SOI_DTD</code> : Date de la délivrance</p></li>
+<li><p><code>ACT_COD</code> : Code de l'acte</p></li>
+<li><p><code>EXE_SPE</code> : Code de spécialité du professionnel de soin prescripteur</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
