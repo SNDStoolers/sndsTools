@@ -21,6 +21,10 @@ lint-pkg:
 lint:
 	Rscript -e 'lintr::lint("${FILE}")' 
 
+## Style the package	
+style-pkg: 
+	Rscript -e 'styler::style_pkg()'
+
 ## Style a file
 style: 
 	Rscript -e 'styler::style_file("${FILE}")'
@@ -28,4 +32,3 @@ style:
 ## Test the package
 test:
 	Rscript -e 'devtools::test()'
-	
