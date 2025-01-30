@@ -58,7 +58,6 @@ et <code>end_date</code> (incluses) sont extraites.</p>
 <span>  dis_dtd_lag_months <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  patients_ids_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  conn <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -99,23 +98,18 @@ récupérer les consultations. Défaut à 6 mois.</p></dd>
 
 
 <dt id="arg-patients-ids-filter">patients_ids_filter<a class="anchor" aria-label="anchor" href="#arg-patients-ids-filter"></a></dt>
-<dd><p>data frame (Optionnel). Un data frame contenant les
-paires d'identifiants des patients pour lesquels les consultations doivent
-être extraites. Les colonnes de ce data frame doivent être <code>BEN_IDT_ANO</code> et
-<code>BEN_NIR_PSA</code>. Les BEN_NIR_PSA doivent être tous les BEN_NIR_PSA associés
+<dd><p>data frame (Optionnel). Un data frame contenant
+les paires d'identifiants des patients pour lesquels les consultations
+doivent être extraites. Les colonnes de ce data frame doivent être
+<code>BEN_IDT_ANO</code>, <code>BEN_NIR_PSA</code> et <code>BEN_RNG_GEM</code>. Les BEN_NIR_PSA doivent être
+tous les BEN_NIR_PSA associés
 aux BEN_IDT_ANO fournis. Défaut à <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-output-table-name">output_table_name<a class="anchor" aria-label="anchor" href="#arg-output-table-name"></a></dt>
 <dd><p>Character (Optionnel). Si fourni, les résultats
 seront sauvegardés dans une table portant ce nom dans la base de données au
-lieu d'être retournés sous forme de data frame. Défaut à <code>NULL</code>.</p></dd>
-
-
-<dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
-<dd><p>Logical (Optionnel). Indique si la table <code>output_table_name</code>
-doit être écrasée dans le cas où elle existe déjà. Si mis à <code>FALSE</code> et
-qu'une table existe, une erreur est renvoyée. Défaut à <code>FALSE</code>.</p></dd>
+lieu d'être retournés sous forme de data frame. Si cette table existe déjà, le programme s'arrête avec un message d'erreur. Défaut à <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-conn">conn<a class="anchor" aria-label="anchor" href="#arg-conn"></a></dt>
