@@ -1,6 +1,6 @@
 # Liste des finess géographiques APHP, APHM et HCL à supprimer pour éviter les
 # doublons
-finess_out <- c(
+FINESS_DOUBLONS <- c(
   "130780521", "130783236", "130783293", "130784234", "130804297",
   "600100101", "750041543", "750100018", "750100042", "750100075",
   "750100083", "750100091", "750100109", "750100125", "750100166",
@@ -14,6 +14,7 @@ finess_out <- c(
 )
 
 #' Construit les conditions pour extraire les diagnostics principaux et reliés.
+#'
 #' @description
 #' Cette fonction permet de construire les conditions pour extraire les
 #' diagnostics principaux et reliés.
@@ -94,56 +95,58 @@ normalize_column_number <- function(
 
 #' Extraction des séjours hospitaliers (MCO).
 #'
+#' @description
 #' Cette fonction permet d'extraire les séjours hospitaliers en MCO. Les séjours
-#' dont les dates EXE_SOI_DTD sont comprises entre start_date et end_date sont
-#' extraits.
+#' dont les dates `EXE_SOI_DTD` sont comprises entre `start_date` et `end_date`
+#' sont extraits.
 #'
-#' Si dp_cim10_codes_starts_with est renseigné, seules les séjours avec les
-#' codes CIM10 correspondants sont extraits.
+#' @details
+#' Si `dp_cim10_codes_starts_with_filter` est renseigné, seules les séjours avec
+#' les codes CIM10 correspondants sont extraits.
 #'
-#' Si or_dr_with_same_codes est renseigné, les séjours avec les codes DR
-#' correspondants sont également extraits.
+#' Si `or_dr_with_same_codes_filter` est renseigné, les séjours avec les codes
+#' DR correspondants sont également extraits.
 #'
-#' Si or_da_with_same_codes est renseigné, les séjours avec les codes DA
-#' correspondants sont également extraits.
+#' Si `or_da_with_same_codes_filter` est renseigné, les séjours avec les codes
+#' DA correspondants sont également extraits.
 #'
-#' Si and_da_with_other_codes est renseigné, les séjours avec les codes DA
-#' différents sont également extraits.
+#' Si `and_da_with_other_codes_filter` est renseigné, les séjours avec les codes
+#' DA différents sont également extraits.
 #'
 #' @param start_date Date La date de début de la période sur laquelle extraire
 #' les séjours.
 #' @param end_date Date La date de fin de la période sur laquelle extraire les
 #' séjours.
-#' @param dp_cim10_codes_starts_with character vector Les codes CIM10 des
-#' diagnostics principaux à extraire.
-#' @param or_dr_with_same_codes logical Indique si les séjours avec les mêmes
-#' codes DR doivent être extraits.
-#' @param or_da_with_same_codes logical Indique si les séjours avec les mêmes
-#' codes DA doivent être extraits.
-#' @param and_da_with_other_codes logical Indique si les séjours avec des codes
-#' DA différents doivent être extraits.
-#' @param da_cim10_codes_starts_with character vector Les codes CIM10 des
-#' diagnostics associés à extraire.
-#' @param patients_ids data.frame Un data.frame contenant les paires
-#' d'identifiants des patients pour lesquels les consultations doivent être
-#' extraites. Les colonnes de ce data.frame doivent être "BEN_IDT_ANO" et
-#' "BEN_NIR_PSA" (en majuscules). Les "BEN_NIR_PSA" doivent être tous les
-#' "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis. Si `patients_ids` n'est pas
-#' fourni, les consultations de tous les patients sont extraites.
-#' @param ben_table_name character Le nom de la table des bénéficiaires.
+#' @param dp_cim10_codes_starts_with_filter character vector (Optionnel). Les
+#' codes CIM10 des diagnostics principaux à extraire. Défaut à `NULL`.
+#' @param or_dr_with_same_codes logical (Optionnel).Indique si les séjours avec
+#' les mêmes codes DR doivent être extraits. Défaut à `NULL`.
+#' @param or_da_with_same_codes logical (Optionnel). Indique si les séjours avec
+#' les mêmes codes DA doivent être extraits. Défaut à `NULL`.
+#' @param and_da_with_other_codes_filter logical (Optionnel). Indique si les
+#' séjours avec des codes DA différents doivent être extraits. Défaut à `NULL`.
+#' @param da_cim10_codes_starts_with_filter character vector (Optionnel). Les
+#' codes CIM10 des diagnostics associés à extraire. Défaut à `NULL`.
+#' @param patients_ids_filter data.frame (Optionnel). Un data.frame contenant
+#' les paires d'identifiants des patients pour lesquels les consultations
+#' doivent être extraites. Les colonnes de ce data.frame doivent être
+#' `BEN_IDT_ANO` et `BEN_NIR_PSA` (en majuscules). Les "BEN_NIR_PSA" doivent
+#' être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis. Si
+#' `patients_ids` n'est pas fourni, les consultations de tous les patients sont
+#' extraites. Défaut à `NULL`.
 #' @param output_table_name character Le nom de la table de sortie dans la base
 #' de données. Si `output_table_name` n'est pas fourni, une table de sortie
-#' intermédiaire est créée.
-#' @param overwrite Logical. Indique si la table `output_table_name`
-#'  doit être écrasée dans le cas où elle existe déjà.
+#' intermédiaire est créée. Défaut à `NULL`.
 #' @param conn dbConnection La connexion à la base de données. Si `conn` n'est
-#' pas fourni, une connexion à la base de données est initialisée.
+#' pas fourni, une connexion à la base de données est initialisée. Défaut à
+#' `NULL`.
 #'
 #' @return Un data.frame contenant les séjours hospitaliers. Les colonnes sont
 #' les suivantes :
-#' - BEN_IDT_ANO : Identifiant bénéficiaire anonymisé (seulement si patient_ids non nul)
-#' - NIR_ANO_17 : NIR anonymisé
-#' - EXE_SOI_DTD : Date de début du séjour hospitalier
+#' - `BEN_IDT_ANO` : Identifiant bénéficiaire anonymisé (seulement si
+#'   patient_ids non nul)
+#' - `NIR_ANO_17` : NIR anonymisé
+#' - `EXE_SOI_DTD` : Date de début du séjour hospitalier
 #'
 #' @examples
 #' \dontrun{
@@ -155,16 +158,15 @@ normalize_column_number <- function(
 #' }
 #' @export
 extract_hospital_stays <- function(
-    start_date = NULL,
-    end_date = NULL,
-    dp_cim10_codes_starts_with = NULL,
-    or_dr_with_same_codes = NULL,
-    or_da_with_same_codes = NULL,
-    and_da_with_other_codes = NULL,
-    da_cim10_codes_starts_with = NULL,
-    patients_ids = NULL,
+    start_date,
+    end_date,
+    dp_cim10_codes_starts_with_filter = NULL,
+    or_dr_with_same_codes_filter = NULL,
+    or_da_with_same_codes_filter = NULL,
+    and_da_with_other_codes_filter = NULL,
+    da_cim10_codes_starts_with_filter = NULL,
+    patients_ids_filter = NULL,
     output_table_name = NULL,
-    overwrite = FALSE,
     conn = NULL) {
   stopifnot(
     !is.null(start_date),
@@ -182,34 +184,22 @@ extract_hospital_stays <- function(
 
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
   if (!is.null(output_table_name)) {
-    output_table_name_is_temp <- FALSE
     stopifnot(
       is.character(output_table_name),
-      !DBI::dbExistsTable(conn, output_table_name) || (DBI::dbExistsTable(conn, output_table_name) && overwrite)
+      !DBI::dbExistsTable(conn, output_table_name)
     )
-    if (DBI::dbExistsTable(conn, output_table_name) && overwrite) {
-      warning(
-        glue::glue(
-          "Table {output_table_name} already exists and will be overwritten."
-        )
-      )
-      DBI::dbRemoveTable(conn, output_table_name)
-    }
-  } else {
-    output_table_name_is_temp <- TRUE
-    output_table_name <- glue::glue("TMP_DISP_{timestamp}")
   }
 
-  if (!is.null(patients_ids)) {
+  if (!is.null(patients_ids_filter)) {
     stopifnot(
       identical(
-        names(patients_ids),
+        names(patients_ids_filter),
         c("BEN_IDT_ANO", "BEN_NIR_PSA")
       ),
-      !anyDuplicated(patients_ids)
+      !anyDuplicated(patients_ids_filter)
     )
     patients_ids_table_name <- glue::glue("TMP_PATIENTS_IDS_{timestamp}")
-    DBI::dbWriteTable(conn, patients_ids_table_name, patients_ids)
+    DBI::dbWriteTable(conn, patients_ids_table_name, patients_ids_filter)
   }
 
   start_year <- lubridate::year(start_date)
@@ -242,8 +232,8 @@ extract_hospital_stays <- function(
     t_mco_um <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}UM"))
 
     dp_dr_conditions <- build_dp_dr_conditions(
-      cim10_codes_starts_with = dp_cim10_codes_starts_with,
-      include_dr = or_dr_with_same_codes
+      cim10_codes_starts_with = dp_cim10_codes_starts_with_filter,
+      include_dr = or_dr_with_same_codes_filter
     )
 
     eta_num_rsa_num <- t_mco_b |>
@@ -251,12 +241,12 @@ extract_hospital_stays <- function(
       dplyr::select(ETA_NUM, RSA_NUM) |>
       dplyr::distinct()
 
-    if (or_da_with_same_codes) {
+    if (or_da_with_same_codes_filter) {
       da_conditions <- build_da_conditions(
-        cim10_codes_starts_with = dp_cim10_codes_starts_with
+        cim10_codes_starts_with = dp_cim10_codes_starts_with_filter
       )
       dp_dr_conditions <- build_dp_dr_conditions(
-        cim10_codes_starts_with = dp_cim10_codes_starts_with,
+        cim10_codes_starts_with = dp_cim10_codes_starts_with_filter,
         include_dr = TRUE
       )
       eta_num_rsa_num_da_d <- t_mco_d |>
@@ -273,12 +263,12 @@ extract_hospital_stays <- function(
       eta_num_rsa_num <- dplyr::union(
         eta_num_rsa_num, eta_num_rsa_num_da
       )
-    } else if (and_da_with_other_codes) {
+    } else if (and_da_with_other_codes_filter) {
       da_conditions <- build_da_conditions(
-        cim10_codes_starts_with = da_cim10_codes_starts_with
+        cim10_codes_starts_with = da_cim10_codes_starts_with_filter
       )
       dp_dr_conditions <- build_dp_dr_conditions(
-        cim10_codes_starts_with = da_cim10_codes_starts_with,
+        cim10_codes_starts_with = da_cim10_codes_starts_with_filter,
         include_dr = TRUE
       )
       eta_num_rsa_num_da_d <- t_mco_d |>
@@ -316,18 +306,19 @@ extract_hospital_stays <- function(
       dplyr::inner_join(t_mco_c, by = c("ETA_NUM", "RSA_NUM")) |>
       dplyr::inner_join(eta_num_rsa_num, by = c("ETA_NUM", "RSA_NUM")) |>
       dplyr::select(dplyr::all_of(selected_cols))
-      
-     exe_soi_dtd_condition <- glue::glue(
-      "EXE_SOI_DTD >= DATE '{formatted_start_date}' 
-      AND EXE_SOI_DTD <= DATE '{formatted_end_date}'" 
-     )
-     t_mco_b_c_dtd_filtered <- t_mco_b_c|>
-     dbplyr::sql(
-       exe_soi_dtd_condition)
-        |>
+
+    exe_soi_dtd_condition <- glue::glue(
+      "EXE_SOI_DTD >= DATE '{formatted_start_date}'
+      AND EXE_SOI_DTD <= DATE '{formatted_end_date}'"
+    )
+    # FIXME: When is this needed?
+    t_mco_b_c_dtd_filtered <- t_mco_b_c |>
+      dbplyr::sql(
+        exe_soi_dtd_condition
+      ) |>
       dplyr::distinct()
 
-    if (!is.null(ben_table_name)) {
+    if (!is.null(patients_ids_filter)) {
       ben <- ben |>
         dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA) |>
         dplyr::distinct()
@@ -346,7 +337,10 @@ extract_hospital_stays <- function(
 
     selected_cols <- c("ETA_NUM", "RSA_NUM", "DGN_PAL", "DGN_REL")
     tmp1_um <- t_mco_um |>
-      dplyr::inner_join(selected_eta_num_rsa_num, by = c("ETA_NUM", "RSA_NUM")) |>
+      dplyr::inner_join(
+        selected_eta_num_rsa_num,
+        by = c("ETA_NUM", "RSA_NUM")
+      ) |>
       dplyr::select(dplyr::all_of(selected_cols)) |>
       dplyr::distinct() |>
       dplyr::collect()
@@ -356,7 +350,11 @@ extract_hospital_stays <- function(
       dplyr::distinct() |>
       dplyr::group_by(ETA_NUM, RSA_NUM) |>
       dplyr::mutate(row_id = dplyr::row_number()) |>
-      dbplyr::pivot_wider(names_from = row_id, values_from = DGN_PAL, names_prefix = "DGN_PAL_UM_") |>
+      dbplyr::pivot_wider(
+        names_from = row_id,
+        values_from = DGN_PAL,
+        names_prefix = "DGN_PAL_UM_"
+      ) |>
       dplyr::ungroup()
 
     max_columns_dgn_pal_um <- 10
@@ -371,7 +369,11 @@ extract_hospital_stays <- function(
       dplyr::distinct() |>
       dplyr::group_by(ETA_NUM, RSA_NUM) |>
       dplyr::mutate(row_id = dplyr::row_number()) |>
-      dbplyr::pivot_wider(names_from = row_id, values_from = DGN_REL, names_prefix = "DGN_REL_UM_") |>
+      dbplyr::pivot_wider(
+        names_from = row_id,
+        values_from = DGN_REL,
+        names_prefix = "DGN_REL_UM_"
+      ) |>
       dplyr::ungroup()
 
     max_columns_dgn_rel_um <- 10
@@ -387,7 +389,10 @@ extract_hospital_stays <- function(
 
     selected_cols <- c("ETA_NUM", "RSA_NUM", "ASS_DGN")
     tmp1_d <- t_mco_d |>
-      dplyr::inner_join(selected_eta_num_rsa_num, by = c("ETA_NUM", "RSA_NUM")) |>
+      dplyr::inner_join(
+        selected_eta_num_rsa_num,
+        by = c("ETA_NUM", "RSA_NUM")
+      ) |>
       dplyr::select(dplyr::all_of(selected_cols)) |>
       dplyr::distinct() |>
       dplyr::collect()
@@ -414,7 +419,11 @@ extract_hospital_stays <- function(
       dplyr::select(-DGN_PAL) |>
       dplyr::group_by(ETA_NUM, RSA_NUM) |>
       dplyr::mutate(row_id = dplyr::row_number()) |>
-      dbplyr::pivot_wider(names_from = row_id, values_from = ASS_DGN, names_prefix = "ASS_DGN_") |>
+      dbplyr::pivot_wider(
+        names_from = row_id,
+        values_from = ASS_DGN,
+        names_prefix = "ASS_DGN_"
+      ) |>
       dplyr::ungroup()
 
     max_columns_da <- 20
@@ -459,21 +468,31 @@ extract_hospital_stays <- function(
     }
 
     hospital_stays <- tmp4 |>
-      filter(
+      dplyr::filter(
         GRG_GHM != 90,
-        !(ETA_NUM %in% finess_out)
+        !(ETA_NUM %in% FINESS_DOUBLONS)
       )
 
     hospital_stays_list <- append(hospital_stays_list, list(hospital_stays))
 
     end_time <- Sys.time()
-    print(glue::glue("Time taken for year {year}: {round(difftime(end_time, start_time, units='mins'),1)} mins."))
+    message(
+      glue::glue(
+        "Time taken for year {year}: {round(difftime(end_time, start_time, units='mins'),1)} mins." # nolint
+      )
+    )
   }
 
-  hospital_stays <- dplyr::bind_rows(hospital_stays_list)
-
+  result <- dplyr::bind_rows(hospital_stays_list)
+  if (!is.null(output_table_name)) {
+    DBI::dbWriteTable(conn, output_table_name, result, overwrite = TRUE)
+    result <- invisible(NULL)
+    message(
+      glue::glue("Results saved to table {output_table_name} in Oracle.")
+    )
+  }
   if (connection_opened) {
     DBI::dbDisconnect(conn)
   }
-  return(hospital_stays)
+  return(result)
 }
