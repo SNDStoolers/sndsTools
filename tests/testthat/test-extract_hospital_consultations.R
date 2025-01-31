@@ -1,6 +1,6 @@
 require(dplyr)
 
-test_that("retrieve_ace works", {
+test_that("extract_hospital_consultations works", {
   conn <- connect_duckdb()
 
   patients_ids_filter <- data.frame(
@@ -39,7 +39,7 @@ test_that("retrieve_ace works", {
     start_date = start_date,
     end_date = end_date,
     spe_codes_filter = spe_codes_filter,
-    patients_ids_filter = patients_ids_filter,
+    patient_ids_filter = patients_ids_filter,
     conn = conn
   )
 
