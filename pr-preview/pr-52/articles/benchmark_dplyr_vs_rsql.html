@@ -202,7 +202,10 @@ flux.</p>
 <span>  time_taken_sql_minutes <span class="op">=</span> <span class="va">time_taken_sql</span> <span class="op">/</span> <span class="fl">60</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    period_days <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">end_date</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">start_date</span><span class="op">)</span><span class="op">)</span></span>
+<span>    query_period_days <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">end_date</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">start_date</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    query_period_months <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">query_period_days</span> <span class="op">/</span> <span class="fl">30</span><span class="op">)</span>,</span>
+<span>    speed_dplyr_nrows_sec <span class="op">=</span> <span class="va">n_rows_dplyr</span> <span class="op">/</span> <span class="va">time_taken_dplyr</span>,</span>
+<span>    speed_sql_nrows_sec <span class="op">=</span> <span class="va">n_rows_sql</span> <span class="op">/</span> <span class="va">time_taken_sql</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="va">timing_results</span></span></code></pre></div>
 <pre><code><span><span class="co">##   start_date   end_date time_taken_dplyr time_taken_sql n_rows_dplyr n_rows_sql</span></span>
@@ -210,11 +213,16 @@ flux.</p>
 <span><span class="co">## 2 2020-01-01 2021-01-01        2481.1538      2924.7824     42458351   48271076</span></span>
 <span><span class="co">## 3 2020-01-01 2022-01-01        1207.4079      1455.3371     97138010  109269375</span></span>
 <span><span class="co">## 4 2020-01-01 2023-01-01        1950.7323      2267.7857    153406576  171841893</span></span>
-<span><span class="co">##   time_taken_dplyr_minutes time_taken_sql_minutes period_days</span></span>
-<span><span class="co">## 1                 4.756247               4.859593          31</span></span>
-<span><span class="co">## 2                41.352563              48.746374         366</span></span>
-<span><span class="co">## 3                20.123465              24.255618         731</span></span>
-<span><span class="co">## 4                32.512205              37.796429        1096</span></span></code></pre>
+<span><span class="co">##   time_taken_dplyr_minutes time_taken_sql_minutes query_period_days</span></span>
+<span><span class="co">## 1                 4.756247               4.859593                31</span></span>
+<span><span class="co">## 2                41.352563              48.746374               366</span></span>
+<span><span class="co">## 3                20.123465              24.255618               731</span></span>
+<span><span class="co">## 4                32.512205              37.796429              1096</span></span>
+<span><span class="co">##   query_period_months speed_dplyr_nrows_sec speed_sql_nrows_sec</span></span>
+<span><span class="co">## 1                   1              15217.22            14945.96</span></span>
+<span><span class="co">## 2                  12              17112.34            16504.16</span></span>
+<span><span class="co">## 3                  24              80451.69            75081.83</span></span>
+<span><span class="co">## 4                  36              78640.51            75775.19</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="résultats-sur-la-durée-des-extractions">Résultats sur la durée des extractions<a class="anchor" aria-label="anchor" href="#r%C3%A9sultats-sur-la-dur%C3%A9e-des-extractions"></a>
@@ -224,6 +232,8 @@ flux.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">label_size</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
+<span></span>
+<span><span class="va">x_breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">timing_results</span><span class="op">$</span><span class="va">query_period_months</span><span class="op">)</span></span>
 <span><span class="va">timing_results</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span>
 <span>    dplyr<span class="op">=</span><span class="va">time_taken_dplyr_minutes</span>, rsql<span class="op">=</span><span class="va">time_taken_sql_minutes</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -232,11 +242,11 @@ flux.</p>
 <span>    names_to <span class="op">=</span> <span class="st">"Méthode"</span>,</span>
 <span>    values_to <span class="op">=</span> <span class="st">"duration"</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">period_days</span>, y <span class="op">=</span> <span class="va">duration</span>, fill <span class="op">=</span> <span class="va">Méthode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">query_period_months</span>, y <span class="op">=</span> <span class="va">duration</span>, fill <span class="op">=</span> <span class="va">Méthode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">timing_results</span><span class="op">$</span><span class="va">period_days</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="va">x_breaks</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="st">"Période sur laquelle\n porte l'extraction(jour)"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Période sur laquelle\n porte l'extraction (mois)"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Temps pris par l'extraction\n sur le portail (minutes)"</span>,</span>
 <span>    fill <span class="op">=</span> <span class="st">"Méthode"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
@@ -264,12 +274,12 @@ flux.</p>
 <span>    names_to <span class="op">=</span> <span class="st">"Méthode"</span>,</span>
 <span>    values_to <span class="op">=</span> <span class="st">"n_rows"</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">period_days</span>, y <span class="op">=</span> <span class="va">n_rows</span>, fill <span class="op">=</span> <span class="va">Méthode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">query_period_months</span>, y <span class="op">=</span> <span class="va">n_rows</span><span class="op">/</span><span class="fl">1e6</span>, fill <span class="op">=</span> <span class="va">Méthode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">timing_results</span><span class="op">$</span><span class="va">period_days</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="va">x_breaks</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    x <span class="op">=</span> <span class="st">"Période sur laquelle\n porte l'extraction (jour)"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Nombres de lignes \ndans l'extraction"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Période sur laquelle\n porte l'extraction (mois)"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Nombres de lignes \ndans l'extraction (millions)"</span>,</span>
 <span>    fill <span class="op">=</span> <span class="st">"Méthode"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -280,6 +290,38 @@ flux.</p>
 <span>    legend.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p><img src="benchmark_dplyr_vs_rsql_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
+</div>
+<div class="section level2">
+<h2 id="vitesse-dextraction-en-ligne-extraite-par-minute">Vitesse d’extraction (en ligne extraite par minute)<a class="anchor" aria-label="anchor" href="#vitesse-dextraction-en-ligne-extraite-par-minute"></a>
+</h2>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># plot time results</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">label_size</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
+<span><span class="va">timing_results</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>dplyr<span class="op">=</span><span class="va">speed_dplyr_nrows_sec</span>, rsql<span class="op">=</span><span class="va">speed_sql_nrows_sec</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
+<span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dplyr</span>, <span class="va">rsql</span><span class="op">)</span>,</span>
+<span>    names_to <span class="op">=</span> <span class="st">"Méthode"</span>,</span>
+<span>    values_to <span class="op">=</span> <span class="st">"speed_nrows_sec"</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">query_period_months</span>, y <span class="op">=</span> <span class="va">speed_nrows_sec</span><span class="op">/</span><span class="fl">1000</span>, fill <span class="op">=</span> <span class="va">Méthode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="va">x_breaks</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"Période sur laquelle\n porte l'extraction (mois)"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Vitesse d'extraction\n (en milliers de lignes par seconde)"</span>,</span>
+<span>    fill <span class="op">=</span> <span class="st">"Méthode"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
+<span>    text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span>,</span>
+<span>    axis.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span>,</span>
+<span>    legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span>,</span>
+<span>    legend.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p><img src="benchmark_dplyr_vs_rsql_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
