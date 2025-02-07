@@ -80,18 +80,18 @@ directement dans une requête de <code><a href="https://dbi.r-dbi.org/reference/
 <div class="section level2">
 <h2 id="description-du-benchmark">Description du Benchmark<a class="anchor" aria-label="anchor" href="#description-du-benchmark"></a>
 </h2>
-<div class="section level4">
-<h4 id="période-dextraction">Période d’extraction<a class="anchor" aria-label="anchor" href="#p%C3%A9riode-dextraction"></a>
-</h4>
 <p>La période retenue est 2020-2023. Le benchmark étudie le temps pris
 par les deux solutions de façon incrémentale : 1 mois, 1 ans, 2 ans, 3
 ans. L’extraction est faite en bouclant par mois sur la date de
 flux.</p>
 </div>
-</div>
 <div class="section level2">
 <h2 id="code-de-benchmark">Code de Benchmark<a class="anchor" aria-label="anchor" href="#code-de-benchmark"></a>
 </h2>
+<div class="section level3">
+<h3 id="comparaison-des-performances-entre-dplyr-et-rsql">Comparaison des performances entre <code>dplyr</code> et
+<code>RSQL</code><a class="anchor" aria-label="anchor" href="#comparaison-des-performances-entre-dplyr-et-rsql"></a>
+</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://straymat.github.io/sndsTools/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
 <span></span>
@@ -124,13 +124,17 @@ flux.</p>
 <span></span>
 <span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect_oracle.html">connect_oracle</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">start_dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">start_dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="va">end_dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>,</span>
+<span>  <span class="co">#as.Date("2020-02-01"),</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2021-01-01"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2022-01-01"</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2023-01-01"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">path2_tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"../inst/extdata"</span><span class="op">)</span></span>
+<span></span>
+<span></span>
 <span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">start_dates</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">start_date</span> <span class="op">&lt;-</span> <span class="va">start_dates</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
@@ -150,9 +154,12 @@ flux.</p>
 <span>    sup_columns <span class="op">=</span> <span class="va">sup_columns</span>,</span>
 <span>    conn <span class="op">=</span> <span class="va">conn</span></span>
 <span>  <span class="op">)</span></span>
-<span>  <span class="va">time_taken_dplyr</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/as.duration.html" class="external-link">as.duration</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">time_0_dplyr</span><span class="op">)</span>, <span class="st">"seconds"</span><span class="op">)</span></span>
-<span>  <span class="va">df_dplyr</span> <span class="op">&lt;-</span>  <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"select * from {dplyr_table_name}"</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">n_rows_dplyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df_dplyr</span><span class="op">)</span></span>
+<span>  <span class="va">time_taken_dplyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/as.duration.html" class="external-link">as.duration</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">time_0_dplyr</span><span class="op">)</span>, <span class="st">"seconds"</span><span class="op">)</span></span>
+<span>  <span class="va">n_rows_dplyr</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"select count(*) from {dplyr_table_name}"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co">#tmp_table_dplyr &lt;- DBI::dbGetQuery(conn, glue::glue("select * from {dplyr_table_name}"))</span></span>
+<span>  <span class="co">#tmp_table_path &lt;- file.path(path2_tmp, paste0(dplyr_table_name, ".parquet"))</span></span>
+<span>  <span class="co">#arrow::write_parquet(tmp_table_dplyr, tmp_table_path)</span></span>
+<span>  </span>
 <span>  <span class="fu">dbExecute</span><span class="op">(</span><span class="va">conn</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"DROP TABLE {dplyr_table_name}"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="co"># Benchmark de RSQL</span></span>
@@ -167,8 +174,11 @@ flux.</p>
 <span>    conn <span class="op">=</span> <span class="va">conn</span></span>
 <span>  <span class="op">)</span></span>
 <span>  <span class="va">time_taken_sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/as.duration.html" class="external-link">as.duration</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">time_0_sql</span><span class="op">)</span>, <span class="st">"seconds"</span><span class="op">)</span></span>
-<span>  <span class="va">df_sql</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"select * from {sql_table_name}"</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">n_rows_sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df_sql</span><span class="op">)</span></span>
+<span>  <span class="va">n_rows_sql</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"select count(*) from {sql_table_name}"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co">#tmp_table_sql &lt;- DBI::dbGetQuery(conn, glue::glue("select * from {sql_table_name}"))</span></span>
+<span>  <span class="co">#tmp_table_path &lt;- file.path(path2_tmp, paste0(sql_table_name, ".parquet"))</span></span>
+<span>  <span class="co">#arrow::write_parquet(tmp_table_sql, tmp_table_path)</span></span>
+<span>  </span>
 <span>  <span class="co"># enregistrement des résultats</span></span>
 <span>  <span class="va">tmp_timing_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>    start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">start_date</span><span class="op">)</span>,</span>
@@ -190,44 +200,143 @@ flux.</p>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="evaluation-de-la-vitesse-dextraction-dplyr-en-fonction-du-nombre-de-lignes-et-de-colonnes-extraites">Evaluation de la vitesse d’extraction <code>dplyr</code> en fonction
+du nombre de lignes et de colonnes extraites<a class="anchor" aria-label="anchor" href="#evaluation-de-la-vitesse-dextraction-dplyr-en-fonction-du-nombre-de-lignes-et-de-colonnes-extraites"></a>
+</h3>
+<p>Le code suivant effectue différent test pour évaluer la sensibilité
+de la vitesse d’extraction de <code>dplyr</code> en fonction du nombre
+de lignes et de colonnes extraites.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://straymat.github.io/sndsTools/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Paramètres d'extraction</span></span>
+<span><span class="va">atc_vitamine_d_7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"M05BB03"</span>, <span class="st">"M05BB04"</span>, <span class="st">"A11CC05"</span>, <span class="st">"A11CC01"</span>, <span class="st">"A12CD51"</span><span class="op">)</span></span>
+<span><span class="va">atc_vitamine_d_5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A12AX"</span>, <span class="st">"A11JA"</span>, <span class="st">"A11BA"</span><span class="op">)</span></span>
+<span><span class="va">cip_vitamine_d_b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3400935657190</span>, <span class="fl">3400936584969</span>, <span class="fl">3400936923751</span>, <span class="fl">3400934880254</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Colonnes supplémentaires pour la fonction `extract_drug_dispenses`.</span></span>
+<span><span class="co"># Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_dispenses`.</span></span>
+<span><span class="va">columns_to_extract</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"BEN_CMU_TOP"</span>,</span>
+<span>  <span class="st">"BEN_AMA_COD"</span>,</span>
+<span>  <span class="st">"BEN_SEX_COD"</span>,</span>
+<span>  <span class="st">"BEN_RES_DPT"</span>,</span>
+<span>  <span class="st">"FLX_DIS_DTD"</span>,</span>
+<span>  <span class="st">"PRS_ACT_QTE"</span>,</span>
+<span>  <span class="st">"BSE_REM_MNT"</span>,</span>
+<span>  <span class="st">"BSE_PRS_NAT"</span>,</span>
+<span>  <span class="st">"ETE_IND_TAA"</span>,</span>
+<span>  <span class="st">"ETB_EXE_FIN"</span>,</span>
+<span>  <span class="st">"ETE_MCO_DDP"</span>,</span>
+<span>  <span class="st">"PHA_GRD_CND"</span>,</span>
+<span>  <span class="st">"PHA_PRS_IDE"</span>,</span>
+<span>  <span class="st">"PHA_DEC_TOP"</span>,</span>
+<span>  <span class="st">"PHA_DEC_QSU"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect_oracle.html">connect_oracle</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">start_dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">end_dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-02-01"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2021-01-01"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">columns_to_extract_list_length</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">start_dates</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">columns_to_extract_list_length</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">start_date</span> <span class="op">&lt;-</span> <span class="va">start_dates</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span>    <span class="va">end_date</span> <span class="op">&lt;-</span> <span class="va">end_dates</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span>    <span class="va">sup_columns</span> <span class="op">&lt;-</span> <span class="va">columns_to_extract</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">columns_to_extract_list_length</span><span class="op">[</span><span class="va">j</span><span class="op">]</span><span class="op">]</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Extraction pour la période : "</span>, <span class="va">start_date</span>, <span class="st">" - "</span>, <span class="va">end_date</span>, <span class="st">" avec "</span>, <span class="va">columns_to_extract_list_length</span><span class="op">[</span><span class="va">j</span><span class="op">]</span>, <span class="st">" colonnes supplémentaires"</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># Benchmark de dplyr</span></span>
+<span>    <span class="va">formatted_study_dates</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span></span>
+<span>      <span class="st">'{format(start_date, "%Y%m%d")}_{format(end_date, "%Y%m%d")}'</span></span>
+<span>    <span class="op">)</span></span>
+<span>    <span class="va">dplyr_table_name</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"dplyr_{formatted_study_dates}"</span><span class="op">)</span></span>
+<span>    <span class="va">time_0_dplyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses</a></span><span class="op">(</span></span>
+<span>      start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
+<span>      end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
+<span>      atc_cod_starts_with_filter <span class="op">=</span> <span class="va">atc_vitamine_d_7</span>,</span>
+<span>      cip13_cod_filter <span class="op">=</span> <span class="va">cip_vitamine_d_b</span>,</span>
+<span>      output_table_name <span class="op">=</span> <span class="va">dplyr_table_name</span>,</span>
+<span>      sup_columns <span class="op">=</span> <span class="va">sup_columns</span>,</span>
+<span>      conn <span class="op">=</span> <span class="va">conn</span></span>
+<span>    <span class="op">)</span></span>
+<span>    <span class="va">time_taken_dplyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/as.duration.html" class="external-link">as.duration</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="va">time_0_dplyr</span><span class="op">)</span>, <span class="st">"seconds"</span><span class="op">)</span></span>
+<span>    <span class="va">df_dplyr</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"select * from {dplyr_table_name}"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">n_rows_dplyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df_dplyr</span><span class="op">)</span></span>
+<span>    <span class="fu">dbExecute</span><span class="op">(</span><span class="va">conn</span>, <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"DROP TABLE {dplyr_table_name}"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>    <span class="co"># enregistrement des résultats</span></span>
+<span>    <span class="va">tmp_timing_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>      start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">start_date</span><span class="op">)</span>,</span>
+<span>      end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">end_date</span><span class="op">)</span>,</span>
+<span>      time_taken_dplyr <span class="op">=</span> <span class="va">time_taken_dplyr</span>,</span>
+<span>      n_rows_dplyr <span class="op">=</span> <span class="va">n_rows_dplyr</span>,</span>
+<span>      n_cols_dplyr <span class="op">=</span> <span class="fl">6</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">sup_columns</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="va">top_create_file</span> <span class="op">=</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">(</span><span class="va">j</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.table</a></span><span class="op">(</span></span>
+<span>      <span class="va">tmp_timing_results</span>,</span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">".."</span>, <span class="st">"inst"</span>, <span class="st">"extdata"</span>, <span class="st">"timing_results_cols.csv"</span><span class="op">)</span>,</span>
+<span>      append <span class="op">=</span> <span class="op">!</span><span class="va">top_create_file</span>,</span>
+<span>      row.names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>      col.names <span class="op">=</span> <span class="va">top_create_file</span>,</span>
+<span>      sep <span class="op">=</span> <span class="st">","</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+</div>
+</div>
 <div class="section level2">
 <h2 id="résultats">Résultats<a class="anchor" aria-label="anchor" href="#r%C3%A9sultats"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://straymat.github.io/sndsTools/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
 <span><span class="va">path2pkg_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"sndsTools"</span><span class="op">)</span></span>
-<span><span class="co">#path2pkg_data &lt;- "../inst/extdata"</span></span>
-<span><span class="va">timing_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">path2pkg_data</span>, <span class="st">"benchmark_rsql_dplyr.csv"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>  time_taken_dplyr_minutes <span class="op">=</span> <span class="va">time_taken_dplyr</span> <span class="op">/</span> <span class="fl">60</span>,</span>
-<span>  time_taken_sql_minutes <span class="op">=</span> <span class="va">time_taken_sql</span> <span class="op">/</span> <span class="fl">60</span></span>
-<span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="co"># path2pkg_data &lt;- "../inst/extdata"</span></span>
+<span><span class="va">timing_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">path2pkg_data</span>, <span class="st">"benchmark_rsql_dplyr.csv"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    time_taken_dplyr_minutes <span class="op">=</span> <span class="va">time_taken_dplyr</span> <span class="op">/</span> <span class="fl">60</span>,</span>
+<span>    time_taken_sql_minutes <span class="op">=</span> <span class="va">time_taken_sql</span> <span class="op">/</span> <span class="fl">60</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    query_period_days <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">end_date</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="va">start_date</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    query_period_months <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">query_period_days</span> <span class="op">/</span> <span class="fl">30</span><span class="op">)</span>,</span>
 <span>    speed_dplyr_nrows_sec <span class="op">=</span> <span class="va">n_rows_dplyr</span> <span class="op">/</span> <span class="va">time_taken_dplyr</span>,</span>
 <span>    speed_sql_nrows_sec <span class="op">=</span> <span class="va">n_rows_sql</span> <span class="op">/</span> <span class="va">time_taken_sql</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="va">timing_results</span></span></code></pre></div>
+<span>  <span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in read.table(file = file, header = header, sep = sep, quote = quote, :</span></span>
+<span><span class="co">## incomplete final line found by readTableHeader on</span></span>
+<span><span class="co">## '/home/runner/work/_temp/Library/sndsTools/extdata/benchmark_rsql_dplyr.csv'</span></span></code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">timing_results</span></span></code></pre></div>
 <pre><code><span><span class="co">##   start_date   end_date time_taken_dplyr time_taken_sql n_rows_dplyr n_rows_sql</span></span>
-<span><span class="co">## 1 2020-01-01 2020-02-01         285.3748       291.5756      4342612    4357876</span></span>
-<span><span class="co">## 2 2020-01-01 2021-01-01        2481.1538      2924.7824     42458351   48271076</span></span>
-<span><span class="co">## 3 2020-01-01 2022-01-01        1207.4079      1455.3371     97138010  109269375</span></span>
-<span><span class="co">## 4 2020-01-01 2023-01-01        1950.7323      2267.7857    153406576  171841893</span></span>
+<span><span class="co">## 1 2020-01-01 2020-02-01         235.2178       226.4485      4344991    4344991</span></span>
+<span><span class="co">## 2 2020-01-01 2021-01-01         763.0326       794.2415     48131314   48131314</span></span>
+<span><span class="co">## 3 2020-01-01 2022-01-01        1613.4070      1613.7409    108979756  108979756</span></span>
+<span><span class="co">## 4 2020-01-01 2023-01-01        2558.6327      2260.9095    171408536  171408536</span></span>
 <span><span class="co">##   time_taken_dplyr_minutes time_taken_sql_minutes query_period_days</span></span>
-<span><span class="co">## 1                 4.756247               4.859593                31</span></span>
-<span><span class="co">## 2                41.352563              48.746374               366</span></span>
-<span><span class="co">## 3                20.123465              24.255618               731</span></span>
-<span><span class="co">## 4                32.512205              37.796429              1096</span></span>
+<span><span class="co">## 1                 3.920297               3.774142                31</span></span>
+<span><span class="co">## 2                12.717210              13.237359               366</span></span>
+<span><span class="co">## 3                26.890116              26.895682               731</span></span>
+<span><span class="co">## 4                42.643879              37.681825              1096</span></span>
 <span><span class="co">##   query_period_months speed_dplyr_nrows_sec speed_sql_nrows_sec</span></span>
-<span><span class="co">## 1                   1              15217.22            14945.96</span></span>
-<span><span class="co">## 2                  12              17112.34            16504.16</span></span>
-<span><span class="co">## 3                  24              80451.69            75081.83</span></span>
-<span><span class="co">## 4                  36              78640.51            75775.19</span></span></code></pre>
+<span><span class="co">## 1                   1              18472.20            19187.54</span></span>
+<span><span class="co">## 2                  12              63078.97            60600.35</span></span>
+<span><span class="co">## 3                  24              67546.35            67532.37</span></span>
+<span><span class="co">## 4                  36              66992.24            75813.98</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="résultats-sur-la-durée-des-extractions">Résultats sur la durée des extractions<a class="anchor" aria-label="anchor" href="#r%C3%A9sultats-sur-la-dur%C3%A9e-des-extractions"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot time results</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
@@ -236,7 +345,8 @@ flux.</p>
 <span><span class="va">x_breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">timing_results</span><span class="op">$</span><span class="va">query_period_months</span><span class="op">)</span></span>
 <span><span class="va">timing_results</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span></span>
-<span>    dplyr<span class="op">=</span><span class="va">time_taken_dplyr_minutes</span>, rsql<span class="op">=</span><span class="va">time_taken_sql_minutes</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    dplyr <span class="op">=</span> <span class="va">time_taken_dplyr_minutes</span>, rsql <span class="op">=</span> <span class="va">time_taken_sql_minutes</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
 <span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dplyr</span>, <span class="va">rsql</span><span class="op">)</span>,</span>
 <span>    names_to <span class="op">=</span> <span class="st">"Méthode"</span>,</span>
@@ -257,24 +367,24 @@ flux.</p>
 <span>    legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span>,</span>
 <span>    legend.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="benchmark_dplyr_vs_rsql_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
+<p><img src="benchmark_dplyr_vs_rsql_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
 </div>
 <div class="section level2">
 <h2 id="résultats-sur-le-contenu-des-extractions-nombre-de-lignes">Résultats sur le contenu des extractions (nombre de lignes)<a class="anchor" aria-label="anchor" href="#r%C3%A9sultats-sur-le-contenu-des-extractions-nombre-de-lignes"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot time results</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">label_size</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
 <span><span class="va">timing_results</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>dplyr<span class="op">=</span><span class="va">n_rows_dplyr</span>, rsql<span class="op">=</span><span class="va">n_rows_sql</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>dplyr <span class="op">=</span> <span class="va">n_rows_dplyr</span>, rsql <span class="op">=</span> <span class="va">n_rows_sql</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
 <span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dplyr</span>, <span class="va">rsql</span><span class="op">)</span>,</span>
 <span>    names_to <span class="op">=</span> <span class="st">"Méthode"</span>,</span>
 <span>    values_to <span class="op">=</span> <span class="st">"n_rows"</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">query_period_months</span>, y <span class="op">=</span> <span class="va">n_rows</span><span class="op">/</span><span class="fl">1e6</span>, fill <span class="op">=</span> <span class="va">Méthode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">query_period_months</span>, y <span class="op">=</span> <span class="va">n_rows</span> <span class="op">/</span> <span class="fl">1e6</span>, fill <span class="op">=</span> <span class="va">Méthode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="va">x_breaks</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
@@ -289,24 +399,24 @@ flux.</p>
 <span>    legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span>,</span>
 <span>    legend.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="benchmark_dplyr_vs_rsql_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
+<p><img src="benchmark_dplyr_vs_rsql_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
 </div>
 <div class="section level2">
 <h2 id="vitesse-dextraction-en-ligne-extraite-par-minute">Vitesse d’extraction (en ligne extraite par minute)<a class="anchor" aria-label="anchor" href="#vitesse-dextraction-en-ligne-extraite-par-minute"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot time results</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">label_size</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
 <span><span class="va">timing_results</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>dplyr<span class="op">=</span><span class="va">speed_dplyr_nrows_sec</span>, rsql<span class="op">=</span><span class="va">speed_sql_nrows_sec</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>dplyr <span class="op">=</span> <span class="va">speed_dplyr_nrows_sec</span>, rsql <span class="op">=</span> <span class="va">speed_sql_nrows_sec</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
 <span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dplyr</span>, <span class="va">rsql</span><span class="op">)</span>,</span>
 <span>    names_to <span class="op">=</span> <span class="st">"Méthode"</span>,</span>
 <span>    values_to <span class="op">=</span> <span class="st">"speed_nrows_sec"</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">query_period_months</span>, y <span class="op">=</span> <span class="va">speed_nrows_sec</span><span class="op">/</span><span class="fl">1000</span>, fill <span class="op">=</span> <span class="va">Méthode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">query_period_months</span>, y <span class="op">=</span> <span class="va">speed_nrows_sec</span> <span class="op">/</span> <span class="fl">1000</span>, fill <span class="op">=</span> <span class="va">Méthode</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="va">x_breaks</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
@@ -321,7 +431,7 @@ flux.</p>
 <span>    legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span>,</span>
 <span>    legend.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">label_size</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="benchmark_dplyr_vs_rsql_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
+<p><img src="benchmark_dplyr_vs_rsql_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
