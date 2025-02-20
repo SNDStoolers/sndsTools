@@ -1,9 +1,9 @@
 require(dplyr)
 
-test_that("retrieve_ace works", {
+test_that("extract_hospital_consultations works", {
   conn <- connect_duckdb()
 
-  patient_ids <- data.frame(
+  patients_ids_filter <- data.frame(
     BEN_IDT_ANO = c(1, 2, 3),
     BEN_NIR_PSA = c(11, 12, 13)
   )
@@ -33,13 +33,13 @@ test_that("retrieve_ace works", {
 
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
-  spe_codes <- c("01", "22", "32", "34")
+  spe_codes_filter <- c("01", "22", "32", "34")
 
   consultations <- extract_hospital_consultations(
     start_date = start_date,
     end_date = end_date,
-    spe_codes = spe_codes,
-    patient_ids = patient_ids,
+    spe_codes_filter = spe_codes_filter,
+    patient_ids_filter = patients_ids_filter,
     conn = conn
   )
 
