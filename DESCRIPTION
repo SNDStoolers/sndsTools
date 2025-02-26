@@ -38,6 +38,7 @@ Suggests:
     testthat (>= 3.0.0),
     duckdb (>= 1.0.0.2),
     styler,
-    lintr
+    lintr,
+    ggplot2
 VignetteBuilder: knitr
 URL: https://straymat.github.io/sndsTools/
