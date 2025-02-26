@@ -96,7 +96,8 @@ extract_drug_dispenses <- function(start_date,
                                    dis_dtd_lag_months = 6,
                                    sup_columns = NULL,
                                    output_table_name = NULL,
-                                   conn = NULL) {
+                                   conn = NULL,
+                                   show_sql_query = TRUE) {
   stopifnot(
     !is.null(start_date),
     !is.null(end_date),
@@ -104,13 +105,13 @@ extract_drug_dispenses <- function(start_date,
     inherits(end_date, "Date"),
     start_date <= end_date
   )
-  
+
   connection_opened <- FALSE
   if (is.null(conn)) {
     conn <- connect_oracle()
     connection_opened <- TRUE
   }
-  
+
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
   if (!is.null(output_table_name)) {
     output_table_name_is_temp <- FALSE
@@ -122,7 +123,7 @@ extract_drug_dispenses <- function(start_date,
     output_table_name_is_temp <- TRUE
     output_table_name <- glue::glue("TMP_DISP_{timestamp}")
   }
-  
+
   if (!is.null(patients_ids_filter)) {
     stopifnot(
       identical(
@@ -137,12 +138,12 @@ extract_drug_dispenses <- function(start_date,
       overwrite = TRUE
     )
   }
-  
+
   dis_dtd_end_date <-
     end_date |>
     lubridate::add_with_rollback(months(dis_dtd_lag_months)) |>
     lubridate::floor_date("months")
-  
+
   start_year <- lubridate::year(start_date)
   end_year <- lubridate::year(dis_dtd_end_date)
   start_month <- lubridate::month(start_date)
@@ -150,9 +151,9 @@ extract_drug_dispenses <- function(start_date,
   formatted_end_date <- format(end_date, "%Y-%m-%d")
   formatted_dis_dtd_end_date <- format(dis_dtd_end_date, "%Y-%m-%d")
   dis_dtd_end_month <- lubridate::month(formatted_dis_dtd_end_date)
-  
+
   first_non_archived_year <- get_first_non_archived_year(conn)
-  
+
   if (!is.null(atc_cod_starts_with_filter)) {
     print(
       glue::glue(
@@ -162,7 +163,7 @@ extract_drug_dispenses <- function(start_date,
   } else {
     print(glue::glue("Extracting drug dispenses for all ATC codes"))
   }
-  
+
   if (!is.null(cip13_cod_filter)) {
     print(
       glue::glue(
@@ -172,9 +173,9 @@ extract_drug_dispenses <- function(start_date,
   } else {
     print(glue::glue("Extracting drug dispenses for all CIP13 codes"))
   }
-  
+
   ir_pha_r <- dplyr::tbl(conn, "IR_PHA_R")
-  
+
   if (!is.null(atc_cod_starts_with_filter)) {
     starts_with_conditions <- vapply(
       atc_cod_starts_with_filter, function(code) {
@@ -184,25 +185,25 @@ extract_drug_dispenses <- function(start_date,
     atc_conditions <- paste(starts_with_conditions, collapse = " OR ")
     atc_conditions <- glue::glue("({atc_conditions})")
   }
-  
+
   if (!is.null(cip13_cod_filter)) {
     cip13_conditions <- glue::glue(
       "PHA_CIP_C13 IN ({paste(cip13_cod_filter, collapse = ',')})"
     )
   }
   if (!is.null(atc_cod_starts_with_filter) &&
-      !is.null(cip13_cod_filter)) {
+    !is.null(cip13_cod_filter)) {
     drug_filter <- atc_conditions + " OR " + cip13_conditions
   } else if (!is.null(cip13_cod_filter) &&
-             is.null(atc_cod_starts_with_filter)) {
+    is.null(atc_cod_starts_with_filter)) {
     drug_filter <- cip13_conditions
   } else if (!is.null(atc_cod_starts_with_filter) &&
-             is.null(cip13_cod_filter)) {
+    is.null(cip13_cod_filter)) {
     drug_filter <- atc_conditions
   } else {
     drug_filter <- NULL
   }
-  
+
   ir_pha_cols <- colnames(ir_pha_r)
   ir_pha_needed_cols <- c("PHA_CIP_C13", "PHA_ATC_CLA")
   for (col in sup_columns) {
@@ -226,7 +227,7 @@ extract_drug_dispenses <- function(start_date,
     )
   )
   ir_pha_filtered_table <- dplyr::tbl(conn, ir_pha_r_filtered_name)
-  
+
   pb <- progress::progress_bar$new(
     format = "Extracting :year1 (going from :year2 to :year3) [:bar] :percent in :elapsed (eta: :eta)", # nolint
     total = (end_year - start_year + 1),
@@ -240,7 +241,7 @@ extract_drug_dispenses <- function(start_date,
       year2 = start_year,
       year3 = end_year
     ))
-    
+
     if (year < first_non_archived_year) {
       er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
       er_pha_f <- dplyr::tbl(conn, glue::glue("ER_PHA_F_{year}"))
@@ -250,7 +251,7 @@ extract_drug_dispenses <- function(start_date,
       er_pha_f <- dplyr::tbl(conn, "ER_PHA_F")
       er_ete_f <- dplyr::tbl(conn, "ER_ETE_F")
     }
-    
+
     flux_start_month <- 1
     flux_end_month <- 12
     if (year == end_year) {
@@ -260,10 +261,9 @@ extract_drug_dispenses <- function(start_date,
       flux_start_month <- max(1, start_month)
     }
     for (month in c(flux_start_month:flux_end_month)) {
-      
       dis_dtd_start <- glue::glue("DATE '{year}-{sprintf('%02d', month)}-01'")
       dis_dtd_end <- glue::glue("DATE '{year}-{sprintf('%02d', month + 1)}-01'")
-      
+
       if ((year != end_year) && (month == 12)) {
         # For archived years, some lines of decembers are indexed in the
         # following year: https://github.com/SNDStoolers/sndsTools/issues/26
@@ -272,13 +272,13 @@ extract_drug_dispenses <- function(start_date,
       dis_dtd_condition <- glue::glue(
         "FLX_DIS_DTD >= {dis_dtd_start} AND FLX_DIS_DTD < {dis_dtd_end}"
       )
-      
+
       soi_dtd_condition <- glue::glue(
         "EXE_SOI_DTD >= DATE '{formatted_start_date}' AND EXE_SOI_DTD <= DATE '{formatted_end_date}'" # nolint
       )
-      
+
       print(glue::glue("-flux: {dis_dtd_start} to {dis_dtd_end}"))
-      
+
       dcir_join_keys <- c(
         "DCT_ORD_NUM",
         "FLX_DIS_DTD",
@@ -294,7 +294,7 @@ extract_drug_dispenses <- function(start_date,
         colnames(ir_pha_filtered_table),
         colnames(er_pha_f)
       )
-      
+
       query <- er_prs_f |>
         dplyr::inner_join(er_pha_f, by = dcir_join_keys) |>
         dplyr::inner_join(
@@ -308,11 +308,11 @@ extract_drug_dispenses <- function(start_date,
           dbplyr::sql(dis_dtd_condition)
         ) |>
         dplyr::filter(
-          DPN_QLF != 71,
-          CPL_MAJ_TOP < 2,
-          (ETE_IND_TAA != 1) || is.na(ETE_IND_TAA)
+          DPN_QLF != 71L,
+          CPL_MAJ_TOP < 2L,
+          (ETE_IND_TAA != 1L) || is.na(ETE_IND_TAA)
         )
-      
+
       cols_to_select <- c(
         "EXE_SOI_DTD",
         "PHA_ACT_QSN",
@@ -323,11 +323,11 @@ extract_drug_dispenses <- function(start_date,
       if (!is.null(sup_columns)) {
         cols_to_select <- c(cols_to_select, sup_columns)
       }
-      
+
       query <- query |>
         dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select)) |>
         dplyr::distinct()
-      
+
       if (!is.null(patients_ids_filter)) {
         patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
         patients_ids_table <- patients_ids_table |>
@@ -338,13 +338,16 @@ extract_drug_dispenses <- function(start_date,
           dplyr::select(BEN_IDT_ANO, dplyr::all_of(cols_to_select)) |>
           dplyr::distinct()
       }
-      
+
       query <- query |> dbplyr::sql_render()
       if (year == start_year && month == flux_start_month) {
         DBI::dbExecute(
           conn,
           glue::glue("CREATE TABLE {output_table_name} AS {query}")
         )
+        if (show_sql_query) {
+          message(glue::glue("Premier mois requêté en date de flux à l'aide de la requête sql suivante :\n {query}"))
+        }
       } else {
         DBI::dbExecute(
           conn,
@@ -353,13 +356,13 @@ extract_drug_dispenses <- function(start_date,
       }
     }
   }
-  
+
   DBI::dbRemoveTable(conn, ir_pha_r_filtered_name)
-  
+
   if (!is.null(patients_ids_filter)) {
     DBI::dbRemoveTable(conn, patients_ids_table_name)
   }
-  
+
   if (output_table_name_is_temp) {
     query <- dplyr::tbl(conn, output_table_name)
     result <- dplyr::collect(query)
@@ -368,10 +371,10 @@ extract_drug_dispenses <- function(start_date,
     result <- invisible(NULL)
     message(glue::glue("Results saved to table {output_table_name} in Oracle."))
   }
-  
+
   if (connection_opened) {
     DBI::dbDisconnect(conn)
   }
-  
+
   return(result)
 }
