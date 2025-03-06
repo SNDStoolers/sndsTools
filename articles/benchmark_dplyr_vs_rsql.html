@@ -44,7 +44,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/straymat/sndsTools" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SNDStoolers/sndsTools" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -64,7 +64,7 @@ Doutreligne</h4>
             
             <h4 data-toc-skip class="date">2025-01-27</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/strayMat/sndsTools/tree/main/vignettes/benchmark_dplyr_vs_rsql.Rmd" class="external-link"><code>vignettes/benchmark_dplyr_vs_rsql.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SNDStoolers/sndsTools/tree/main/vignettes/benchmark_dplyr_vs_rsql.Rmd" class="external-link"><code>vignettes/benchmark_dplyr_vs_rsql.Rmd</code></a></small>
       <div class="d-none name"><code>benchmark_dplyr_vs_rsql.Rmd</code></div>
     </div>
 
@@ -97,7 +97,7 @@ flux.</p>
 <code>RSQL</code><a class="anchor" aria-label="anchor" href="#comparaison-des-performances-entre-dplyr-et-rsql"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://straymat.github.io/sndsTools/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Paramètres d'extraction</span></span>
 <span><span class="va">atc_vitamine_d_7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"M05BB03"</span>, <span class="st">"M05BB04"</span>, <span class="st">"A11CC05"</span>, <span class="st">"A11CC01"</span>, <span class="st">"A12CD51"</span><span class="op">)</span></span>
@@ -212,7 +212,7 @@ du nombre de lignes et de colonnes extraites<a class="anchor" aria-label="anchor
 de la vitesse d’extraction de <code>dplyr</code> en fonction du nombre
 de lignes et de colonnes extraites.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://straymat.github.io/sndsTools/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Paramètres d'extraction</span></span>
 <span><span class="va">atc_vitamine_d_7</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"M05BB03"</span>, <span class="st">"M05BB04"</span>, <span class="st">"A11CC05"</span>, <span class="st">"A11CC01"</span>, <span class="st">"A12CD51"</span><span class="op">)</span></span>
@@ -305,7 +305,7 @@ de lignes et de colonnes extraites.</p>
 <h3 id="benchmark-dplyrrsql">benchmark dplyr/RSQL<a class="anchor" aria-label="anchor" href="#benchmark-dplyrrsql"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://straymat.github.io/sndsTools/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
 <span><span class="va">path2pkg_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"sndsTools"</span><span class="op">)</span></span>
 <span><span class="co"># path2pkg_data &lt;- "../inst/extdata"</span></span>
 <span><span class="va">timing_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">path2pkg_data</span>, <span class="st">"benchmark_rsql_dplyr.csv"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
