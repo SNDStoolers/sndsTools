@@ -14,23 +14,23 @@ Ce projet est un effort communautaire. Les nouveaux contributeurs sont les bienv
 
 ## Répondre à une question sur une issue
 
-De nombreuses questions sont posées sur les [issues](https://github.com/strayMat/sndsTools/issues). Vous pouvez y répondre en donnant des conseils, ou en proposant une solution. 
+De nombreuses questions sont posées sur les [issues](https://github.com/SNDStoolers/sndsTools/issues). Vous pouvez y répondre en donnant des conseils, ou en proposant une solution. 
 
 ## Créer une nouvelle issue
 
-Si vous avez trouvé un bug, ou si vous avez une question sur une fonctionnalité, vous pouvez [créer une nouvelle issue](https://github.com/strayMat/sndsTools/issues/new/choose). 
+Si vous avez trouvé un bug, ou si vous avez une question sur une fonctionnalité, vous pouvez [créer une nouvelle issue](https://github.com/SNDStoolers/sndsTools/issues/new/choose). 
 
 En cas de bug, il est important de donner un exemple reproductible [`reprex`](https://www.tidyverse.org/help/#reprex). Celui-ci contient le code nécessaire pour reproduire le bug, et le message d'erreur complet. Il est très important pour qu'un développeur plus expérimenté puisse comprendre le problème et vous aider. 
 
 ## Contribuer à la documentation
 
-Contribuer à la documentation est aussi important que de contribuer au code. Vous pouvez proposer des modifications à la documentation en créant une [pull request](https://github.com/strayMat/sndsTools/pulls). Les petites erreurs et modifications peuvent être corrigée directment dans l'interface web GitHub.
+Contribuer à la documentation est aussi important que de contribuer au code. Vous pouvez proposer des modifications à la documentation en créant une [pull request](https://github.com/SNDStoolers/sndsTools/pulls). Les petites erreurs et modifications peuvent être corrigée directment dans l'interface web GitHub.
 
 **NB:** La documentation est principalement dans le code R, et est générée avec le paquet [roxygen2](https://cran.r-project.org/package=roxygen2). Pour la modifier il faut donc modifier les fichiers `.R` dans le dossier `R/` du projet.
 
 ## Contribuer au code
 
-Afin de résoudre un bug, ou d'ajouter une nouvelle fonctionnalité, vous pouvez créer une [pull request](https://github.com/strayMat/sndsTools/pulls).
+Afin de résoudre un bug, ou d'ajouter une nouvelle fonctionnalité, vous pouvez créer une [pull request](https://github.com/SNDStoolers/sndsTools/pulls).
 
 # Principes généraux de contribution
 
@@ -58,7 +58,7 @@ Dans les premières étapes, nous expliquons comment installer localement {sndsT
 
 1. [Créez un compte sur GitHub](https://github.com/join) si vous n'en avez pas déjà un.
 
-2. Forkez le [dépôt du projet](https://github.com/strayMat/sndsTools) : cliquez sur le bouton "Fork" en haut de la page. Cela crée une copie du code sur votre compte GitHub. Pour plus de détails sur la manière de forker un dépôt, consultez [ce guide](https://help.github.com/articles/fork-a-repo/).
+2. Forkez le [dépôt du projet](https://github.com/SNDStoolers/sndsTools) : cliquez sur le bouton "Fork" en haut de la page. Cela crée une copie du code sur votre compte GitHub. Pour plus de détails sur la manière de forker un dépôt, consultez [ce guide](https://help.github.com/articles/fork-a-repo/).
 
 3. Clonez votre fork du dépôt {sndsTools} depuis votre compte GitHub sur votre disque local :
 
@@ -76,7 +76,7 @@ devtools::install(dependencies = TRUE)
 5. Ajoutez le dépôt `upstream remote`. Cela sauvegarde la référence du dépôt {sndsTools}, que vous pouvez utiliser pour garder votre version synchronisée avec les derniers changements.
 
 ```bash
-git remote add upstream git@github.com:strayMat/sndsTools.git
+git remote add upstream git@github.com:SNDStoolers/sndsTools.git
 ```
 
 Vous devriez désormais avoir une installation fonctionnelle de {sndsTools}, et votre dépôt git correctement configuré. Vous pouvez maintenant commencer à contribuer en modifiant le code et en soumettant une PR.

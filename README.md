@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/strayMat/sndsTools/graph/badge.svg?token=NKPHJFLAN8)](https://codecov.io/gh/strayMat/sndsTools)
+[![codecov](https://codecov.io/gh/sndstoolers/sndsTools/graph/badge.svg?token=NKPHJFLAN8)](https://codecov.io/gh/sndstoolers/sndsTools)
 
 # Extraction de recours aux soins sur le SNDS en R 
 
@@ -32,9 +32,9 @@ TODO (figure à mettre dans man/figures)
 
 ## Liens utiles 
 
-- **lien vers cette page de la documentation** : [https://straymat.github.io/sndsTools/index.html](https://straymat.github.io/sndsTools/index.html)
+- **lien vers cette page de la documentation** : [https://sndstoolers.github.io/sndsTools/index.html](https://sndstoolers.github.io/sndsTools/index.html)
 
-- **Dépôt du code source** : [https://github.com/straymat/sndsTools](https://github.com/straymat/sndsTools)
+- **Dépôt du code source** : [https://github.com/SNDStoolers/sndsTools](https://github.com/SNDStoolers/sndsTools)
 
 - **Description des extractions et des tables de données créées** : TODO [Flux de données](data.html)
 

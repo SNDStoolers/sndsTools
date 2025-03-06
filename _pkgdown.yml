@@ -2,8 +2,8 @@ url: ~
 
 repo:
   url:
-    home: https://github.com/straymat/sndsTools
-    source: https://github.com/strayMat/sndsTools/tree/main/
+    home: https://github.com/SNDStoolers/sndsTools
+    source: https://github.com/SNDStoolers/sndsTools/tree/main/
 template:
   bootstrap: 5
   bslib:

@@ -23,7 +23,7 @@ Les core contributors sont particulièrement investis dans le projet. Ils ont de
 
 ## Devenir un contributeur 
 
-Tout utilisateur peut être contributeur en faisant [une nouvelle issue](https://github.com/strayMat/sndsTools/issues), [une pull request](https://github.com/strayMat/sndsTools/pulls), ou en effectuant une revue sur une pull request existante. Le [guide de contribution](contribuer.html) détaille les différentes manières de contribuer. 
+Tout utilisateur peut être contributeur en faisant [une nouvelle issue](https://github.com/SNDStoolers/sndsTools/issues), [une pull request](https://github.com/SNDStoolers/sndsTools/pulls), ou en effectuant une revue sur une pull request existante. Le [guide de contribution](contribuer.html) détaille les différentes manières de contribuer. 
 
 ## Devenir un core contributeur 
 
