@@ -1,12 +1,25 @@
 [![codecov](https://codecov.io/gh/sndstoolers/sndsTools/graph/badge.svg?token=NKPHJFLAN8)](https://codecov.io/gh/sndstoolers/sndsTools)
 
-# Extraction de recours aux soins sur le SNDS en R 
-
-🚧 Projet en cours de développement.
+# `SndsTools` : Extraction de recours aux soins dans le SNDS avec R 
 
 ## Description
 
 Ce package R permet d'extraire des données de recours aux soins du SNDS (Système National des Données de Santé) pour une population donnée. 
+
+## Fonctionnalités 
+
+Ce package R simplifie les étapes d'extraction de données du SNDS sur des données utilisées dans la majorité des études sur le SNDS. Les principales fonctionnalités couvertes sont les suivantes :
+
+- Effectuer l'extraction des tables individuelles pour les données suivantes :
+    - Consultations dans le DCIR,
+    - Médicaments dans le DCIR,
+    - Affections de longue durée (ALD),
+    - Hospitalisations dans le MCO,
+    - Consultations dans le MCO.
+
+- Intègre les requêtes mois par mois sur la date de flux pour les données DCIR conformément aux recommandations de la CNAM.
+
+- Intègre les filtres qualités usuels pour exclure les lignes indésirables (ex. `PRS_DPN_QLP != 71` pour [exclure les remontées pour information dans le DCIR](https://documentation-snds.health-data-hub.fr/snds/fiches/sas_prestation_dcir.html#recommandations-pour-les-requetes)).
 
 ## Historique
 
@@ -28,7 +41,6 @@ TODO (figure à mettre dans man/figures)
 
 - Langage de programmation : R
 - Packages utilisés : dplyr, dbplyr, DBI, glue, lubridate, progress
-
 
 ## Liens utiles 
 
