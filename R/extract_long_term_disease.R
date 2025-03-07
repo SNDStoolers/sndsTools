@@ -76,7 +76,8 @@
 #' )
 #' }
 #' @export
-extract_long_term_disease <- function(# nolint:
+extract_long_term_disease <- function(
+    # nolint:
     start_date = NULL,
     end_date = NULL,
     icd_cod_starts_with = NULL,

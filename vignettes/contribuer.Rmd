@@ -114,6 +114,13 @@ git push origin my-new-feature
 
 Il est possible qu'à un moment, vous ayez besoin de résoudre des conflits, si d'autres contributeurs ont modifié le code pendant que vous travailliez sur votre branche. Vous pouvez vous référer à [cette documentation pour résoudre les conflits](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/).
 
+10. Avant de demander une revue pour votre pull request, vérifier avec les commandes suivantes dans le terminal que le code passent certains test de qualité : 
+
+- que votre code ne casse pas de tests : `make test`
+- que votre code respecte les conventions de style : `make style-pkg`
+- que votre code respecte les conventions de lint : `make lint-pkg`
+- que la documentation se génère correctement : `make doc-html`
+
 # Références pour contribuer
 
 La meilleur manière d'apprendre comment contribuer est de se lancer ! 

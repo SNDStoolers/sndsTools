@@ -33,7 +33,7 @@ style:
 	Rscript -e 'styler::style_file("${FILE}")'
 
 ## Test the package
-test:
+test-pkg:
 	Rscript -e 'devtools::test()'
 
 ## Auto-test (only code or tests that change)
