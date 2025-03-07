@@ -9,30 +9,31 @@ connect_oracle <- function() {
   Sys.setenv(ORA_SDTZ = "Europe/Paris")
   drv <- DBI::dbDriver("Oracle")
   conn <- DBI::dbConnect(drv, dbname = "IPIAMPR2.WORLD")
-
-  return(conn)
+  conn
 }
 
 #' Initialisation de la connexion à la base de données duckdb.
 #'
-#' Utilisation pour le testing uniquement. Si le code s'exécute en dehors du portail, il faut initier une connexion duckdb pour
-#' effectuer les tests.
+#' Utilisation pour le testing uniquement. Si le code s'exécute en dehors du
+#' portail, il faut initier une connexion duckdb pour effectuer les tests.
 #'
 #' @return dbConnection Connexion à la base de données duckdb
 #'
 #' @export
 connect_duckdb <- function() {
   print(
-    "Le code ne s'exécute pas sur le portail CNAM. Initialisation d'une connexion duckdb en mémoire."
+    "Le code ne s'exécute pas sur le portail CNAM.
+    Initialisation d'une connexion duckdb en mémoire."
   )
   conn <- DBI::dbConnect(duckdb::duckdb(), ":memory:")
 
-  # generate fake user_synonyms table for testing: used in all er_prs_f functions
+  # Generate fake user_synonyms table for testing: used in all er_prs_f
+  # functions
   user_synonyms <- data.frame(
     SYNONYM_NAME = c("ER_PRS_F_2009", "ER_PRS_F_2010")
   )
   DBI::dbWriteTable(conn, "user_synonyms", user_synonyms)
-  return(conn)
+  conn
 }
 
 #' Création d'une table à partir d'une requête SQL.
@@ -53,7 +54,8 @@ create_table_from_query <- function(conn = NULL,
                                     query = NULL,
                                     overwrite = FALSE) {
   stopifnot(
-    !DBI::dbExistsTable(conn, output_table_name) || (DBI::dbExistsTable(conn, output_table_name) && overwrite)
+    !DBI::dbExistsTable(conn, output_table_name) ||
+      (DBI::dbExistsTable(conn, output_table_name) && overwrite)
   )
   if (DBI::dbExistsTable(conn, output_table_name) && overwrite) {
     DBI::dbRemoveTable(conn, output_table_name)
@@ -86,34 +88,6 @@ insert_into_table_from_query <- function(
   )
 }
 
-#' Création d'une table à partir d'une requête SQL ou insertion des résultats dans une table existante.
-#' @param conn Connexion à la base de données
-#' @param output_table_name Nom de la table de sortie
-#' @param query Requête SQL
-#' @return NULL
-#'
-#' @export
-create_table_or_insert_from_query <- function(conn = NULL,
-                                              output_table_name = NULL,
-                                              query = NULL,
-                                              append = FALSE) {
-  query <- dbplyr::sql_render(query)
-  if (DBI::dbExistsTable(conn, output_table_name)) {
-    if (append) {
-      DBI::dbExecute(
-        conn,
-        glue::glue("INSERT INTO {output_table_name} {query}")
-      )
-    } else {
-      stop(glue::glue("La table {output_table_name} existe déjà et le paramètre append est FALSE."))
-    }
-  } else {
-    DBI::dbExecute(
-      conn,
-      glue::glue("CREATE TABLE {output_table_name} AS {query}")
-    )
-  }
-}
 
 #' Récupération de l'année non archivée la plus ancienne de la table ER_PRS_F.
 #' @param conn Connexion à la base de données
@@ -123,7 +97,8 @@ create_table_or_insert_from_query <- function(conn = NULL,
 get_first_non_archived_year <- function(conn) {
   user_synonyms <- DBI::dbGetQuery(
     conn,
-    "SELECT synonym_name FROM user_synonyms WHERE synonym_name LIKE 'ER_PRS_F_%'"
+    "SELECT synonym_name
+      FROM user_synonyms WHERE synonym_name LIKE 'ER_PRS_F_%'"
   )
   max_archived_year <-
     sub("ER_PRS_F_", "", x = user_synonyms$SYNONYM_NAME, fixed = TRUE) |>
@@ -135,7 +110,7 @@ get_first_non_archived_year <- function(conn) {
 #' Récupération des statistiques des tables
 #' @param conn Connexion à la base de données
 #' @param table Chaine de caractère indiquant le nom d'une table
-#' @references https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_STATS.html#GUID-CA6A56B9-0540-45E9-B1D7-D78769B7714C
+#' @references https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_STATS.html#GUID-CA6A56B9-0540-45E9-B1D7-D78769B7714C #nolint
 gather_table_stats <- function(conn, table) {
   user <- DBI::dbGetQuery(conn, "SELECT user FROM dual")
   user <- DBI::dbQuoteIdentifier(conn, user$USER)

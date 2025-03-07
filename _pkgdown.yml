@@ -36,7 +36,6 @@ reference:
 - title: Utilitaires
   desc: Fonctions utilitaires pour manipuler les données extraites.
 - contents:
-  - create_table_or_insert_from_query
   - insert_into_table_from_query
   - get_first_non_archived_year
   - create_table_from_query

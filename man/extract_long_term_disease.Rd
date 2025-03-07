@@ -40,7 +40,7 @@ IMB_ETM_NAT à exclure. Par défaut, les ALD de nature
 11, 12 et 13 sont exclues car elles correspondent à des
 exonérations pour accidents du travail ou maladies professionnelles.
 Voir la fiche suivante de la documentation :
-https://documentation-snds.health-data-hub.fr/snds/fiches/beneficiaires_ald.html
+https://documentation-snds.health-data-hub.fr/snds/fiches/beneficiaires_ald.html #nolint
 et notamment le Programme #1 pour la référence de ce filtre.}
 
 \item{patients_ids}{data.frame Optionnel. Un data.frame contenant les

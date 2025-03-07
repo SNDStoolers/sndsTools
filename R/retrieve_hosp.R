@@ -1,11 +1,3 @@
-# library(ROracle)
-# library(dplyr)
-# library(dbplyr)
-# library(DBI)
-# library(glue)
-# library(lubridate)
-# source("~/sasdata1/park/retrieve/utils.R")
-
 finess_out <- c(
   "130780521", "130783236", "130783293", "130784234", "130804297",
   "600100101", "750041543", "750100018", "750100042", "750100075",
@@ -19,33 +11,45 @@ finess_out <- c(
   "830100558"
 )
 
-build_dp_dr_conditions <- function(cim10_codes_starts_with = NULL, include_dr = NULL) {
-  starts_with_conditions_dp <- sapply(cim10_codes_starts_with, function(code) glue("DGN_PAL LIKE '{code}%'"))
+build_dp_dr_conditions <- function(
+    cim10_codes_starts_with = NULL, include_dr = NULL) {
+  starts_with_conditions_dp <- sapply(
+    cim10_codes_starts_with, function(code) glue("DGN_PAL LIKE '{code}%'")
+  )
   if (include_dr) {
-    starts_with_conditions_dr <- sapply(cim10_codes_starts_with, function(code) glue("DGN_REL LIKE '{code}%'"))
+    starts_with_conditions_dr <- sapply(
+      cim10_codes_starts_with, function(code) glue("DGN_REL LIKE '{code}%'")
+    )
   } else {
     starts_with_conditions_dr <- NULL
   }
-  starts_with_conditions <- c(starts_with_conditions_dp, starts_with_conditions_dr)
+  starts_with_conditions <- c(
+    starts_with_conditions_dp, starts_with_conditions_dr
+  )
   combined_conditions <- paste(starts_with_conditions, collapse = " OR ")
   combined_conditions <- glue("({combined_conditions})")
   return(combined_conditions)
 }
 
 build_da_conditions <- function(cim10_codes_starts_with = NULL) {
-  starts_with_conditions_da <- sapply(cim10_codes_starts_with, function(code) glue("ASS_DGN LIKE '{code}%'"))
+  starts_with_conditions_da <- sapply(
+    cim10_codes_starts_with, function(code) glue("ASS_DGN LIKE '{code}%'")
+  )
   combined_conditions <- paste(starts_with_conditions_da, collapse = " OR ")
   combined_conditions <- glue("({combined_conditions})")
   return(combined_conditions)
 }
 
-normalize_column_number <- function(df = NULL, column_prefix = NULL, max_columns_number = NULL) {
+normalize_column_number <- function(
+    df = NULL, column_prefix = NULL, max_columns_number = NULL) {
   expected_cols <- paste(column_prefix, 1:max_columns_number, sep = "")
 
   missing_cols <- setdiff(expected_cols, names(df))
   df[missing_cols] <- NA
 
-  excess_cols <- names(df)[str_detect(names(df), glue("^{column_prefix}\\d+$")) & !names(df) %in% expected_cols]
+  excess_cols <- names(df)[str_detect(
+    names(df), glue("^{column_prefix}\\d+$")
+  ) & !names(df) %in% expected_cols]
   df <- df[, !(names(df) %in% excess_cols)]
   return(df)
 }
@@ -82,7 +86,10 @@ extract_hospital_stays <- function(
     t_mco_d <- tbl(conn, glue("T_MCO{formatted_year}D"))
     t_mco_um <- tbl(conn, glue("T_MCO{formatted_year}UM"))
 
-    dp_dr_conditions <- build_dp_dr_conditions(cim10_codes_starts_with = dp_cim10_codes_starts_with, include_dr = or_dr_with_same_codes)
+    dp_dr_conditions <- build_dp_dr_conditions(
+      cim10_codes_starts_with = dp_cim10_codes_starts_with,
+      include_dr = or_dr_with_same_codes
+    )
 
     eta_num_rsa_num <- t_mco_b %>%
       filter(sql(dp_dr_conditions)) %>%
@@ -90,8 +97,12 @@ extract_hospital_stays <- function(
       distinct()
 
     if (or_da_with_same_codes) {
-      da_conditions <- build_da_conditions(cim10_codes_starts_with = dp_cim10_codes_starts_with)
-      dp_dr_conditions <- build_dp_dr_conditions(cim10_codes_starts_with = dp_cim10_codes_starts_with, include_dr = TRUE)
+      da_conditions <- build_da_conditions(
+        cim10_codes_starts_with = dp_cim10_codes_starts_with
+      )
+      dp_dr_conditions <- build_dp_dr_conditions(
+        cim10_codes_starts_with = dp_cim10_codes_starts_with, include_dr = TRUE
+      )
       eta_num_rsa_num_da_d <- t_mco_d %>%
         filter(sql(da_conditions)) %>%
         select(ETA_NUM, RSA_NUM) %>%
@@ -103,8 +114,13 @@ extract_hospital_stays <- function(
       eta_num_rsa_num_da <- union(eta_num_rsa_num_da_d, eta_num_rsa_num_da_um)
       eta_num_rsa_num <- union(eta_num_rsa_num, eta_num_rsa_num_da)
     } else if (and_da_with_other_codes) {
-      da_conditions <- build_da_conditions(cim10_codes_starts_with = da_cim10_codes_starts_with)
-      dp_dr_conditions <- build_dp_dr_conditions(cim10_codes_starts_with = da_cim10_codes_starts_with, include_dr = TRUE)
+      da_conditions <- build_da_conditions(
+        cim10_codes_starts_with = da_cim10_codes_starts_with
+      )
+      dp_dr_conditions <- build_dp_dr_conditions(
+        cim10_codes_starts_with = da_cim10_codes_starts_with,
+        include_dr = TRUE
+      )
       eta_num_rsa_num_da_d <- t_mco_d %>%
         filter(sql(da_conditions)) %>%
         select(ETA_NUM, RSA_NUM) %>%
@@ -119,9 +135,12 @@ extract_hospital_stays <- function(
     }
 
     selected_cols <- c(
-      "ETA_NUM", "RSA_NUM", "SEJ_NUM", "SEJ_NBJ", "NBR_DGN", "NBR_RUM", "NBR_ACT", "ENT_MOD", "ENT_PRV", "SOR_MOD", "SOR_DES", "DGN_PAL", "DGN_REL", "GRG_GHM", "BDI_DEP",
+      "ETA_NUM", "RSA_NUM", "SEJ_NUM", "SEJ_NBJ", "NBR_DGN",
+      "NBR_RUM", "NBR_ACT", "ENT_MOD", "ENT_PRV", "SOR_MOD",
+      "SOR_DES", "DGN_PAL", "DGN_REL", "GRG_GHM", "BDI_DEP",
       "BDI_COD", "COD_SEX", "AGE_ANN", "AGE_JOU", "NIR_ANO_17",
-      "EXE_SOI_DTD", "EXE_SOI_DTF", "FHO_RET", "NAI_RET", "NIR_RET", "PMS_RET", "SEJ_RET", "SEX_RET"
+      "EXE_SOI_DTD", "EXE_SOI_DTF", "FHO_RET", "NAI_RET",
+      "NIR_RET", "PMS_RET", "SEJ_RET", "SEX_RET"
     )
     # SOR_ANN and SOR_MOI have been removed from the selected columns
     # because they are not always present in the tables
@@ -169,7 +188,9 @@ extract_hospital_stays <- function(
       distinct() %>%
       group_by(ETA_NUM, RSA_NUM) %>%
       mutate(row_id = row_number()) %>%
-      pivot_wider(names_from = row_id, values_from = DGN_PAL, names_prefix = "DGN_PAL_UM_") %>%
+      pivot_wider(
+        names_from = row_id, values_from = DGN_PAL, names_prefix = "DGN_PAL_UM_"
+      ) %>%
       ungroup()
 
     max_columns_dgn_pal_um <- 10
@@ -184,7 +205,11 @@ extract_hospital_stays <- function(
       distinct() %>%
       group_by(ETA_NUM, RSA_NUM) %>%
       mutate(row_id = row_number()) %>%
-      pivot_wider(names_from = row_id, values_from = DGN_REL, names_prefix = "DGN_REL_UM_") %>%
+      pivot_wider(
+        names_from = row_id,
+        values_from = DGN_REL,
+        names_prefix = "DGN_REL_UM_"
+      ) %>%
       ungroup()
 
     max_columns_dgn_rel_um <- 10
@@ -227,7 +252,11 @@ extract_hospital_stays <- function(
       select(-DGN_PAL) %>%
       group_by(ETA_NUM, RSA_NUM) %>%
       mutate(row_id = row_number()) %>%
-      pivot_wider(names_from = row_id, values_from = ASS_DGN, names_prefix = "ASS_DGN_") %>%
+      pivot_wider(
+        names_from = row_id,
+        values_from = ASS_DGN,
+        names_prefix = "ASS_DGN_"
+      ) %>%
       ungroup()
 
     max_columns_da <- 20
@@ -280,14 +309,19 @@ extract_hospital_stays <- function(
     hospital_stays_list <- append(hospital_stays_list, list(hospital_stays))
 
     end_time <- Sys.time()
-    print(glue("Time taken for year {year}: {round(difftime(end_time, start_time, units='mins'),1)} mins."))
+    print(
+      glue::glue("
+      Time taken for year {year}:
+      {round(difftime(end_time, start_time, units='mins'),1)} mins.")
+    )
   }
 
   hospital_stays <- bind_rows(hospital_stays_list)
 
 
   if (!is.null(r_output_path)) {
-    saveRDS(hospital_stays, glue("{r_output_path}/{tolower(output_table_name)}.RDS"))
+    saveRDS(hospital_stays, glue::glue("
+    {r_output_path}/{tolower(output_table_name)}.RDS"))
   }
 
   dbDisconnect(conn)

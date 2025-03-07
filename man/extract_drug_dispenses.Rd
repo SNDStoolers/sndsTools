@@ -13,7 +13,8 @@ extract_drug_dispenses(
   dis_dtd_lag_months = 6,
   sup_columns = NULL,
   output_table_name = NULL,
-  conn = NULL
+  conn = NULL,
+  show_sql_query = TRUE
 )
 }
 \arguments{
@@ -103,7 +104,7 @@ Pour être à flux constant sur l'ensemble des années, il faut utiliser
 \code{dis_dtd_lag_months} = 27 Cela rallonge le temps d'extraction alors que
 l'impact sur l'extraction est minime car la Cnam estime que 99 \% des soins
 sont remontés à 6 mois c'est-à-dire pour dis_dtd_lag_months = 6 Voir
-https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir
+https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir # nolint
 }
 \examples{
 \dontrun{

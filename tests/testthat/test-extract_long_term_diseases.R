@@ -6,7 +6,6 @@ test_that("extract_long_term_disease works", {
   fake_patients_ids <- data.frame(
     BEN_IDT_ANO = c(1, 2, 3),
     BEN_NIR_PSA = c(11, 12, 13)
-    #BEN_RNG_GEM = c(1, 1, 1)
   )
   fake_ald <- data.frame(
     BEN_NIR_PSA = c(11, 15, 12, 13, 13),
@@ -53,13 +52,16 @@ test_that("extract_long_term_disease works", {
       list(
         BEN_IDT_ANO = c(2, 3),
         IMB_ALD_NUM = c(1, 1),
-        IMB_ALD_DTD = as.Date(c("2019-01-03",
-        "2019-01-05")),
-        IMB_ALD_DTF = as.Date(c("2019-02-03",
-        "2019-02-05")),
+        IMB_ALD_DTD = as.Date(c(
+          "2019-01-03",
+          "2019-01-05"
+        )),
+        IMB_ALD_DTF = as.Date(c(
+          "2019-02-03",
+          "2019-02-05"
+        )),
         IMB_ETM_NAT = c("01", "01"),
         MED_MTF_COD = c("I65", "I60")
-        #BEN_RNG_GEM = c(1, 1)
       ),
       class = c("tbl_df", "tbl", "data.frame"),
       row.names = c(NA, -2L)

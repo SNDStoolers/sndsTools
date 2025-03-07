@@ -27,7 +27,7 @@
 #' consultations de tous les prestations sont extraites. Les codes des
 #' prestations sont disponibles sur la page [actes et consultations externes de
 #' la documentation
-#' SNDS](https://documentation-snds.health-data-hub.fr/snds/fiches/actes_consult_externes.html#exemple-de-requetes-pour-analyse).
+#' SNDS](https://documentation-snds.health-data-hub.fr/snds/fiches/actes_consult_externes.html#exemple-de-requetes-pour-analyse). #nolint
 #' @param patient_ids_filter data.frame Optionnel. Un data.frame contenant les
 #' paires d'identifiants des patients pour lesquels les consultations doivent
 #' être extraites. Les colonnes de ce data.frame doivent être `BEN_IDT_ANO` et
@@ -141,9 +141,9 @@ extract_hospital_consultations <- function(start_date,
       dplyr::select(ETA_NUM, SEQ_NUM, ACT_COD, EXE_SPE) |>
       dplyr::distinct()
 
-    date_condition <- glue::glue(
-      "EXE_SOI_DTD <= DATE '{formatted_end_date}' AND EXE_SOI_DTD >= DATE '{formatted_start_date}'"
-    )
+    date_condition <- glue::glue("
+    EXE_SOI_DTD <= DATE '{formatted_end_date}'
+      AND EXE_SOI_DTD >= DATE '{formatted_start_date}'")
     ace <- cstc |>
       filter(dbplyr::sql(date_condition)) |>
       dplyr::left_join(fcstc, by = c("ETA_NUM", "SEQ_NUM")) |>

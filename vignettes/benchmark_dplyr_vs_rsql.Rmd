@@ -67,7 +67,7 @@ conn <- connect_oracle()
 
 start_dates <- rep(as.Date("2020-01-01"), 3)
 end_dates <- c(
-  #as.Date("2020-02-01"),
+  # as.Date("2020-02-01"),
   as.Date("2021-01-01"),
   as.Date("2022-01-01"),
   as.Date("2023-01-01")
@@ -81,7 +81,7 @@ for (i in seq_along(start_dates)) {
   start_date <- start_dates[i]
   end_date <- end_dates[i]
   message("Extraction pour la période : ", start_date, " - ", end_date)
-  
+
   # benchmark de dplyr
   formatted_study_dates <- glue::glue('{format(start_date, "%Y%m%d")}_{format(end_date, "%Y%m%d")}')
   dplyr_table_name <- glue::glue("dplyr_{formatted_study_dates}")
@@ -97,12 +97,12 @@ for (i in seq_along(start_dates)) {
   )
   time_taken_dplyr <- as.numeric(lubridate::as.duration(Sys.time() - time_0_dplyr), "seconds")
   n_rows_dplyr <- DBI::dbGetQuery(conn, glue::glue("select count(*) from {dplyr_table_name}"))
-  #tmp_table_dplyr <- DBI::dbGetQuery(conn, glue::glue("select * from {dplyr_table_name}"))
-  #tmp_table_path <- file.path(path2_tmp, paste0(dplyr_table_name, ".parquet"))
-  #arrow::write_parquet(tmp_table_dplyr, tmp_table_path)
-  
+  # tmp_table_dplyr <- DBI::dbGetQuery(conn, glue::glue("select * from {dplyr_table_name}"))
+  # tmp_table_path <- file.path(path2_tmp, paste0(dplyr_table_name, ".parquet"))
+  # arrow::write_parquet(tmp_table_dplyr, tmp_table_path)
+
   dbExecute(conn, glue::glue("DROP TABLE {dplyr_table_name}"))
-  
+
   # benchmark de RSQL
   sql_table_name <- glue::glue("sql_{formatted_study_dates}")
   time_0_sql <- Sys.time()
@@ -116,10 +116,10 @@ for (i in seq_along(start_dates)) {
   )
   time_taken_sql <- as.numeric(lubridate::as.duration(Sys.time() - time_0_sql), "seconds")
   n_rows_sql <- DBI::dbGetQuery(conn, glue::glue("select count(*) from {sql_table_name}"))
-  #tmp_table_sql <- DBI::dbGetQuery(conn, glue::glue("select * from {sql_table_name}"))
-  #tmp_table_path <- file.path(path2_tmp, paste0(sql_table_name, ".parquet"))
-  #arrow::write_parquet(tmp_table_sql, tmp_table_path)
-  
+  # tmp_table_sql <- DBI::dbGetQuery(conn, glue::glue("select * from {sql_table_name}"))
+  # tmp_table_path <- file.path(path2_tmp, paste0(sql_table_name, ".parquet"))
+  # arrow::write_parquet(tmp_table_sql, tmp_table_path)
+
   # enregistrement des résultats
   tmp_timing_results <- data.frame(
     start_date = as.character(start_date),
@@ -130,14 +130,14 @@ for (i in seq_along(start_dates)) {
     n_rows_sql = n_rows_sql
   )
   dbExecute(conn, glue::glue("DROP TABLE {sql_table_name}"))
-  
+
   write.table(
     tmp_timing_results,
     file.path("..", "inst", "extdata", "timing_results.csv"),
-    append = i>1,
+    append = i > 1,
     row.names = FALSE,
-    col.names = i==1,
-    sep=","
+    col.names = i == 1,
+    sep = ","
   )
 }
 ```
@@ -220,8 +220,8 @@ for (i in seq_along(start_dates)) {
       n_rows_dplyr = n_rows_dplyr,
       n_cols_dplyr = 6 + length(sup_columns)
     )
-    
-    top_create_file = (i == 1) && (j==1) 
+
+    top_create_file <- (i == 1) && (j == 1)
     write.table(
       tmp_timing_results,
       file.path("..", "inst", "extdata", "timing_results_cols.csv"),
@@ -364,21 +364,21 @@ Ce second benchmark étudie la différence pouvant être observée pour une requ
 
 ```{r, eval=TRUE}
 path2pkg_data <- system.file("extdata", package = "sndsTools")
-#path2pkg_data <- "inst/extdata"
+# path2pkg_data <- "inst/extdata"
 
 label_fill <- "Nombres\nde colonnes\n extraites"
 timing_results_cols <- read.csv(
   file.path(
-    path2pkg_data, "benchmark_dplyr_speed_per_cols_rows.csv")
-    ) |>
+    path2pkg_data, "benchmark_dplyr_speed_per_cols_rows.csv"
+  )
+) |>
   dplyr::mutate(
     time_taken_dplyr_minutes = time_taken_dplyr / 60,
     n_rows_cols = n_rows_dplyr * n_cols_dplyr,
     period_months = as.numeric(
       as.Date(end_date) - as.Date(start_date)
-      ) %/% 30,
-      !!sym(label_fill):= as.character(n_cols_dplyr)
-    
+    ) %/% 30,
+    !!sym(label_fill) := as.character(n_cols_dplyr)
   )
 timing_results_cols
 ```
@@ -390,13 +390,16 @@ library(ggplot2)
 
 label_size <- 20
 ggplot(timing_results_cols,
-  aes(x =as.character(period_months), y = time_taken_dplyr_minutes, fill = !!sym(label_fill)), color=!!sym(label_fill)) +
+  aes(x = as.character(period_months), y = time_taken_dplyr_minutes, fill = !!sym(label_fill)),
+  color = !!sym(label_fill)
+) +
   geom_col(position = "dodge") +
-   labs(
+  labs(
     x = "Période d'extraction (mois)",
     y = "Temps d'extraction\n (minutes)",
     fill = label_fill
-  ) + theme(
+  ) +
+  theme(
     text = element_text(size = label_size),
     axis.title = element_text(size = label_size),
     legend.title = element_text(size = label_size),

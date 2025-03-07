@@ -32,7 +32,7 @@
 #'   11, 12 et 13 sont exclues car elles correspondent à des
 #'   exonérations pour accidents du travail ou maladies professionnelles.
 #'   Voir la fiche suivante de la documentation :
-#'   https://documentation-snds.health-data-hub.fr/snds/fiches/beneficiaires_ald.html
+#'   https://documentation-snds.health-data-hub.fr/snds/fiches/beneficiaires_ald.html #nolint
 #'   et notamment le Programme #1 pour la référence de ce filtre.
 #' @param patients_ids data.frame Optionnel. Un data.frame contenant les
 #'   paires d'identifiants des patients pour lesquels les délivrances de
@@ -76,7 +76,7 @@
 #' )
 #' }
 #' @export
-extract_long_term_disease <- function(
+extract_long_term_disease <- function(# nolint:
     start_date = NULL,
     end_date = NULL,
     icd_cod_starts_with = NULL,
@@ -105,7 +105,8 @@ extract_long_term_disease <- function(
     output_table_name_is_temp <- FALSE
     stopifnot(
       is.character(output_table_name),
-      !DBI::dbExistsTable(conn, output_table_name) || (DBI::dbExistsTable(conn, output_table_name) && overwrite)
+      !DBI::dbExistsTable(conn, output_table_name) ||
+        (DBI::dbExistsTable(conn, output_table_name) && overwrite)
     )
     if (DBI::dbExistsTable(conn, output_table_name) && overwrite) {
       warning(

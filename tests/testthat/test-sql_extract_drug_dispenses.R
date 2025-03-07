@@ -3,7 +3,6 @@ require(dplyr)
 fake_patients_ids <- data.frame(
   BEN_IDT_ANO = c(1, 2, 3),
   BEN_NIR_PSA = c(11, 12, 13)
-  # BEN_RNG_GEM = c(1, 1, 1)
 )
 
 fake_dcir_join_keys <- data.frame(
@@ -120,7 +119,8 @@ test_that("sql_extract_drug_dispenses works for ATC", {
         PHA_ACT_QSN,
         PHA_ATC_CLA,
         PHA_PRS_C13
-      ) |> collect(),
+      ) |>
+      collect(),
     structure(
       list(
         BEN_NIR_PSA = c(13),
@@ -128,7 +128,6 @@ test_that("sql_extract_drug_dispenses works for ATC", {
         PHA_ACT_QSN = c(1),
         PHA_ATC_CLA = c("J05AG05"),
         PHA_PRS_C13 = c("3400930219874")
-        # BEN_RNG_GEM = c(1, 1)
       ),
       class = c("tbl_df", "tbl", "data.frame"),
       row.names = c(NA, -1L)
@@ -140,14 +139,13 @@ test_that("sql_extract_drug_dispenses works for ATC", {
 test_that("sql_extract_drug_dispenses works for CIP13", {
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
-  
+
   drug_dispenses <- sql_extract_drug_dispenses(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = c("J05"),
     cip13_cod_filter = c("3400932725847"),
     output_table_name = "TMP_DRUG_DISPENSES",
-    # patients_ids = fake_patients_ids,
     conn = conn
   )
   drug_dispenses <- dplyr::tbl(conn, "TMP_DRUG_DISPENSES")
@@ -162,7 +160,8 @@ test_that("sql_extract_drug_dispenses works for CIP13", {
         PHA_ACT_QSN,
         PHA_ATC_CLA,
         PHA_PRS_C13
-      ) |> collect(),
+      ) |>
+      collect(),
     structure(
       list(
         BEN_NIR_PSA = c(12, 13),
@@ -170,7 +169,6 @@ test_that("sql_extract_drug_dispenses works for CIP13", {
         PHA_ACT_QSN = c(1, 1),
         PHA_ATC_CLA = c("N05AC01", "J05AG05"),
         PHA_PRS_C13 = c("3400932725847", "3400930219874")
-        # BEN_RNG_GEM = c(1, 1)
       ),
       class = c("tbl_df", "tbl", "data.frame"),
       row.names = c(NA, -2L)
