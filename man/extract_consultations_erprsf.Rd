@@ -31,7 +31,7 @@ sont extraites. Défaut à \code{NULL}.}
 prestations à extraire en norme B5 (colonne \code{PRS_NAT_REF}, référentiel
 \code{IR_NAT_V}). Si \code{prestation_filter} n'est pas fourni, les consultations de
 tous les prestations sont extraites. Les codes des prestations sont
-disponibles sur la page \href{https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html}{"Cibler selon les natures de prestations"} de la documentation SNDS. Défaut à \code{NULL}.}
+disponibles sur la page \href{https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html}{"Cibler selon les natures de prestations"} de la documentation SNDS. Défaut à \code{NULL}. #nolint}
 
 \item{dis_dtd_lag_months}{Integer (Optionnel). Le nombre maximum de mois de
 décalage de \code{FLX_DIS_DTD} par rapport à \verb{EXE_SOI DTD} pris en compte pour
@@ -46,7 +46,8 @@ aux BEN_IDT_ANO fournis. Défaut à \code{NULL}.}
 
 \item{output_table_name}{Character (Optionnel). Si fourni, les résultats
 seront sauvegardés dans une table portant ce nom dans la base de données au
-lieu d'être retournés sous forme de data frame. Si cette table existe déjà, le programme s'arrête avec un message d'erreur. Défaut à \code{NULL}.}
+lieu d'être retournés sous forme de data frame. Si cette table existe déjà,
+le programme s'arrête avec un message d'erreur. Défaut à \code{NULL}.}
 
 \item{conn}{DBI connection (Optionnel). Une connexion à la base de données
 Oracle. Par défaut, une connexion est établie avec oracle.}
@@ -84,10 +85,11 @@ extraites.
 
 Pour être à flux constant sur l'ensemble des années, il faut utiliser
 \code{dis_dtd_lag_months = 27} Cela rallonge le temps d'extraction alors que
-l'impact sur l'extraction est minime car \href{https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-2-2-dates}{la Cnam estime que 99 \% des soins sont remontés à 6 mois} c'est-à-dire pour \code{dis_dtd_lag_months = 6}.
+l'impact sur l'extraction est minime car \href{https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-2-2-dates}{la Cnam estime que 99 \% des soins sont remontés à 6 mois} #nolint
+c'est-à-dire pour \code{dis_dtd_lag_months = 6}.
 
 Un guide sur l'activité des médecins libéraux est disponibles sur la page
-\href{https://documentation-snds.health-data-hub.fr/snds/fiches/activite_medecins.html#contexte}{Activité des médecins libéraux}.
+\href{https://documentation-snds.health-data-hub.fr/snds/fiches/activite_medecins.html#contexte}{Activité des médecins libéraux}. #nolint
 }
 \examples{
 \dontrun{

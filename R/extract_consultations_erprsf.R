@@ -16,11 +16,12 @@
 #' Pour être à flux constant sur l'ensemble des années, il faut utiliser
 #' `dis_dtd_lag_months = 27` Cela rallonge le temps d'extraction alors que
 #' l'impact sur l'extraction est minime car [la Cnam estime que 99 % des soins
-#' sont remontés à 6 mois](https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-2-2-dates) c'est-à-dire pour `dis_dtd_lag_months = 6`.
+#' sont remontés à 6 mois](https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-2-2-dates) #nolint
+#' c'est-à-dire pour `dis_dtd_lag_months = 6`.
 #'
 #' Un guide sur l'activité des médecins libéraux est disponibles sur la page
 #' [Activité des médecins
-#' libéraux](https://documentation-snds.health-data-hub.fr/snds/fiches/activite_medecins.html#contexte).
+#' libéraux](https://documentation-snds.health-data-hub.fr/snds/fiches/activite_medecins.html#contexte). #nolint
 #'
 #' @param start_date Date. La date de début de la période des consultations à
 #' extraire.
@@ -35,7 +36,7 @@
 #' `IR_NAT_V`). Si `prestation_filter` n'est pas fourni, les consultations de
 #' tous les prestations sont extraites. Les codes des prestations sont
 #' disponibles sur la page ["Cibler selon les natures de
-#' prestations"](https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html) de la documentation SNDS. Défaut à `NULL`.
+#' prestations"](https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html) de la documentation SNDS. Défaut à `NULL`. #nolint
 #' @param dis_dtd_lag_months Integer (Optionnel). Le nombre maximum de mois de
 #' décalage de `FLX_DIS_DTD` par rapport à `EXE_SOI DTD` pris en compte pour
 #' récupérer les consultations. Défaut à 6 mois.
@@ -47,7 +48,8 @@
 #' aux BEN_IDT_ANO fournis. Défaut à `NULL`.
 #' @param output_table_name Character (Optionnel). Si fourni, les résultats
 #' seront sauvegardés dans une table portant ce nom dans la base de données au
-#' lieu d'être retournés sous forme de data frame. Si cette table existe déjà, le programme s'arrête avec un message d'erreur. Défaut à `NULL`.
+#' lieu d'être retournés sous forme de data frame. Si cette table existe déjà,
+#' le programme s'arrête avec un message d'erreur. Défaut à `NULL`.
 #' @param conn DBI connection (Optionnel). Une connexion à la base de données
 #' Oracle. Par défaut, une connexion est établie avec oracle.
 #' @return Si `output_table_name` est `NULL`, retourne un data frame contenant
@@ -133,16 +135,17 @@ extract_consultations_erprsf <- function(start_date,
 
   if (!is.null(pse_spe_filter)) {
     print(
-      glue::glue(
-        "Extracting consultations from all specialties among {paste(pse_spe_filter, collapse = ' or ')}..."
-      )
+      glue::glue("
+      Extracting consultations
+      from all specialties among
+      {paste(pse_spe_filter, collapse = ' or ')}...")
     )
   } else {
     print(glue::glue("Extracting consultations from all specialties codes..."))
   }
 
   pb <- progress::progress_bar$new(
-    format = "Extracting :year1 (going from :year2 to :year3) [:bar] :percent in :elapsed (eta: :eta)",
+    format = "Extracting :year1 (going from :year2 to :year3) [:bar] :percent in :elapsed (eta: :eta)", # nolint
     total = (end_year - start_year + 1),
     clear = FALSE,
     width = 80
@@ -175,24 +178,26 @@ extract_consultations_erprsf <- function(start_date,
     )
 
     # TODO: Ces filtres qualité devraient être externalisés dans une fonction
-    # spécifique, documentée avec les références aux documentations de la CNAM concernant les choix.
+    # spécifique, documentée avec les références aux documentations de la CNAM
+    # concernant les choix.
     er_prs_f_clean <- er_prs_f |>
       dplyr::filter(
         dbplyr::sql(soi_dtd_condition),
         dbplyr::sql(dis_dtd_condition)
       ) |>
       dplyr::filter(
-        (DPN_QLF != 71 |
-          is.na(DPN_QLF)),
-        # Suppression de l'activité des actes et consultations externes (ACE) rémontée pour information, cette activité est mesurée par ailleurs pour les établissements de santé dans le champ de la SAE
-        (PRS_DPN_QLP != 71 |
-          is.na(PRS_DPN_QLP)),
+        (DPN_QLF != 71 | is.na(DPN_QLF)),
+        # Suppression de l'activité des actes et consultations externes (ACE)
+        # rémontée pour information, cette activité est mesurée par ailleurs
+        # pour les établissements de santé dans le champ de la SAE
+        (PRS_DPN_QLP != 71 | is.na(PRS_DPN_QLP)),
         # Suppression des ACE pour information
         (CPL_MAJ_TOP < 2),
         # Suppression des majorations
         (CPL_AFF_COD != 16),
-        # Suppression des participations forfaitaires!(PSE_STJ_COD %in% c(61, 62, 63, 64, 69)),
-        # Suppression des prestations de professionneles exécutants salariés (impact négligeable)
+        # Suppression des participations forfaitaires!(PSE_STJ_COD %in% c(61,
+        # 62, 63, 64, 69)), Suppression des prestations de professionneles
+        # exécutants salariés (impact négligeable)
         PRS_ACT_QTE > 0
       )
 
@@ -212,14 +217,18 @@ extract_consultations_erprsf <- function(start_date,
       dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select)) |>
       dplyr::distinct()
 
-    ## TODO : le lien avec les patients_ids_filter pourrait être extrait comme un utilitaire.
+    # TODO : le lien avec les patients_ids_filter pourrait être extrait comme un
+    # utilitaire.
     if (!is.null(patients_ids_filter)) {
       patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
       patients_ids_table <- patients_ids_table |>
         dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM) |>
         dplyr::distinct()
       query <- query |>
-        dplyr::inner_join(patients_ids_table, by = c("BEN_NIR_PSA", "BEN_RNG_GEM")) |>
+        dplyr::inner_join(
+          patients_ids_table,
+          by = c("BEN_NIR_PSA", "BEN_RNG_GEM")
+        ) |>
         dplyr::select(BEN_IDT_ANO, dplyr::all_of(cols_to_select)) |>
         dplyr::distinct()
     }

@@ -3,7 +3,6 @@ require(dplyr)
 fake_patients_ids <- data.frame(
   BEN_IDT_ANO = c(1, 2, 3),
   BEN_NIR_PSA = c(11, 12, 13)
-  # BEN_RNG_GEM = c(1, 1, 1)
 )
 
 fake_dcir_join_keys <- data.frame(
@@ -108,7 +107,6 @@ test_that("extract_drug_dispenses works for ATC", {
         PHA_ATC_CLA = c("J05AG05"),
         PHA_PRS_C13 = c("3400930219874"),
         PSP_SPE_COD = c("32")
-        # BEN_RNG_GEM = c(1, 1)
       ),
       class = c("tbl_df", "tbl", "data.frame"),
       row.names = c(NA, -1L)
@@ -139,7 +137,6 @@ test_that("extract_drug_dispenses works for CIP13", {
         PHA_ATC_CLA = c("N05AC01", "J05AG05"),
         PHA_PRS_C13 = c("3400932725847", "3400930219874"),
         PSP_SPE_COD = c("22", "32")
-        # BEN_RNG_GEM = c(1, 1)
       ),
       class = c("tbl_df", "tbl", "data.frame"),
       row.names = c(NA, -2L)

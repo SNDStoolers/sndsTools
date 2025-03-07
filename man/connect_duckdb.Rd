@@ -10,6 +10,6 @@ connect_duckdb()
 dbConnection Connexion à la base de données duckdb
 }
 \description{
-Utilisation pour le testing uniquement. Si le code s'exécute en dehors du portail, il faut initier une connexion duckdb pour
-effectuer les tests.
+Utilisation pour le testing uniquement. Si le code s'exécute en dehors du
+portail, il faut initier une connexion duckdb pour effectuer les tests.
 }

@@ -23,7 +23,7 @@
 #'   NULL.
 #'
 #' @export
-sql_extract_drug_dispenses <- function(start_date,
+sql_extract_drug_dispenses <- function(start_date, # nolint
                                        end_date,
                                        output_table_name,
                                        atc_cod_starts_with_filter = NULL,
@@ -36,7 +36,7 @@ sql_extract_drug_dispenses <- function(start_date,
     inherits(end_date, "Date"),
     start_date <= end_date
   )
-  
+
   connection_opened <- FALSE
   if (is.null(conn)) {
     conn <- connect_oracle()
@@ -45,11 +45,11 @@ sql_extract_drug_dispenses <- function(start_date,
   # Format the dates (used in the glued SQL query)
   formatted_start_date <- format(start_date, "%Y-%m-%d") # nolint
   formatted_end_date <- format(end_date, "%Y-%m-%d") # nolint
-  
+
   # Create the subset of IR_PHA_V table that should be joined to the DCIR
   # tables(same code as extract_drug_dispenses)
   ir_pha_r <- dplyr::tbl(conn, "IR_PHA_R")
-  
+
   if (!is.null(atc_cod_starts_with_filter)) {
     starts_with_conditions <- vapply(
       atc_cod_starts_with_filter, function(code) {
@@ -64,14 +64,11 @@ sql_extract_drug_dispenses <- function(start_date,
       "PHA_CIP_C13 IN ({paste(cip13_cod_filter, collapse = ',')})"
     )
   }
-  if (
-    !is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) {
+  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) { # nolint
     drug_filter <- atc_conditions + " OR " + cip13_conditions
-  } else if (
-    !is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)) {
+  } else if (!is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)) { # nolint
     drug_filter <- cip13_conditions
-  } else if (
-    !is.null(atc_cod_starts_with_filter) && is.null(cip13_cod_filter)) {
+  } else if (!is.null(atc_cod_starts_with_filter) && is.null(cip13_cod_filter)) { # nolint
     drug_filter <- atc_conditions
   } else {
     drug_filter <- NULL
@@ -92,7 +89,7 @@ sql_extract_drug_dispenses <- function(start_date,
       "CREATE TABLE {ir_pha_r_filtered_name} AS {ir_pha_filtered_query}"
     )
   )
-  
+
   sql_drug_query <- "
   SELECT DISTINCT prs.BEN_NIR_PSA,
     prs.BEN_CMU_TOP,
@@ -181,7 +178,7 @@ WHERE (
     }
   }
   message(glue::glue("Results saved to table {output_table_name} in Oracle."))
-  
+
   # Cleaning
   DBI::dbRemoveTable(conn, ir_pha_r_filtered_name)
   if (connection_opened) {

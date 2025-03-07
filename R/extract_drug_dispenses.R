@@ -26,7 +26,7 @@
 #' `dis_dtd_lag_months` = 27 Cela rallonge le temps d'extraction alors que
 #' l'impact sur l'extraction est minime car la Cnam estime que 99 % des soins
 #' sont remontés à 6 mois c'est-à-dire pour dis_dtd_lag_months = 6 Voir
-#' https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir
+#' https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir # nolint
 #'
 #' @param start_date Date. La date de début de la période
 #'   des délivrances des médicaments à extraire.
@@ -88,7 +88,7 @@
 #' )
 #' }
 #' @export
-extract_drug_dispenses <- function(start_date,
+extract_drug_dispenses <- function(start_date, # nolint
                                    end_date,
                                    atc_cod_starts_with_filter = NULL,
                                    cip13_cod_filter = NULL,
@@ -191,14 +191,12 @@ extract_drug_dispenses <- function(start_date,
       "PHA_CIP_C13 IN ({paste(cip13_cod_filter, collapse = ',')})"
     )
   }
-  if (!is.null(atc_cod_starts_with_filter) &&
-    !is.null(cip13_cod_filter)) {
+  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) { # nolint
     drug_filter <- atc_conditions + " OR " + cip13_conditions
-  } else if (!is.null(cip13_cod_filter) &&
-    is.null(atc_cod_starts_with_filter)) {
+  } else if (!is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)) { # nolint
     drug_filter <- cip13_conditions
   } else if (!is.null(atc_cod_starts_with_filter) &&
-    is.null(cip13_cod_filter)) {
+    is.null(cip13_cod_filter)) { # nolint
     drug_filter <- atc_conditions
   } else {
     drug_filter <- NULL
@@ -290,7 +288,7 @@ extract_drug_dispenses <- function(start_date,
         "PRS_ORD_NUM",
         "REM_TYP_AFF"
       )
-      ir_pha_col_distinct_from_er_pha <- setdiff(
+      ir_pha_cols_not_in_er_pha <- setdiff(
         colnames(ir_pha_filtered_table),
         colnames(er_pha_f)
       )
@@ -299,7 +297,7 @@ extract_drug_dispenses <- function(start_date,
         dplyr::inner_join(er_pha_f, by = dcir_join_keys) |>
         dplyr::inner_join(
           ir_pha_filtered_table |>
-            dplyr::select(dplyr::all_of(ir_pha_col_distinct_from_er_pha)),
+            dplyr::select(dplyr::all_of(ir_pha_cols_not_in_er_pha)),
           by = c("PHA_PRS_C13" = "PHA_CIP_C13")
         ) |>
         dplyr::left_join(er_ete_f, by = dcir_join_keys) |>
@@ -310,7 +308,7 @@ extract_drug_dispenses <- function(start_date,
         dplyr::filter(
           DPN_QLF != 71L,
           CPL_MAJ_TOP < 2L,
-          (ETE_IND_TAA != 1L) || is.na(ETE_IND_TAA)
+          (ETE_IND_TAA != 1L) | is.na(ETE_IND_TAA)
         )
 
       cols_to_select <- c(
@@ -346,7 +344,9 @@ extract_drug_dispenses <- function(start_date,
           glue::glue("CREATE TABLE {output_table_name} AS {query}")
         )
         if (show_sql_query) {
-          message(glue::glue("Premier mois requêté en date de flux à l'aide de la requête sql suivante :\n {query}"))
+          message(glue::glue("
+          Premier mois requêté en date de flux
+          à l'aide de la requête sql suivante :\n {query}"))
         }
       } else {
         DBI::dbExecute(
