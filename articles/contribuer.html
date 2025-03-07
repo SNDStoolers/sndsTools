@@ -224,6 +224,24 @@ votre code.</li>
 conflits, si d’autres contributeurs ont modifié le code pendant que vous
 travailliez sur votre branche. Vous pouvez vous référer à <a href="https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/" class="external-link">cette
 documentation pour résoudre les conflits</a>.</p>
+<ol start="10" style="list-style-type: decimal">
+<li>Avant de demander une revue pour votre pull request, vérifier avec
+les commandes suivantes dans le terminal que le code passent certains
+test de qualité :</li>
+</ol>
+<ul>
+<li>que votre code ne casse pas de tests : <code>make test</code>
+</li>
+<li>que votre code respecte les conventions de style :
+<code>make style-pkg</code>
+</li>
+<li>que votre code respecte les conventions de lint :
+<code>make lint-pkg</code>
+</li>
+<li>que la documentation se génère correctement :
+<code>make doc-html</code>
+</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="références-pour-contribuer">Références pour contribuer<a class="anchor" aria-label="anchor" href="#r%C3%A9f%C3%A9rences-pour-contribuer"></a>
