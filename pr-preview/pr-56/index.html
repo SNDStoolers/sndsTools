@@ -56,13 +56,32 @@
 <div class="row">
   <main id="main" class="col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="extraction-de-recours-aux-soins-sur-le-snds-en-r">Extraction de recours aux soins sur le SNDS en R<a class="anchor" aria-label="anchor" href="#extraction-de-recours-aux-soins-sur-le-snds-en-r"></a>
+<div class="page-header"><h1 id="sndstools--extraction-de-recours-aux-soins-dans-le-snds-avec-r">
+<code>SndsTools</code> : Extraction de recours aux soins dans le SNDS avec R<a class="anchor" aria-label="anchor" href="#sndstools--extraction-de-recours-aux-soins-dans-le-snds-avec-r"></a>
 </h1></div>
-<p>🚧 Projet en cours de développement.</p>
 <div class="section level2">
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
 <p>Ce package R permet d’extraire des données de recours aux soins du SNDS (Système National des Données de Santé) pour une population donnée.</p>
+</div>
+<div class="section level2">
+<h2 id="fonctionnalités">Fonctionnalités<a class="anchor" aria-label="anchor" href="#fonctionnalit%C3%A9s"></a>
+</h2>
+<p>Ce package R simplifie les étapes d’extraction de données du SNDS sur des données utilisées dans la majorité des études sur le SNDS. Les principales fonctionnalités couvertes sont les suivantes :</p>
+<ul>
+<li>
+<p>Effectuer l’extraction des tables individuelles pour les données suivantes :</p>
+<ul>
+<li>Consultations dans le DCIR,</li>
+<li>Médicaments dans le DCIR,</li>
+<li>Affections de longue durée (ALD),</li>
+<li>Hospitalisations dans le MCO,</li>
+<li>Consultations dans le MCO.</li>
+</ul>
+</li>
+<li><p>Intègre les requêtes mois par mois sur la date de flux pour les données DCIR conformément aux recommandations de la CNAM.</p></li>
+<li><p>Intègre les filtres qualités usuels pour exclure les lignes indésirables (ex. <code>PRS_DPN_QLP != 71</code> pour <a href="https://documentation-snds.health-data-hub.fr/snds/fiches/sas_prestation_dcir.html#recommandations-pour-les-requetes" class="external-link">exclure les remontées pour information dans le DCIR</a>).</p></li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="historique">Historique<a class="anchor" aria-label="anchor" href="#historique"></a>
