@@ -46,3 +46,6 @@ testf:
 ## Move binary to the right place
 mv-binary:
 	Rscript -e 'file.copy(from="~/Citrix_documents/IMPORT/sndsTools_0.0.0.1.tar.gz", to="~/sasdata1/prg/", overwrite = TRUE)'
+
+concat-functions:
+	cat R/* > sndsTools_all.R

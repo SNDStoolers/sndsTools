@@ -27,11 +27,10 @@ Ce paquet R de traitement de données a pour objectif de faciliter l'accès aux 
 Pour une utilisation sur le portail CNAM, il est nécessaire de copier/coller le code source du paquet sur le portail CNAM. Pour cela, il faut suivre les étapes suivantes :
 
 ```{r, eval = FALSE}
-## 1. En local
-system("cat sndsTools/R/* > sndsTools.R")
-## 2. Copier/coller le fichier sndsTools.R sur le portail CNAM
-## 3. Sur le portail CNAM
-source("sndsTools.R")
+## 1. En local (sur votre ordinateur) : Copier le fichier contenant toutes les fonctions: [sndsTools_all.R](https://github.com/SNDStoolers/sndsTools/sndsTools_all.R)
+## 2. Sur le portail CNAM, coller le fichier sndsTools.R sur le portail CNAM
+## 3. Sur le portail CNAM, charger toutes les fonctions du paquet:
+source("sndsTools_all.R")
 ```
 
 ### En local (pour le développement du paquet)
