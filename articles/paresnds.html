@@ -89,11 +89,10 @@ bonnes pratiques pour utiliser ces données.</p>
 copier/coller le code source du paquet sur le portail CNAM. Pour cela,
 il faut suivre les étapes suivantes :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## 1. En local</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"cat sndsTools/R/* &gt; sndsTools.R"</span><span class="op">)</span></span>
-<span><span class="co">## 2. Copier/coller le fichier sndsTools.R sur le portail CNAM</span></span>
-<span><span class="co">## 3. Sur le portail CNAM</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"sndsTools.R"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">## 1. En local (sur votre ordinateur) : Copier le fichier contenant toutes les fonctions: [sndsTools_all.R](https://github.com/SNDStoolers/sndsTools/sndsTools_all.R)</span></span>
+<span><span class="co">## 2. Sur le portail CNAM, coller le fichier sndsTools.R sur le portail CNAM</span></span>
+<span><span class="co">## 3. Sur le portail CNAM, charger toutes les fonctions du paquet:</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"sndsTools_all.R"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="en-local-pour-le-développement-du-paquet">En local (pour le développement du paquet)<a class="anchor" aria-label="anchor" href="#en-local-pour-le-d%C3%A9veloppement-du-paquet"></a>
