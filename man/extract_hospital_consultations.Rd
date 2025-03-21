@@ -28,7 +28,7 @@ fourni, les consultations de tous les spécialités sont extraites.}
 \item{prestation_codes_filter}{character vector Optionnel. Les codes des
 prestations à extraire. Si \code{prestation_codes} n'est pas fourni, les
 consultations de tous les prestations sont extraites. Les codes des
-prestations sont disponibles sur la page \href{https://documentation-snds.health-data-hub.fr/snds/fiches/actes_consult_externes.html#exemple-de-requetes-pour-analyse}{actes et consultations externes de la documentation SNDS}. #nolint}
+prestations sont disponibles sur la page \href{https://documentation-snds.health-data-hub.fr/snds/fiches/actes_consult_externes.html#exemple-de-requetes-pour-analyse}{actes et consultations externes de la documentation SNDS}.}
 
 \item{patient_ids_filter}{data.frame Optionnel. Un data.frame contenant les
 paires d'identifiants des patients pour lesquels les consultations doivent

@@ -9,7 +9,7 @@
 #' également les délivrances dont les dates `FLX_DIS_DTD` sont comprises dans
 #' les `dis_dtd_lag_months` mois suivant end_date.
 #'
-#' #' Si `atc_cod_starts_with` ou `cip13_codes` sont fournies, seules les
+#' Si `atc_cod_starts_with` ou `cip13_codes` sont fournies, seules les
 #' délivrances de médicaments dont le code ATC commence par l'un des éléments de
 #' `atc_cod_starts_with` OU dont le code CIP13 est dans `cip13_codes` sont
 #' extraites. Dans le cas ou aucun des filtres n'est renseigné, les délivrances
@@ -24,9 +24,10 @@
 
 #' Pour être à flux constant sur l'ensemble des années, il faut utiliser
 #' `dis_dtd_lag_months` = 27 Cela rallonge le temps d'extraction alors que
-#' l'impact sur l'extraction est minime car la Cnam estime que 99 % des soins
-#' sont remontés à 6 mois c'est-à-dire pour dis_dtd_lag_months = 6 Voir
-#' https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir # nolint
+#' l'impact sur l'extraction est minime car [la Cnam estime que 99 % des soins
+#' sont remontés à 6
+#' mois](https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir),
+#' c'est-à-dire pour dis_dtd_lag_months = 6.
 #'
 #' @param start_date Date. La date de début de la période
 #'   des délivrances des médicaments à extraire.

@@ -27,7 +27,7 @@
 #' consultations de tous les prestations sont extraites. Les codes des
 #' prestations sont disponibles sur la page [actes et consultations externes de
 #' la documentation
-#' SNDS](https://documentation-snds.health-data-hub.fr/snds/fiches/actes_consult_externes.html#exemple-de-requetes-pour-analyse). #nolint
+#' SNDS](https://documentation-snds.health-data-hub.fr/snds/fiches/actes_consult_externes.html#exemple-de-requetes-pour-analyse).
 #' @param patient_ids_filter data.frame Optionnel. Un data.frame contenant les
 #' paires d'identifiants des patients pour lesquels les consultations doivent
 #' être extraites. Les colonnes de ce data.frame doivent être `BEN_IDT_ANO` et

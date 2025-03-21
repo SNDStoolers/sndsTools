@@ -16,7 +16,7 @@
 #' Pour être à flux constant sur l'ensemble des années, il faut utiliser
 #' `dis_dtd_lag_months = 27` Cela rallonge le temps d'extraction alors que
 #' l'impact sur l'extraction est minime car [la Cnam estime que 99 % des soins
-#' sont remontés à 6 mois](https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-2-2-dates) #nolint
+#' sont remontés à 6 mois](https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-2-2-dates)
 #' c'est-à-dire pour `dis_dtd_lag_months = 6`.
 #'
 #' Un guide sur l'activité des médecins libéraux est disponibles sur la page
@@ -36,7 +36,8 @@
 #' `IR_NAT_V`). Si `prestation_filter` n'est pas fourni, les consultations de
 #' tous les prestations sont extraites. Les codes des prestations sont
 #' disponibles sur la page ["Cibler selon les natures de
-#' prestations"](https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html) de la documentation SNDS. Défaut à `NULL`. #nolint
+#' prestations"](https://documentation-snds.health-data-hub.fr/snds/fiches/
+#' prestation.html) de la documentation SNDS. Défaut à `NULL`.
 #' @param dis_dtd_lag_months Integer (Optionnel). Le nombre maximum de mois de
 #' décalage de `FLX_DIS_DTD` par rapport à `EXE_SOI DTD` pris en compte pour
 #' récupérer les consultations. Défaut à 6 mois.

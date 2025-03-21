@@ -88,7 +88,7 @@ Le décalage de remontée des données est pris en compte en récupérant
 également les délivrances dont les dates \code{FLX_DIS_DTD} sont comprises dans
 les \code{dis_dtd_lag_months} mois suivant end_date.
 
-#' Si \code{atc_cod_starts_with} ou \code{cip13_codes} sont fournies, seules les
+Si \code{atc_cod_starts_with} ou \code{cip13_codes} sont fournies, seules les
 délivrances de médicaments dont le code ATC commence par l'un des éléments de
 \code{atc_cod_starts_with} OU dont le code CIP13 est dans \code{cip13_codes} sont
 extraites. Dans le cas ou aucun des filtres n'est renseigné, les délivrances
@@ -102,9 +102,8 @@ extraites. Dans le cas contraire, les délivrances de tous les patients sont
 extraites.
 Pour être à flux constant sur l'ensemble des années, il faut utiliser
 \code{dis_dtd_lag_months} = 27 Cela rallonge le temps d'extraction alors que
-l'impact sur l'extraction est minime car la Cnam estime que 99 \% des soins
-sont remontés à 6 mois c'est-à-dire pour dis_dtd_lag_months = 6 Voir
-https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir # nolint
+l'impact sur l'extraction est minime car \href{https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir}{la Cnam estime que 99 \% des soins sont remontés à 6 mois},
+c'est-à-dire pour dis_dtd_lag_months = 6.
 }
 \examples{
 \dontrun{
