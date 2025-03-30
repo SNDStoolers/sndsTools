@@ -31,9 +31,7 @@ sont extraites. Défaut à \code{NULL}.}
 prestations à extraire en norme B5 (colonne \code{PRS_NAT_REF}, référentiel
 \code{IR_NAT_V}). Si \code{prestation_filter} n'est pas fourni, les consultations de
 tous les prestations sont extraites. Les codes des prestations sont
-disponibles sur la page \link[="Cibler selon les natures de
-prestations"]{"Cibler selon les natures de prestations"}(https://documentation-snds.health-data-hub.fr/snds/fiches/
-prestation.html) de la documentation SNDS. Défaut à \code{NULL}.}
+disponibles sur la page \href{https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html}{Cibler selon les natures de prestations} de la documentation SNDS. Défaut à \code{NULL}.}
 
 \item{dis_dtd_lag_months}{Integer (Optionnel). Le nombre maximum de mois de
 décalage de \code{FLX_DIS_DTD} par rapport à \verb{EXE_SOI DTD} pris en compte pour

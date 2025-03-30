@@ -188,11 +188,17 @@ download_synthetic_snds <- function() {
 #' projet
 #' [synthetic-generator](https://gitlab.com/healthdatahub/se-former-au-snds/synthetic-generator/).
 #'
+#' Ces données ne respectent pas les contraintes métier de la base de données
+#' réelle. Par exemple, dans les données fictives, les dates de flux sont
+#' générées aléatoirement par rapport aux dates de soin alors que dans la vraie
+#' base de données, les dates de flux sont toujours postérieures aux dates de
+#' soin.
+#'
 #' @return Une liste de data frames, chacun correspondant à un fichier CSV dans
 #' le zip.
 #' @examples
 #' # Charger les données synthétiques
-#' donnees_synthetiques <- load_synthetic_snds("chemin/vers/synthetic_data.zip")
+#' donnees_synthetiques <- load_synthetic_snds()
 #' # Accéder à un data frame spécifique
 #' #' df <- donnees_synthetiques[["ER_PRS_F"]]
 #' #' # Afficher les premières lignes du data frame
@@ -201,10 +207,9 @@ download_synthetic_snds <- function() {
 load_synthetic_snds <- function() {
   # Create a temporary directory to extract the zip file
   temp_dir <- tempdir()
+  dir2extdata <- system.file("extdata", package = "sndsTools")
   path2zip <- file.path(
-    rprojroot::find_package_root_file(),
-    "inst",
-    "extdata",
+    dir2extdata,
     "synthetic_data.zip"
   )
   unzip(path2zip, exdir = temp_dir)
@@ -223,7 +228,7 @@ load_synthetic_snds <- function() {
   return(data_list)
 }
 
-#' Charge et insére les données synthétiques du SNDS dans une base de données
+#' Charge et insère les données synthétiques du SNDS dans une base de données
 #' temporaire
 #'
 #' @description
@@ -238,7 +243,7 @@ load_synthetic_snds <- function() {
 #' insert_synthetic_snds(conn)
 #' # Vérifier les tables insérées
 #' tables <- DBI::dbListTables(conn)
-#' print(tables[[1, 10]])
+#' print(tables[1:10])
 #' @export
 insert_synthetic_snds <- function(conn) {
   # Load the synthetic data
@@ -260,7 +265,14 @@ insert_synthetic_snds <- function(conn) {
       # Convert the FLX_DIS_DTD column to Date format
       df$FLX_DIS_DTD <- as.Date(df$FLX_DIS_DTD, format = "%d/%m/%Y")
     }
-
+    for (col in colnames(df)) {
+      if (grepl("_TOP$", col)) {
+        # Convert the date columns to Date format
+        df[[col]] <- as.numeric(
+          tolower(df[[col]]) == "true"
+        )
+      }
+    }
     # Write the data frame to the database
     DBI::dbWriteTable(conn, table_name, df)
   }

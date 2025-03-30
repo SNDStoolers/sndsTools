@@ -8,7 +8,7 @@ docs-r:
 docs-html:
 	Rscript -e 'pkgload::load_all();devtools::document();devtools::check(error_on="error")'
 	Rscript -e 'pkgdown::clean_site();devtools::install();pkgdown::build_site()'
-	Rscript -e ';pkgload::load_all();devtools::document();devtools::check(error_on="error")'
+	Rscript -e 'pkgload::load_all();devtools::document();devtools::check(error_on="error")'
 	Rscript -e 'pkgdown::clean_site();devtools::install();pkgdown::build_site()'
 
 ## Install the packages
