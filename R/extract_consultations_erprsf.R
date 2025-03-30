@@ -35,9 +35,7 @@
 #' prestations à extraire en norme B5 (colonne `PRS_NAT_REF`, référentiel
 #' `IR_NAT_V`). Si `prestation_filter` n'est pas fourni, les consultations de
 #' tous les prestations sont extraites. Les codes des prestations sont
-#' disponibles sur la page ["Cibler selon les natures de
-#' prestations"](https://documentation-snds.health-data-hub.fr/snds/fiches/
-#' prestation.html) de la documentation SNDS. Défaut à `NULL`.
+#' disponibles sur la page [Cibler selon les natures de prestations](https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html) de la documentation SNDS. Défaut à `NULL`.
 #' @param dis_dtd_lag_months Integer (Optionnel). Le nombre maximum de mois de
 #' décalage de `FLX_DIS_DTD` par rapport à `EXE_SOI DTD` pris en compte pour
 #' récupérer les consultations. Défaut à 6 mois.
@@ -212,8 +210,10 @@ extract_consultations_erprsf <- function(start_date,
     )
     query <- er_prs_f_clean |>
       dplyr::filter(
-        PRS_NAT_REF %in% prestation_filter,
-        PSE_SPE_COD %in% pse_spe_filter
+        (PRS_NAT_REF %in% prestation_filter) |
+          is.null(prestation_filter),
+        (PSE_SPE_COD %in% pse_spe_filter) |
+          is.null(pse_spe_filter)
       ) |>
       dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select)) |>
       dplyr::distinct()

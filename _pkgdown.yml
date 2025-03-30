@@ -42,4 +42,8 @@ reference:
   - connect_duckdb
   - connect_oracle
   - gather_table_stats
+  - download_synthetic_snds
+  - insert_synthetic_snds
+  - load_synthetic_snds
+
 

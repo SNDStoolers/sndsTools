@@ -120,3 +120,160 @@ gather_table_stats <- function(conn, table) {
     data = data.frame(user, table)
   )
 }
+
+#' Télécharge et zip les données synthétiques du SNDS
+#'
+#' @description
+#' Télécharge [les données fictives du
+#' SNDS](https://www.data.gouv.fr/fr/datasets/donnees-synthetiques-de-la-base-principales-du-systeme-national-des-donnees-de-sante/)
+#' disponible sur datagouv.fr. Puis, zip dans une seul fichier
+#' `synthetic_data.zip` toutes les tables des données fictives. Sauvegarde ce
+#' fichier zip dans le répertoire `inst/extdata` du package.
+#' @return Le chemin vers le répertoire contenant le fichier zip contenant les
+#' données.
+#' @export
+download_synthetic_snds <- function() {
+  # Utilisation du répertoire inst/extdata standard pour les packages R
+  pkg_root <- rprojroot::find_package_root_file()
+  extdata_dir <- file.path(pkg_root, "inst", "extdata")
+  synthetic_data_dir <- file.path(extdata_dir, "synthetic_data")
+  if (!dir.exists(synthetic_data_dir)) {
+    dir.create(synthetic_data_dir, recursive = TRUE)
+  }
+  snds_produits <- list(dcir_tables = "https://www.data.gouv.fr/fr/datasets/r/33b5e0ac-cf40-49be-9026-30525f667ca1")
+  snds_produits <- list(dcir_tables = "https://www.data.gouv.fr/fr/datasets/r/33b5e0ac-cf40-49be-9026-30525f667ca1", mco_tables = "https://www.data.gouv.fr/fr/datasets/r/832cfa99-5106-4081-be16-520991375e6d", had_tables = "https://www.data.gouv.fr/fr/datasets/r/9dcf3637-ec46-4188-981a-2a28637f6577", ssr_tables = "https://www.data.gouv.fr/fr/datasets/r/877d3a9f-8ea0-4925-987a-cfb2f53bbc72", rimp_tables = "https://www.data.gouv.fr/fr/datasets/r/2a4fa5d4-245d-4e21-bad2-7b438199e3c8", beneficiaries_tables = "https://www.data.gouv.fr/fr/datasets/r/a57fcd0f-e63a-48f0-ba73-f8e93a15aec2", cartographie_pathologies_tables = "https://www.data.gouv.fr/fr/datasets/r/e75e0fc2-0acf-4f58-8b4f-fcc26b651918", causes_de_deces_tables = "https://www.data.gouv.fr/fr/datasets/r/3b9a7898-9bcf-4839-aeb2-ccb3e4990b03") # nolint
+
+  for (produit in names(snds_produits)) {
+    zip_url <- snds_produits[[produit]]
+    # Define the destination file path
+    zip_file <- tempfile(fileext = ".zip")
+    # Download the zip file
+    download.file(zip_url, zip_file, mode = "wb")
+    # Unzip the file to a temporary directory
+    unzip_dir <- tempdir()
+    # Use system unzip with UTF-8 encoding to handle Latin-encoded names
+    system(
+      glue::glue(
+        "unzip -o -O LATIN1 {shQuote(zip_file)} -d {shQuote(synthetic_data_dir)}" # nolint
+      )
+    )
+  }
+
+  dir2produits <- list.dirs(synthetic_data_dir, full.names = TRUE)
+  # zip all the directories into one zip file
+  zip_file <- file.path(extdata_dir, "synthetic_data.zip")
+  zip(zip_file, dir2produits, flags = "-r9Xj", extras = "-i *.csv")
+  # Remove the unzipped directories
+  print(dir2produits)
+  for (dir in dir2produits) {
+    unlink(dir, recursive = TRUE)
+  }
+  return(zip_file)
+}
+
+#' Charger les données synthétiques du SNDS
+#'
+#' @description
+#' Cette fonction charge les données synthétiques du SNDS à partir d'un fichier
+#' zip contenu dans le répertoire `synthetic_data.zip`. Ce fichier zip contient
+#' un fichier CSV pour chaque table du SDNS.
+#'
+#' @details
+#' Le fichier zip `synthetic_data.zip` a été obtenu en téléchargeant [les
+#' données fictives du
+#' SNDS](https://www.data.gouv.fr/fr/datasets/donnees-synthetiques-de-la-base-principales-du-systeme-national-des-donnees-de-sante/)
+#' disponible sur datagouv.fr. Ces données ont été générées en 2019 grâce au
+#' [schéma formel du
+#' SNDS](https://gitlab.com/healthdatahub/applications-du-hdh/schema-snds) et au
+#' projet
+#' [synthetic-generator](https://gitlab.com/healthdatahub/se-former-au-snds/synthetic-generator/).
+#'
+#' Ces données ne respectent pas les contraintes métier de la base de données
+#' réelle. Par exemple, dans les données fictives, les dates de flux sont
+#' générées aléatoirement par rapport aux dates de soin alors que dans la vraie
+#' base de données, les dates de flux sont toujours postérieures aux dates de
+#' soin.
+#'
+#' @return Une liste de data frames, chacun correspondant à un fichier CSV dans
+#' le zip.
+#' @examples
+#' # Charger les données synthétiques
+#' donnees_synthetiques <- load_synthetic_snds()
+#' # Accéder à un data frame spécifique
+#' #' df <- donnees_synthetiques[["ER_PRS_F"]]
+#' #' # Afficher les premières lignes du data frame
+#' #' print(head(df))
+#' @export
+load_synthetic_snds <- function() {
+  # Create a temporary directory to extract the zip file
+  temp_dir <- tempdir()
+  dir2extdata <- system.file("extdata", package = "sndsTools")
+  path2zip <- file.path(
+    dir2extdata,
+    "synthetic_data.zip"
+  )
+  unzip(path2zip, exdir = temp_dir)
+
+  # List all CSV files in the extracted directory
+  csv_files <- list.files(temp_dir, pattern = "\\.csv$", full.names = TRUE)
+
+  # Read each CSV file into a data frame and store in a list
+  data_list <- lapply(csv_files, read.csv,
+    stringsAsFactors = FALSE,
+    fileEncoding = "UTF-8",
+    sep = ";"
+  )
+  names(data_list) <- gsub("\\.csv$", "", basename(csv_files))
+
+  return(data_list)
+}
+
+#' Charge et insère les données synthétiques du SNDS dans une base de données
+#' temporaire
+#'
+#' @description
+#' Cette fonction charge les données synthétiques du SNDS à partir d'un fichier
+#' zip contenu dans le répertoire `synthetic_data.zip`.
+#' Ensuite elle insère chaque table dans une base de données temporaire.
+#' @param conn Connexion à la base de données
+#' @examples
+#' # Connexion à la base de données
+#' conn <- connect_duckdb()
+#' # Insérer les données synthétiques
+#' insert_synthetic_snds(conn)
+#' # Vérifier les tables insérées
+#' tables <- DBI::dbListTables(conn)
+#' print(tables[1:10])
+#' @export
+insert_synthetic_snds <- function(conn) {
+  # Load the synthetic data
+  synthetic_data <- load_synthetic_snds()
+
+  # Loop through each data frame in the list and insert into the database
+  for (table_name in names(synthetic_data)) {
+    df <- synthetic_data[[table_name]]
+    # force datetime conversion
+    if ("EXE_SOI_DTD" %in% colnames(df)) {
+      # Convert the EXE_SOI_DTD column to Date format
+      df$EXE_SOI_DTD <- as.Date(df$EXE_SOI_DTD, format = "%d/%m/%Y")
+    }
+    if ("EXE_SOI_DTF" %in% colnames(df)) {
+      # Convert the EXE_SOI_DTF column to Date format
+      df$EXE_SOI_DTF <- as.Date(df$EXE_SOI_DTF, format = "%d/%m/%Y")
+    }
+    if ("FLX_DIS_DTD" %in% colnames(df)) {
+      # Convert the FLX_DIS_DTD column to Date format
+      df$FLX_DIS_DTD <- as.Date(df$FLX_DIS_DTD, format = "%d/%m/%Y")
+    }
+    for (col in colnames(df)) {
+      if (grepl("_TOP$", col)) {
+        # Convert the date columns to Date format
+        df[[col]] <- as.numeric(
+          tolower(df[[col]]) == "true"
+        )
+      }
+    }
+    # Write the data frame to the database
+    DBI::dbWriteTable(conn, table_name, df)
+  }
+}

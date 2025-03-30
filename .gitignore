@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 docs
+.vscode
 
 *.tar.gz
 # github https token

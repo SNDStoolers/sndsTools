@@ -1,0 +1,48 @@
+---
+title: "Exemple de requêtes simples"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exemple de requêtes simples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(sndsTools)
+library(dplyr)
+```
+
+# Exemple de requêtes simples
+
+Ce document présente quelques exemples de requêtes simples sur la base de données SNDS. Ces exemples sont effectuées à partir d'une base de données fictive fournie par le package `sndsTools`.
+
+Le fonctionnement sur le portail est identique sauf pour la connexion à la base de données. Il faut remplacer `connect_duckdb()` par `connect_oracle()`.
+
+## Connexion à la base de données
+```{r}
+# Instancier une connexion duckdb
+conn <- connect_duckdb() # Remplacer par connect_oracle() sur le portail
+# Charger une base de données fictive SNDS
+insert_synthetic_snds(conn) # Ne pas lancer sur le portail
+# Afficher les tables disponibles
+tables <- DBI::dbListTables(conn)
+# Affiche les 10 premières tables
+print(tables[1:10])
+# Affiche le début de la table principale du DCIR
+er_prs_f <- DBI::dbReadTable(conn, "ER_PRS_F")
+er_prs_f |>
+  dplyr::select(c("BEN_NIR_PSA", "FLX_DIS_DTD", "EXE_SOI_DTD", "PSE_SPE_COD", "PRS_NAT_REF")) |>
+  head(5)
+```
+
+```{r}
+# Extraction des consultations (sans filtre sur les codes prestations ou les spécialités exécutantes)
+extracted_consultations <- extract_consultations_erprsf(start_date = as.Date("2020-01-01"), end_date = as.Date("2021-12-31"), dis_dtd_lag_months = 36, conn = conn)
+extracted_consultations
+```
+
+```{r}
+# Ne pas oublier de déconnecter la base de données
+DBI::dbDisconnect(conn)
+```
