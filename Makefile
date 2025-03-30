@@ -1,15 +1,19 @@
 ## Build the package documentation
 docs-r:
-	Rscript -e 'library(devtools);pkgload::load_all();devtools::document();devtools::check(error_on="error")'
-	Rscript -e 'library(devtools);pkgload::load_all();devtools::document();devtools::check(error_on="error")'
+	Rscript -e 'pkgload::load_all();devtools::document();devtools::check(error_on="error")'
+	Rscript -e 'pkgload::load_all();devtools::document();devtools::check(error_on="error")'
 
 
 ## Build the package website
 docs-html:
-	Rscript -e 'library(devtools);pkgload::load_all();devtools::document();devtools::check(error_on="error")'
+	Rscript -e 'pkgload::load_all();devtools::document();devtools::check(error_on="error")'
 	Rscript -e 'pkgdown::clean_site();devtools::install();pkgdown::build_site()'
-	Rscript -e 'library(devtools);pkgload::load_all();devtools::document();devtools::check(error_on="error")'
+	Rscript -e ';pkgload::load_all();devtools::document();devtools::check(error_on="error")'
 	Rscript -e 'pkgdown::clean_site();devtools::install();pkgdown::build_site()'
+
+## Install the packages
+install:
+	Rscript -e 'devtools::install()'	
 
 ## Build the package sources as .tar.gz
 build:

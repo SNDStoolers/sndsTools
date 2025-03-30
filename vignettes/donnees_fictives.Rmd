@@ -1,0 +1,43 @@
+---
+title: "Exemple de requêtes simples"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exemple de requêtes simples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(sndsTools)
+library(dplyr)
+```
+
+# Exemple de requêtes simples
+
+Ce document présente quelques exemples de requêtes simples sur la base de données SNDS. Il est important de noter que ces requêtes sont à titre d'exemple et ne doivent pas être utilisées telles quelles dans un projet réel. Il est essentiel de comprendre les données et de les adapter à vos besoins spécifiques.
+
+
+```{r}
+snds <- load_synthetic_snds()
+snds[["ER_PRS_F"]]$EXE_SOI_DTD
+devtools::load_all()
+# Instancier une connexion duckdb
+conn <- connect_duckdb()
+# Charger une base de données fictive SNDS*
+insert_synthetic_snds(conn)
+# Afficher les tables disponibles
+tables <- DBI::dbListTables(conn)
+# Affiche les 10 premières tables
+print(tables[1:10])
+# Affiche le début de la table médicaments
+medicaments <- DBI::dbReadTable(conn, "ER_PHA_F")
+er_prs_f <- DBI::dbReadTable(conn, "ER_PRS_F")
+str(er_prs_f)
+```
+
+```{r}
+# Extraction des consultations
+extracted_consultations <- extract_consultations_erprsf(start_date = as.Date("2015-01-01"), end_date = as.Date("2015-01-03"), pse_spe_filter = c("0", "00", "36"), conn = conn)
+```
+
