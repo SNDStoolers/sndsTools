@@ -33,7 +33,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/contribuer.html">Contribuer</a></li>
+<li><a class="dropdown-item" href="../articles/benchmark_dplyr_vs_rsql.html">Benchmarking dplyr vs RSQL</a></li>
+    <li><a class="dropdown-item" href="../articles/contribuer.html">Contribuer</a></li>
     <li><a class="dropdown-item" href="../articles/gouvernance.html">Gouvernance</a></li>
     <li><a class="dropdown-item" href="../articles/paresnds.html">Prise en main</a></li>
   </ul>
@@ -43,7 +44,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/straymat/sndsTools" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SNDStoolers/sndsTools" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -60,7 +61,7 @@
       <h1>Prise en main</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/strayMat/sndsTools/tree/main/vignettes/paresnds.Rmd" class="external-link"><code>vignettes/paresnds.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SNDStoolers/sndsTools/tree/main/vignettes/paresnds.Rmd" class="external-link"><code>vignettes/paresnds.Rmd</code></a></small>
       <div class="d-none name"><code>paresnds.Rmd</code></div>
     </div>
 
@@ -88,11 +89,10 @@ bonnes pratiques pour utiliser ces données.</p>
 copier/coller le code source du paquet sur le portail CNAM. Pour cela,
 il faut suivre les étapes suivantes :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## 1. En local</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">"cat sndsTools/R/* &gt; sndsTools.R"</span><span class="op">)</span></span>
-<span><span class="co">## 2. Copier/coller le fichier sndsTools.R sur le portail CNAM</span></span>
-<span><span class="co">## 3. Sur le portail CNAM</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"sndsTools.R"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">## 1. En local (sur votre ordinateur) : Copier le fichier contenant toutes les fonctions: [sndsTools_all.R](https://github.com/SNDStoolers/sndsTools/sndsTools_all.R)</span></span>
+<span><span class="co">## 2. Sur le portail CNAM, coller le fichier sndsTools.R sur le portail CNAM</span></span>
+<span><span class="co">## 3. Sur le portail CNAM, charger toutes les fonctions du paquet:</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"sndsTools_all.R"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="en-local-pour-le-développement-du-paquet">En local (pour le développement du paquet)<a class="anchor" aria-label="anchor" href="#en-local-pour-le-d%C3%A9veloppement-du-paquet"></a>
@@ -102,7 +102,7 @@ il faut suivre les étapes suivantes :</p>
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span>dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Puis pour charger le paquet :</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://straymat.github.io/sndsTools/" class="external-link">sndsTools</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/" class="external-link">sndsTools</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -117,7 +117,7 @@ il faut suivre les étapes suivantes :</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>

@@ -22,13 +22,14 @@ et end_date (incluses) sont extraites."></head><body>
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/contribuer.html">Contribuer</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/benchmark_dplyr_vs_rsql.html">Benchmarking dplyr vs RSQL</a></li>
+    <li><a class="dropdown-item" href="../articles/contribuer.html">Contribuer</a></li>
     <li><a class="dropdown-item" href="../articles/gouvernance.html">Gouvernance</a></li>
     <li><a class="dropdown-item" href="../articles/paresnds.html">Prise en main</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/straymat/sndsTools" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SNDStoolers/sndsTools" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -38,7 +39,7 @@ et end_date (incluses) sont extraites."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Extraction des consultations dans le DCIR.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/strayMat/sndsTools/tree/main/R/extract_consultations_erprsf.R" class="external-link"><code>R/extract_consultations_erprsf.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SNDStoolers/sndsTools/tree/main/R/extract_consultations_erprsf.R" class="external-link"><code>R/extract_consultations_erprsf.R</code></a></small>
       <div class="d-none name"><code>extract_consultations_erprsf.Rd</code></div>
     </div>
 
@@ -88,7 +89,8 @@ sont extraites. Défaut à <code>NULL</code>.</p></dd>
 prestations à extraire en norme B5 (colonne <code>PRS_NAT_REF</code>, référentiel
 <code>IR_NAT_V</code>). Si <code>prestation_filter</code> n'est pas fourni, les consultations de
 tous les prestations sont extraites. Les codes des prestations sont
-disponibles sur la page <a href="https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html" class="external-link">"Cibler selon les natures de prestations"</a> de la documentation SNDS. Défaut à <code>NULL</code>.</p></dd>
+disponibles sur la page "Cibler selon les natures de prestations"(https://documentation-snds.health-data-hub.fr/snds/fiches/
+prestation.html) de la documentation SNDS. Défaut à <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-dis-dtd-lag-months">dis_dtd_lag_months<a class="anchor" aria-label="anchor" href="#arg-dis-dtd-lag-months"></a></dt>
@@ -109,7 +111,8 @@ aux BEN_IDT_ANO fournis. Défaut à <code>NULL</code>.</p></dd>
 <dt id="arg-output-table-name">output_table_name<a class="anchor" aria-label="anchor" href="#arg-output-table-name"></a></dt>
 <dd><p>Character (Optionnel). Si fourni, les résultats
 seront sauvegardés dans une table portant ce nom dans la base de données au
-lieu d'être retournés sous forme de data frame. Si cette table existe déjà, le programme s'arrête avec un message d'erreur. Défaut à <code>NULL</code>.</p></dd>
+lieu d'être retournés sous forme de data frame. Si cette table existe déjà,
+le programme s'arrête avec un message d'erreur. Défaut à <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-conn">conn<a class="anchor" aria-label="anchor" href="#arg-conn"></a></dt>
@@ -142,9 +145,10 @@ extraites. Dans le cas contraire, les consultations de tous les patients sont
 extraites.</p>
 <p>Pour être à flux constant sur l'ensemble des années, il faut utiliser
 <code>dis_dtd_lag_months = 27</code> Cela rallonge le temps d'extraction alors que
-l'impact sur l'extraction est minime car <a href="https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-2-2-dates" class="external-link">la Cnam estime que 99 % des soins sont remontés à 6 mois</a> c'est-à-dire pour <code>dis_dtd_lag_months = 6</code>.</p>
+l'impact sur l'extraction est minime car <a href="https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-2-2-dates" class="external-link">la Cnam estime que 99 % des soins sont remontés à 6 mois</a>
+c'est-à-dire pour <code>dis_dtd_lag_months = 6</code>.</p>
 <p>Un guide sur l'activité des médecins libéraux est disponibles sur la page
-<a href="https://documentation-snds.health-data-hub.fr/snds/fiches/activite_medecins.html#contexte" class="external-link">Activité des médecins libéraux</a>.</p>
+<a href="https://documentation-snds.health-data-hub.fr/snds/fiches/activite_medecins.html#contexte" class="external-link">Activité des médecins libéraux</a>. #nolint</p>
     </div>
 
     <div class="section level2">
@@ -167,7 +171,7 @@ l'impact sur l'extraction est minime car <a href="https://documentation-snds.hea
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer></div>
