@@ -7,34 +7,44 @@
 #' end_date sont extraites.
 #'
 #' @details
-#' Si spe_codes est renseigné, seules les consultations des spécialités
+#' Si spe_codes_filter est renseigné, seules les consultations des spécialités
 #' correspondantes sont extraites.
 #'
-#' Si prestation_codes est renseigné, seules les consultations des prestations
-#' correspondantes sont extraites.
+#' Si prestation_codes_filter est renseigné, seules les consultations des
+#' prestations correspondantes sont extraites.
 #'
-#' Si patients_ids est fourni, seules les délivrances de médicaments pour les
-#' patients dont les identifiants sont dans patients_ids sont extraites.
+#' Si ccam_codes_filter est renseigné, seules les consultations des actes
+#' médicaux correspondants sont extraites. Notez que si `ccam_codes_filter` est
+#' fourni, `spe_codes_filter` et `prestation_codes_filter` peuvent être nuls, et
+#' vice versa.
+#'
+#' Si patients_ids_filter est fourni, seules les délivrances de médicaments pour
+#' les patients dont les identifiants sont dans patients_ids_filter sont
+#' extraites.
 #'
 #' @param start_date Date La date de début de la période sur laquelle extraire
 #' les consultations.
 #' @param end_date Date La date de fin de la période sur laquelle extraire les
 #' consultations.
 #' @param spe_codes_filter character vector Optionnel. Les codes spécialités des
-#' médecins effectuant les consultations à extraire. Si `spe_codes` n'est pas
+#' médecins effectuant les consultations à extraire. Si `spe_codes_filter` n'est pas
 #' fourni, les consultations de tous les spécialités sont extraites.
 #' @param prestation_codes_filter character vector Optionnel. Les codes des
-#' prestations à extraire. Si `prestation_codes` n'est pas fourni, les
+#' prestations à extraire. Si `prestation_codes_filter` n'est pas fourni, les
 #' consultations de tous les prestations sont extraites. Les codes des
 #' prestations sont disponibles sur la page [actes et consultations externes de
 #' la documentation
 #' SNDS](https://documentation-snds.health-data-hub.fr/snds/fiches/actes_consult_externes.html#exemple-de-requetes-pour-analyse).
+#' @param ccam_codes_filter character vector Optionnel. Les codes CCAM des actes
+#' médicaux des consultations à extraire. Si `ccam_codes_filter` n'est pas fourni, les
+#' consultations de tous les actes sont extraites. Les codes des actes médicaux
+#' d'après la CCAM est disponible sur [le site de cette dernière](https://www.ameli.fr/accueil-de-la-ccam/index.php).
 #' @param patient_ids_filter data.frame Optionnel. Un data.frame contenant les
 #' paires d'identifiants des patients pour lesquels les consultations doivent
 #' être extraites. Les colonnes de ce data.frame doivent être `BEN_IDT_ANO` et
 #' `BEN_NIR_PSA` (en majuscules). Les `BEN_NIR_PSA` doivent être tous les
-#' `BEN_NIR_PSA` associés aux `BEN_IDT_ANO` fournis. Si `patients_ids` n'est pas
-#' fourni, les consultations de tous les patients sont extraites.
+#' `BEN_NIR_PSA` associés aux `BEN_IDT_ANO` fournis. Si `patient_ids_filter`
+#' n'est pas fourni, les consultations de tous les patients sont extraites.
 #' @param output_table_name character Optionnel. Le nom de la table de sortie
 #' dans la base de données. Si `output_table_name` n'est pas fourni, une table
 #' de sortie intermédiaire est créée en R. Si `output_table_name` est fourni
@@ -47,19 +57,34 @@
 #' @return Un data.frame contenant les consultations. Les colonnes sont les
 #' suivantes :
 #' - `BEN_IDT_ANO` : Identifiant bénéficiaire anonymisé (seulement si
-#' - patient_ids
-#'   non nul)
+#' patient_ids_filter non nul)
 #' - `NIR_ANO_17` : NIR anonymisé
 #' - `EXE_SOI_DTD` : Date de la délivrance
-#' - `ACT_COD` : Code de l'acte
+#' - `ACT_COD` : Code prestation de l'acte
 #' - `EXE_SPE` : Code de spécialité du professionnel de soin prescripteur
+#' - `CCAM_COD` : Code de l'acte médical classifié avec la CCAM.
 #'
 #' @examples
 #' \dontrun{
+#' # Extraction des consultations à l'hôpital en 2019 pour les spécialités 01 et 02
 #' extract_hospital_consultations(
 #'   start_date = as.Date("2019-01-01"),
 #'   end_date = as.Date("2019-12-31"),
-#'   spe_codes = c("01", "02")
+#'   spe_codes_filter = c("01", "02")
+#' )
+#' # Extraction de consultations à l'hôpital à partir de code CCAM
+#' extract_hospital_consultations(
+#'   start_date = as.Date("2019-01-01"),
+#'   end_date = as.Date("2019-12-31"),
+#'   ccam_codes_filter = c("ACQK001", "ACQH003")
+#' )
+#' # Extraction de consultations à l'hôpital à partir de code CCAM et de spécialités
+#' extract_hospital_consultations(
+#'   start_date = as.Date("2019-01-01"),
+#'   end_date = as.Date("2019-12-31"),
+#'   ccam_codes_filter = c("ACQK001", "ACQH003"),
+#'   spe_codes_filter = c("01", "02")
+#'
 #' )
 #' }
 #' @export
@@ -70,6 +95,7 @@ extract_hospital_consultations <- function(
   end_date,
   spe_codes_filter = NULL,
   prestation_codes_filter = NULL,
+  ccam_codes_filter = NULL,
   patient_ids_filter = NULL,
   output_table_name = NULL,
   conn = NULL
@@ -129,8 +155,10 @@ extract_hospital_consultations <- function(
 
     formatted_year <- sprintf("%02d", year %% 100)
 
-    cstc <-
-      dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}CSTC")) |>
+    date_condition <- glue::glue(
+      "EXE_SOI_DTD <= DATE '{formatted_end_date}' AND EXE_SOI_DTD >= DATE '{formatted_start_date}'" # nolint
+    )
+    cstc <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}CSTC")) |>
       dplyr::filter(
         NIR_RET == "0",
         NAI_RET == "0",
@@ -138,31 +166,47 @@ extract_hospital_consultations <- function(
         ENT_DAT_RET == "0",
         IAS_RET == "0"
       ) |>
+      dplyr::filter(dbplyr::sql(date_condition)) |>
       dplyr::select(ETA_NUM, SEQ_NUM, NIR_ANO_17, EXE_SOI_DTD) |>
       dplyr::distinct()
 
-    fcstc <-
-      dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}FCSTC")) |>
-      dplyr::select(ETA_NUM, SEQ_NUM, ACT_COD, EXE_SPE) |>
+    # Filtre sur codes CCAM
+    fmstc <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}FMSTC")) |>
+      dplyr::select(ETA_NUM, SEQ_NUM, CCAM_COD) |>
       dplyr::distinct()
-
-    date_condition <- glue::glue(
-      "EXE_SOI_DTD <= DATE '{formatted_end_date}' AND EXE_SOI_DTD >= DATE '{formatted_start_date}'" # nolint
-    )
-    ace <- cstc |>
-      dplyr::filter(dbplyr::sql(date_condition)) |>
-      dplyr::left_join(fcstc, by = c("ETA_NUM", "SEQ_NUM")) |>
-      dplyr::select(NIR_ANO_17, EXE_SOI_DTD, ACT_COD, EXE_SPE) |>
-      dplyr::distinct()
-
+    if (!is.null(ccam_codes_filter)) {
+      fmstc <- fmstc |>
+        dplyr::filter(CCAM_COD %in% ccam_codes_filter)
+      ace <- cstc |>
+        dplyr::inner_join(fmstc, by = c("ETA_NUM", "SEQ_NUM")) |>
+        dplyr::distinct()
+    } else {
+      # joining with fmstc without filtering on ccam codes
+      ace <- cstc |>
+        dplyr::left_join(fmstc, by = c("ETA_NUM", "SEQ_NUM")) |>
+        dplyr::distinct()
+    }
+    # Filtre sur codes prestatioon et spécialités
+    fcstc <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}FCSTC")) |>
+      dplyr::select(ETA_NUM, SEQ_NUM, ACT_COD, EXE_SPE)
+    if (!is.null(prestation_codes_filter)) {
+      fcstc <- fcstc |>
+        dplyr::filter(ACT_COD %in% prestation_codes_filter)
+    }
     if (!is.null(spe_codes_filter)) {
-      ace <- ace |>
+      fcstc <- fcstc |>
         dplyr::filter(EXE_SPE %in% spe_codes_filter)
     }
-
-    if (!is.null(prestation_codes_filter)) {
+    if (!is.null(prestation_codes_filter) || !is.null(spe_codes_filter)) {
+      # joining all tables
       ace <- ace |>
-        dplyr::filter(ACT_COD %in% prestation_codes_filter)
+        dplyr::inner_join(fcstc, by = c("ETA_NUM", "SEQ_NUM")) |>
+        dplyr::distinct()
+    } else {
+      # joining with fcstc without filtering on prestation and spe codes
+      ace <- ace |>
+        dplyr::left_join(fcstc, by = c("ETA_NUM", "SEQ_NUM")) |>
+        dplyr::distinct()
     }
 
     if (!is.null(patient_ids_filter)) {
@@ -178,13 +222,14 @@ extract_hospital_consultations <- function(
           "BEN_IDT_ANO",
           "NIR_ANO_17",
           "EXE_SOI_DTD",
+          "CCAM_COD",
           "ACT_COD",
           "EXE_SPE"
         )
     } else {
       query <- ace
       selected_columns <-
-        c("NIR_ANO_17", "EXE_SOI_DTD", "ACT_COD", "EXE_SPE")
+        c("NIR_ANO_17", "EXE_SOI_DTD", "CCAM_COD", "ACT_COD", "EXE_SPE")
     }
     query <- query |>
       dplyr::select(dplyr::all_of(selected_columns)) |>
