@@ -94,6 +94,7 @@ extract_hospital_consultations <- function(start_date,
     output_table_name <- glue::glue("TMP_DISP_{timestamp}")
   }
 
+
   start_year <- lubridate::year(start_date)
   end_year <- lubridate::year(end_date)
   formatted_start_date <- format(start_date, "%Y-%m-%d")
@@ -141,9 +142,9 @@ extract_hospital_consultations <- function(start_date,
       dplyr::select(ETA_NUM, SEQ_NUM, ACT_COD, EXE_SPE) |>
       dplyr::distinct()
 
-    date_condition <- glue::glue("
-    EXE_SOI_DTD <= DATE '{formatted_end_date}'
-      AND EXE_SOI_DTD >= DATE '{formatted_start_date}'")
+    date_condition <- glue::glue(
+      "EXE_SOI_DTD <= DATE '{formatted_end_date}' AND EXE_SOI_DTD >= DATE '{formatted_start_date}'" # nolint
+    )
     ace <- cstc |>
       filter(dbplyr::sql(date_condition)) |>
       dplyr::left_join(fcstc, by = c("ETA_NUM", "SEQ_NUM")) |>

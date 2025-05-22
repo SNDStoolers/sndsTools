@@ -42,4 +42,3 @@ reference:
   - connect_duckdb
   - connect_oracle
   - gather_table_stats
-
