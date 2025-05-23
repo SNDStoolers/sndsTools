@@ -117,7 +117,10 @@ test_that("build_dp_dr_conditions works correctly", {
   )
   expect_equal(
     result1,
-    "DGN_PAL LIKE 'A00%' OR DGN_PAL LIKE 'B00%' OR DGN_REL LIKE 'A00%' OR DGN_REL LIKE 'B00%'"
+    paste0(
+      "DGN_PAL LIKE 'A00%' OR DGN_PAL LIKE 'B00%' OR ",
+      "DGN_REL LIKE 'A00%' OR DGN_REL LIKE 'B00%'"
+    )
   )
 
   # Test with include_dr = FALSE

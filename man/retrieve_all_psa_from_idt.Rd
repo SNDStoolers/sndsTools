@@ -90,8 +90,8 @@ présentant des inconsistances relatives aux codes sexe.
 }
 }
 \details{
-La fonction retourne une copie du/des référentiel(s) \code{ÌR_BEN_R}
-(/\code{ÌR_BEN_R_ARC}) dans une table dédoublonnée avec des indicateurs visant
+La fonction retourne une copie du/des référentiel(s) \code{IR_BEN_R}
+(/\code{IR_BEN_R_ARC}) dans une table dédoublonnée avec des indicateurs visant
 à améliorer le processus d'inclusion.
 }
 \examples{

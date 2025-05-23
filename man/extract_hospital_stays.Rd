@@ -127,8 +127,7 @@ successivement à cette table "séjour" les tables T_MCO\emph{D et T_MCO}UM.
 Finalement, les deux tables obtenues sont concaténées horizontalement. Il est
 donc fréquent d'avoir des doublons concernant les colonnes des tables B et C
 dans les lignes de la table résultante. Une explication détaillée et un
-diagramme illustrant le fonctionnement retenu sont disponibles sur  \link[le
-github du projet Scalpel]{https://github.com/X-DataInitiative/SCALPEL-Flattening/blob/DREES-104-DocFlattening/README_joins.md#the-pmsi-flattening}.
+diagramme illustrant le fonctionnement retenu sont disponibles sur \href{https://github.com/X-DataInitiative/SCALPEL-Flattening/blob/DREES-104-DocFlattening/README_joins.md#the-pmsi-flattening}{le github du projet Scalpel}.
 }
 \examples{
 \dontrun{

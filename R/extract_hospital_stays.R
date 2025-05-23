@@ -103,6 +103,7 @@ build_da_conditions <- function(cim10_codes = NULL) {
   collapsed_conditions
 }
 
+# nolint start
 #' Extraction des diagnostics des séjours hospitaliers (MCO).
 #'
 #' @description Cette fonction permet d'extraire les diagnostics des séjours
@@ -133,8 +134,7 @@ build_da_conditions <- function(cim10_codes = NULL) {
 #' Finalement, les deux tables obtenues sont concaténées horizontalement. Il est
 #' donc fréquent d'avoir des doublons concernant les colonnes des tables B et C
 #' dans les lignes de la table résultante. Une explication détaillée et un
-#' diagramme illustrant le fonctionnement retenu sont disponibles sur  \link[le
-#' github du projet Scalpel]{https://github.com/X-DataInitiative/SCALPEL-Flattening/blob/DREES-104-DocFlattening/README_joins.md#the-pmsi-flattening}.
+#' diagramme illustrant le fonctionnement retenu sont disponibles sur [le github du projet Scalpel](https://github.com/X-DataInitiative/SCALPEL-Flattening/blob/DREES-104-DocFlattening/README_joins.md#the-pmsi-flattening).
 #'
 #' @param start_date Date La date de début de la période sur laquelle extraire
 #' les séjours.
@@ -212,6 +212,7 @@ build_da_conditions <- function(cim10_codes = NULL) {
 #'     c("A00", "B00")
 #' )  @export
 #' }
+# nolint end
 extract_hospital_stays <- function(start_date,
                                    end_date,
                                    dp_cim10_codes_filter = NULL,

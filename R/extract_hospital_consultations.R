@@ -1,3 +1,4 @@
+# nolint start
 #' Extraction des consultations externes à l'hôpital (MCO).
 #'
 #' @description
@@ -62,6 +63,7 @@
 #' )
 #' }
 #' @export
+# nolint end
 extract_hospital_consultations <- function(start_date,
                                            end_date,
                                            spe_codes_filter = NULL,

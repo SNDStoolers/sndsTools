@@ -1,3 +1,4 @@
+# nolint start
 #' Extraction des consultations dans le DCIR.
 #' @description
 #' Cette fonction permet d'extraire les consultations dans le DCIR. Les
@@ -21,7 +22,7 @@
 #'
 #' Un guide sur l'activité des médecins libéraux est disponibles sur la page
 #' [Activité des médecins
-#' libéraux](https://documentation-snds.health-data-hub.fr/snds/fiches/activite_medecins.html#contexte). #nolint
+#' libéraux](https://documentation-snds.health-data-hub.fr/snds/fiches/activite_medecins.html#contexte).
 #'
 #' @param start_date Date. La date de début de la période des consultations à
 #' extraire.
@@ -35,9 +36,7 @@
 #' prestations à extraire en norme B5 (colonne `PRS_NAT_REF`, référentiel
 #' `IR_NAT_V`). Si `prestation_filter` n'est pas fourni, les consultations de
 #' tous les prestations sont extraites. Les codes des prestations sont
-#' disponibles sur la page ["Cibler selon les natures de
-#' prestations"](https://documentation-snds.health-data-hub.fr/snds/fiches/
-#' prestation.html) de la documentation SNDS. Défaut à `NULL`.
+#' disponibles sur la page ["Cibler selon les natures de prestations"](https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html) de la documentation SNDS. Défaut à `NULL`.
 #' @param dis_dtd_lag_months Integer (Optionnel). Le nombre maximum de mois de
 #' décalage de `FLX_DIS_DTD` par rapport à `EXE_SOI DTD` pris en compte pour
 #' récupérer les consultations. Défaut à 6 mois.
@@ -75,6 +74,7 @@
 #' )
 #' }
 #' @export
+# nolint end
 extract_consultations_erprsf <- function(start_date,
                                          end_date,
                                          pse_spe_filter = NULL,
@@ -197,7 +197,7 @@ extract_consultations_erprsf <- function(start_date,
         # Suppression des majorations
         (CPL_AFF_COD != 16),
         # Suppression des participations forfaitaires!(PSE_STJ_COD %in% c(61,
-        # 62, 63, 64, 69)), Suppression des prestations de professionneles
+        # 62, 63, 64, 69)), Suppression des prestations de professionnelles
         # exécutants salariés (impact négligeable)
         PRS_ACT_QTE > 0
       )

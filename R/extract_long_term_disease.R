@@ -1,3 +1,4 @@
+# nolint start
 #' Extraction des Affections Longue Durée (ALD)
 #' @description
 #' Cette fonction permet d'extraire des ALD actives au
@@ -77,7 +78,6 @@
 #' }
 #' @export
 extract_long_term_disease <- function(
-    # nolint:
     start_date = NULL,
     end_date = NULL,
     icd_cod_starts_with = NULL,
@@ -87,6 +87,7 @@ extract_long_term_disease <- function(
     output_table_name = NULL,
     overwrite = FALSE,
     conn = NULL) {
+  # nolint end. Force # nolint: cyclocomp_linter for the function.
   stopifnot(
     !is.null(start_date),
     !is.null(end_date),
