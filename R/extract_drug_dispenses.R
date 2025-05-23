@@ -1,3 +1,4 @@
+# nolint start
 #' Extraction des délivrances de médicaments.
 #'
 #' @description Cette fonction permet
@@ -89,6 +90,7 @@
 #' )
 #' }
 #' @export
+# nolint end
 extract_drug_dispenses <- function(start_date, # nolint
                                    end_date,
                                    atc_cod_starts_with_filter = NULL,
