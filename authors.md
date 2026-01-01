@@ -17,14 +17,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/SNDStoolers/sndsTools/tree/main/DESCRIPTION)
 
-Belloir A, Doutreligne M, Soeiro T, Dibling M (2025). *sndsTools:
+Belloir A, Doutreligne M, Soeiro T, Dibling M (2026). *sndsTools:
 Extraction de recours aux soins sur le SNDS en R*. R package version
 0.0.0.1, <https://sndstoolers.github.io/sndsTools/index.html/>.
 
     @Manual{,
       title = {sndsTools: Extraction de recours aux soins sur le SNDS en R},
       author = {Antoine Belloir and Matthieu Doutreligne and Thomas Soeiro and Marc Dibling},
-      year = {2025},
+      year = {2026},
       note = {R package version 0.0.0.1},
       url = {https://sndstoolers.github.io/sndsTools/index.html/},
     }
