@@ -37,6 +37,9 @@
 #' `IR_NAT_V`). Si `prestation_filter` n'est pas fourni, les consultations de
 #' tous les prestations sont extraites. Les codes des prestations sont
 #' disponibles sur la page ["Cibler selon les natures de prestations"](https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html) de la documentation SNDS. Défaut à `NULL`.
+#' @param analyse_couts Logical (Optionnel). Si `TRUE`, les filtres de qualité
+#' liés aux coûts, écartant les actes en majorations sont ignorés. Utile pour
+#' des analyses portant sur les coûts. Défaut à `FALSE`.
 #' @param dis_dtd_lag_months Integer (Optionnel). Le nombre maximum de mois de
 #' décalage de `FLX_DIS_DTD` par rapport à `EXE_SOI DTD` pris en compte pour
 #' récupérer les consultations. Défaut à 6 mois.
@@ -75,16 +78,20 @@
 #' }
 #' @export
 # nolint end
-extract_consultations_erprsf <- function(start_date,
-                                         end_date,
-                                         pse_spe_filter = NULL,
-                                         prestation_filter = NULL,
-                                         dis_dtd_lag_months = 6,
-                                         patients_ids_filter = NULL,
-                                         output_table_name = NULL,
-                                         conn = NULL) {
+extract_consultations_erprsf <- function(
+  start_date,
+  end_date,
+  pse_spe_filter = NULL,
+  prestation_filter = NULL,
+  analyse_couts = FALSE,
+  dis_dtd_lag_months = 6,
+  patients_ids_filter = NULL,
+  output_table_name = NULL,
+  conn = NULL
+) {
   stopifnot(
-    !is.null(start_date), !is.null(end_date),
+    !is.null(start_date),
+    !is.null(end_date),
     inherits(start_date, "Date"),
     inherits(end_date, "Date"),
     start_date <= end_date
@@ -136,10 +143,12 @@ extract_consultations_erprsf <- function(start_date,
 
   if (!is.null(pse_spe_filter)) {
     print(
-      glue::glue("
+      glue::glue(
+        "
       Extracting consultations
       from all specialties among
-      {paste(pse_spe_filter, collapse = ' or ')}...")
+      {paste(pse_spe_filter, collapse = ' or ')}..."
+      )
     )
   } else {
     print(glue::glue("Extracting consultations from all specialties codes..."))
@@ -153,11 +162,13 @@ extract_consultations_erprsf <- function(start_date,
   )
   pb$tick(0)
   for (year in start_year:end_year) {
-    pb$tick(tokens = list(
-      year1 = year,
-      year2 = start_year,
-      year3 = end_year
-    ))
+    pb$tick(
+      tokens = list(
+        year1 = year,
+        year2 = start_year,
+        year3 = end_year
+      )
+    )
     if (year < first_non_archived_year) {
       er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
     } else {
@@ -170,8 +181,10 @@ extract_consultations_erprsf <- function(start_date,
         AND DATE '{formatted_dis_dtd_end_date}'"
       )
     } else {
-      dis_dtd_condition <- glue::glue("FLX_DIS_DTD BETWEEN DATE '{year}-02-01'
-      AND DATE '{year + 1}-01-01'")
+      dis_dtd_condition <- glue::glue(
+        "FLX_DIS_DTD BETWEEN DATE '{year}-02-01'
+      AND DATE '{year + 1}-01-01'"
+      )
     }
     soi_dtd_condition <- glue::glue(
       "EXE_SOI_DTD BETWEEN DATE '{formatted_start_date}'
@@ -189,18 +202,20 @@ extract_consultations_erprsf <- function(start_date,
       dplyr::filter(
         (DPN_QLF != 71 | is.na(DPN_QLF)),
         # Suppression de l'activité des actes et consultations externes (ACE)
-        # rémontée pour information, cette activité est mesurée par ailleurs
+        # remontée pour information, cette activité est mesurée par ailleurs
         # pour les établissements de santé dans le champ de la SAE
         (PRS_DPN_QLP != 71 | is.na(PRS_DPN_QLP)),
-        # Suppression des ACE pour information
-        (CPL_MAJ_TOP < 2),
-        # Suppression des majorations
-        (CPL_AFF_COD != 16),
-        # Suppression des participations forfaitaires!(PSE_STJ_COD %in% c(61,
-        # 62, 63, 64, 69)), Suppression des prestations de professionnelles
-        # exécutants salariés (impact négligeable)
-        PRS_ACT_QTE > 0
       )
+    if (!analyse_couts) {
+      er_prs_f_clean <- er_prs_f_clean |>
+        dplyr::filter(
+          # Suppression des ACE pour information
+          (CPL_MAJ_TOP < 2),
+          # Suppression des majorations
+          (CPL_AFF_COD != 16),
+          PRS_ACT_QTE > 0
+        )
+    }
 
     cols_to_select <- c(
       "EXE_SOI_DTD",
@@ -210,12 +225,22 @@ extract_consultations_erprsf <- function(start_date,
       "PRS_ACT_QTE",
       "BEN_RNG_GEM"
     )
+    # apply query filters
     query <- er_prs_f_clean |>
-      dplyr::filter(
-        PRS_NAT_REF %in% prestation_filter,
-        PSE_SPE_COD %in% pse_spe_filter
-      ) |>
-      dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select)) |>
+      dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select))
+    if (!is.null(prestation_filter)) {
+      query <- query |>
+        dplyr::filter(
+          PRS_NAT_REF %in% prestation_filter
+        )
+    }
+    if (!is.null(pse_spe_filter)) {
+      query <- query |>
+        dplyr::filter(
+          PSE_SPE_COD %in% pse_spe_filter
+        )
+    }
+    query <- query |>
       dplyr::distinct()
 
     # TODO : le lien avec les patients_ids_filter pourrait être extrait comme un
