@@ -46,3 +46,7 @@ reference:
   - gather_table_stats
   - retrieve_all_psa_from_idt
   - retrieve_all_psa_from_psa
+- title: Données factices
+  desc: Fonctions pour générer des données factices similaires à celles du SNDS.
+- contents:
+  - starts_with("create_mock")
