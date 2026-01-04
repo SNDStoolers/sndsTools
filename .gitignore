@@ -7,3 +7,5 @@ docs
 *.tar.gz
 # github https token
 .github_token
+.vscode/
+.idea/

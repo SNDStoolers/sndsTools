@@ -1,0 +1,28 @@
+{
+    "name": "R Package Dev (Rocker)",
+    "image": "rocker/tidyverse:latest",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "REditorSupport.r",
+                "Posit.air-vscode",
+                "rooveterinaryinc.roo-cline" // AI agentic editor
+            ],
+            "settings": {
+                "r.plot.view": "httpgd",
+                "r.bracketedPaste": true,
+                "[r]": {
+                    "editor.defaultFormatter": "Posit.air-vscode",
+                    "editor.formatOnSave": true
+                },
+                "[quarto]": {
+                    "editor.defaultFormatter": "Posit.air-vscode",
+                    "editor.formatOnSave": true
+                }
+            }
+        }
+    },
+    "remoteUser": "root",
+    "postCreateCommand": "Rscript -e 'install.packages(c(\"devtools\", \"roxygen2\", \"testthat\", \"httpgd\", \"lintr\"))' && Rscript -e 'devtools::install(upgrade=\"never\")' && echo 'export PATH=\"$HOME/.vscode-server/extensions/posit.air-vscode-0.18.0-linux-x64/bundled/bin:$PATH\"' >> ~/.bashrc",
+    "postStartCommand": ". ~/.bashrc" // corresponding to source ~/.bashrc but working in dev container.
+}
