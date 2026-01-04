@@ -11,13 +11,27 @@ library(lubridate)
 
 ben_ids_orauser <- "BEN_FILTERED_IDS"
 
-selected_ben <- readRDS("~/sasdata1/pathologies-retrieval-snds/data/processed/ben_filtered.RDS")
+selected_ben <- readRDS(
+  "~/sasdata1/pathologies-retrieval-snds/data/processed/ben_filtered.RDS"
+)
 selected_ben <- selected_ben %>%
   select(ben_idt_ano, first_series_date) %>%
   mutate(first_series_date = as.Date(first_series_date)) %>%
   distinct()
 
-cancer_codes <- c("C", "D00", "D01", "D02", "D03", "D04", "D05", "D06", "D07", "D08", "D09")
+cancer_codes <- c(
+  "C",
+  "D00",
+  "D01",
+  "D02",
+  "D03",
+  "D04",
+  "D05",
+  "D06",
+  "D07",
+  "D08",
+  "D09"
+)
 
 retrieval_start_date <- as.Date("01/01/2009", format = "%d/%m/%Y")
 retrieval_end_date <- as.Date("31/12/2013", format = "%d/%m/%Y")
@@ -111,11 +125,12 @@ has_cancer_atcd <- selected_ben %>%
   left_join(has_hospital_stay, by = "ben_idt_ano") %>%
   left_join(has_ongoing_ald, by = "ben_idt_ano") %>%
   mutate(
-    has_cancer_atcd = (
-      (!is.na(has_hospital_stay) & has_hospital_stay) |
-        (!is.na(has_ald) & has_ald)
-    )
+    has_cancer_atcd = ((!is.na(has_hospital_stay) & has_hospital_stay) |
+      (!is.na(has_ald) & has_ald))
   ) %>%
   distinct()
 
-saveRDS(has_cancer_atcd, "~/sasdata1/pathologies-retrieval-snds/data/processed/has_cancer_atcd.RDS")
+saveRDS(
+  has_cancer_atcd,
+  "~/sasdata1/pathologies-retrieval-snds/data/processed/has_cancer_atcd.RDS"
+)

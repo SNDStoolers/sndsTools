@@ -55,7 +55,8 @@ fake_erprsf <- data.frame(
   PRS_ACT_QTE = c(1, 1, 1, 1, 1),
   BSE_REM_MNT = c(1, 1, 1, 1, 1),
   BSE_PRS_NAT = c(1, 1, 1, 1, 1)
-) |> cbind(fake_dcir_join_keys)
+) |>
+  cbind(fake_dcir_join_keys)
 
 fake_erphaf <- data.frame(
   PHA_PRS_C13 = c(
@@ -69,7 +70,8 @@ fake_erphaf <- data.frame(
   PHA_PRS_IDE = c(1, 2, 3, 4, 5),
   PHA_DEC_TOP = c(1, 1, 1, 1, 1),
   PHA_DEC_QSU = c(1, 1, 1, 1, 1)
-) |> cbind(fake_dcir_join_keys)
+) |>
+  cbind(fake_dcir_join_keys)
 
 fake_irphar <- data.frame(
   PHA_CIP_C13 = c(
@@ -89,7 +91,8 @@ fake_eretef <- data.frame(
   "ETE_IND_TAA" = c(10, 10, 10),
   "ETB_EXE_FIN" = c(1, 1, 1),
   "ETE_MCO_DDP" = c(1, 1, 1)
-) |> cbind(fake_dcir_join_keys |> head(3))
+) |>
+  cbind(fake_dcir_join_keys |> head(3))
 
 
 conn <- connect_duckdb()
@@ -149,7 +152,6 @@ test_that("sql_extract_drug_dispenses works for CIP13", {
     conn = conn
   )
   drug_dispenses <- dplyr::tbl(conn, "TMP_DRUG_DISPENSES")
-
 
   expect_equal(
     drug_dispenses |>

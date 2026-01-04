@@ -74,16 +74,19 @@
 #' )
 #' }
 #' @export
-extract_consultations_erprsf <- function(start_date,
-                                         end_date,
-                                         pse_spe_filter = NULL,
-                                         prestation_filter = NULL,
-                                         dis_dtd_lag_months = 6,
-                                         patients_ids_filter = NULL,
-                                         output_table_name = NULL,
-                                         conn = NULL) {
+extract_consultations_erprsf <- function(
+  start_date,
+  end_date,
+  pse_spe_filter = NULL,
+  prestation_filter = NULL,
+  dis_dtd_lag_months = 6,
+  patients_ids_filter = NULL,
+  output_table_name = NULL,
+  conn = NULL
+) {
   stopifnot(
-    !is.null(start_date), !is.null(end_date),
+    !is.null(start_date),
+    !is.null(end_date),
     inherits(start_date, "Date"),
     inherits(end_date, "Date"),
     start_date <= end_date
@@ -135,10 +138,12 @@ extract_consultations_erprsf <- function(start_date,
 
   if (!is.null(pse_spe_filter)) {
     print(
-      glue::glue("
+      glue::glue(
+        "
       Extracting consultations
       from all specialties among
-      {paste(pse_spe_filter, collapse = ' or ')}...")
+      {paste(pse_spe_filter, collapse = ' or ')}..."
+      )
     )
   } else {
     print(glue::glue("Extracting consultations from all specialties codes..."))
@@ -152,11 +157,13 @@ extract_consultations_erprsf <- function(start_date,
   )
   pb$tick(0)
   for (year in start_year:end_year) {
-    pb$tick(tokens = list(
-      year1 = year,
-      year2 = start_year,
-      year3 = end_year
-    ))
+    pb$tick(
+      tokens = list(
+        year1 = year,
+        year2 = start_year,
+        year3 = end_year
+      )
+    )
     if (year < first_non_archived_year) {
       er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
     } else {
@@ -169,8 +176,10 @@ extract_consultations_erprsf <- function(start_date,
         AND DATE '{formatted_dis_dtd_end_date}'"
       )
     } else {
-      dis_dtd_condition <- glue::glue("FLX_DIS_DTD BETWEEN DATE '{year}-02-01'
-      AND DATE '{year + 1}-01-01'")
+      dis_dtd_condition <- glue::glue(
+        "FLX_DIS_DTD BETWEEN DATE '{year}-02-01'
+      AND DATE '{year + 1}-01-01'"
+      )
     }
     soi_dtd_condition <- glue::glue(
       "EXE_SOI_DTD BETWEEN DATE '{formatted_start_date}'
@@ -357,16 +366,18 @@ extract_consultations_erprsf <- function(start_date,
 #' )
 #' }
 #' @export
-extract_drug_dispenses <- function(start_date, # nolint
-                                   end_date,
-                                   atc_cod_starts_with_filter = NULL,
-                                   cip13_cod_filter = NULL,
-                                   patients_ids_filter = NULL,
-                                   dis_dtd_lag_months = 6,
-                                   sup_columns = NULL,
-                                   output_table_name = NULL,
-                                   conn = NULL,
-                                   show_sql_query = TRUE) {
+extract_drug_dispenses <- function(
+  start_date, # nolint
+  end_date,
+  atc_cod_starts_with_filter = NULL,
+  cip13_cod_filter = NULL,
+  patients_ids_filter = NULL,
+  dis_dtd_lag_months = 6,
+  sup_columns = NULL,
+  output_table_name = NULL,
+  conn = NULL,
+  show_sql_query = TRUE
+) {
   stopifnot(
     !is.null(start_date),
     !is.null(end_date),
@@ -403,7 +414,9 @@ extract_drug_dispenses <- function(start_date, # nolint
     )
     patients_ids_table_name <- glue::glue("TMP_PATIENTS_IDS_{timestamp}")
     DBI::dbWriteTable(
-      conn, patients_ids_table_name, patients_ids_filter,
+      conn,
+      patients_ids_table_name,
+      patients_ids_filter,
       overwrite = TRUE
     )
   }
@@ -447,9 +460,11 @@ extract_drug_dispenses <- function(start_date, # nolint
 
   if (!is.null(atc_cod_starts_with_filter)) {
     starts_with_conditions <- vapply(
-      atc_cod_starts_with_filter, function(code) {
+      atc_cod_starts_with_filter,
+      function(code) {
         glue::glue("PHA_ATC_CLA LIKE '{code}%'")
-      }, character(1)
+      },
+      character(1)
     )
     atc_conditions <- paste(starts_with_conditions, collapse = " OR ")
     atc_conditions <- glue::glue("({atc_conditions})")
@@ -460,12 +475,19 @@ extract_drug_dispenses <- function(start_date, # nolint
       "PHA_CIP_C13 IN ({paste(cip13_cod_filter, collapse = ',')})"
     )
   }
-  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) { # nolint
+  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) {
+    # nolint
     drug_filter <- atc_conditions + " OR " + cip13_conditions
-  } else if (!is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)) { # nolint
+  } else if (
+    !is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)
+  ) {
+    # nolint
     drug_filter <- cip13_conditions
-  } else if (!is.null(atc_cod_starts_with_filter) &&
-    is.null(cip13_cod_filter)) { # nolint
+  } else if (
+    !is.null(atc_cod_starts_with_filter) &&
+      is.null(cip13_cod_filter)
+  ) {
+    # nolint
     drug_filter <- atc_conditions
   } else {
     drug_filter <- NULL
@@ -478,9 +500,10 @@ extract_drug_dispenses <- function(start_date, # nolint
       ir_pha_needed_cols <- c(ir_pha_needed_cols, col)
     }
   }
-  ir_pha_filtered <- ir_pha_r |> dplyr::select(
-    dplyr::all_of(ir_pha_needed_cols)
-  )
+  ir_pha_filtered <- ir_pha_r |>
+    dplyr::select(
+      dplyr::all_of(ir_pha_needed_cols)
+    )
   if (!is.null(drug_filter)) {
     ir_pha_filtered_query <- ir_pha_filtered |>
       dplyr::filter(dbplyr::sql(drug_filter)) |>
@@ -503,11 +526,13 @@ extract_drug_dispenses <- function(start_date, # nolint
   )
   pb$tick(0)
   for (year in start_year:end_year) {
-    pb$tick(tokens = list(
-      year1 = year,
-      year2 = start_year,
-      year3 = end_year
-    ))
+    pb$tick(
+      tokens = list(
+        year1 = year,
+        year2 = start_year,
+        year3 = end_year
+      )
+    )
 
     if (year < first_non_archived_year) {
       er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
@@ -613,9 +638,11 @@ extract_drug_dispenses <- function(start_date, # nolint
           glue::glue("CREATE TABLE {output_table_name} AS {query}")
         )
         if (show_sql_query) {
-          message(glue::glue("
+          message(glue::glue(
+            "
           Premier mois requêté en date de flux
-          à l'aide de la requête sql suivante :\n {query}"))
+          à l'aide de la requête sql suivante :\n {query}"
+          ))
         }
       } else {
         DBI::dbExecute(
@@ -711,13 +738,15 @@ extract_drug_dispenses <- function(start_date, # nolint
 #' )
 #' }
 #' @export
-extract_hospital_consultations <- function(start_date,
-                                           end_date,
-                                           spe_codes_filter = NULL,
-                                           prestation_codes_filter = NULL,
-                                           patient_ids_filter = NULL,
-                                           output_table_name = NULL,
-                                           conn = NULL) {
+extract_hospital_consultations <- function(
+  start_date,
+  end_date,
+  spe_codes_filter = NULL,
+  prestation_codes_filter = NULL,
+  patient_ids_filter = NULL,
+  output_table_name = NULL,
+  conn = NULL
+) {
   stopifnot(
     !is.null(start_date),
     !is.null(end_date),
@@ -750,9 +779,7 @@ extract_hospital_consultations <- function(start_date,
 
   if (!is.null(patient_ids_filter)) {
     patient_ids_table_name <- "TMP_PATIENT_IDS"
-    try(DBI::dbRemoveTable(conn, patient_ids_table_name),
-      silent = TRUE
-    )
+    try(DBI::dbRemoveTable(conn, patient_ids_table_name), silent = TRUE)
     DBI::dbWriteTable(conn, patient_ids_table_name, patient_ids_filter)
   }
 
@@ -765,11 +792,13 @@ extract_hospital_consultations <- function(start_date,
   )
   pb$tick(0)
   for (year in start_year:end_year) {
-    pb$tick(tokens = list(
-      year1 = year,
-      year2 = start_year,
-      year3 = end_year
-    ))
+    pb$tick(
+      tokens = list(
+        year1 = year,
+        year2 = start_year,
+        year3 = end_year
+      )
+    )
 
     formatted_year <- sprintf("%02d", year %% 100)
 
@@ -790,9 +819,11 @@ extract_hospital_consultations <- function(start_date,
       dplyr::select(ETA_NUM, SEQ_NUM, ACT_COD, EXE_SPE) |>
       dplyr::distinct()
 
-    date_condition <- glue::glue("
+    date_condition <- glue::glue(
+      "
     EXE_SOI_DTD <= DATE '{formatted_end_date}'
-      AND EXE_SOI_DTD >= DATE '{formatted_start_date}'")
+      AND EXE_SOI_DTD >= DATE '{formatted_start_date}'"
+    )
     ace <- cstc |>
       filter(dbplyr::sql(date_condition)) |>
       dplyr::left_join(fcstc, by = c("ETA_NUM", "SEQ_NUM")) |>
@@ -812,7 +843,8 @@ extract_hospital_consultations <- function(start_date,
     if (!is.null(patient_ids_filter)) {
       patient_ids_table <- dplyr::tbl(conn, patient_ids_table_name)
       query <- patient_ids_table |>
-        dplyr::inner_join(ace,
+        dplyr::inner_join(
+          ace,
           by = c("BEN_NIR_PSA" = "NIR_ANO_17"),
           keep = TRUE
         )
@@ -944,16 +976,17 @@ extract_hospital_consultations <- function(start_date,
 #' }
 #' @export
 extract_long_term_disease <- function(
-    # nolint:
-    start_date = NULL,
-    end_date = NULL,
-    icd_cod_starts_with = NULL,
-    ald_numbers = NULL,
-    excl_etm_nat = c("11", "12", "13"),
-    patients_ids = NULL,
-    output_table_name = NULL,
-    overwrite = FALSE,
-    conn = NULL) {
+  # nolint:
+  start_date = NULL,
+  end_date = NULL,
+  icd_cod_starts_with = NULL,
+  ald_numbers = NULL,
+  excl_etm_nat = c("11", "12", "13"),
+  patients_ids = NULL,
+  output_table_name = NULL,
+  overwrite = FALSE,
+  conn = NULL
+) {
   stopifnot(
     !is.null(start_date),
     !is.null(end_date),
@@ -1005,12 +1038,16 @@ extract_long_term_disease <- function(
   formatted_end_date <- format(end_date, "%Y-%m-%d")
 
   if (!is.null(icd_cod_starts_with)) {
-    print(glue::glue("Extracting LTD status for ICD 10 codes starting \
-    with {paste(icd_cod_starts_with, collapse = ' or ')}..."))
+    print(glue::glue(
+      "Extracting LTD status for ICD 10 codes starting \
+    with {paste(icd_cod_starts_with, collapse = ' or ')}..."
+    ))
   }
   if (!is.null(ald_numbers)) {
-    print(glue::glue("Extracting LTD status for ALD numbers \
-    {paste(ald_numbers, collapse = ',')}..."))
+    print(glue::glue(
+      "Extracting LTD status for ALD numbers \
+    {paste(ald_numbers, collapse = ',')}..."
+    ))
   }
   if (is.null(icd_cod_starts_with) && is.null(ald_numbers)) {
     print(glue::glue("Extracting LTD status for all ICD 10 codes..."))
@@ -1115,32 +1152,73 @@ extract_long_term_disease <- function(
   return(result)
 }
 finess_out <- c(
-  "130780521", "130783236", "130783293", "130784234", "130804297",
-  "600100101", "750041543", "750100018", "750100042", "750100075",
-  "750100083", "750100091", "750100109", "750100125", "750100166",
-  "750100208", "750100216", "750100232", "750100273", "750100299",
-  "750801441", "750803447", "750803454", "910100015", "910100023",
-  "920100013", "920100021", "920100039", "920100047", "920100054",
-  "920100062", "930100011", "930100037", "930100045", "940100027",
-  "940100035", "940100043", "940100050", "940100068", "950100016",
-  "690783154", "690784137", "690784152", "690784178", "690787478",
+  "130780521",
+  "130783236",
+  "130783293",
+  "130784234",
+  "130804297",
+  "600100101",
+  "750041543",
+  "750100018",
+  "750100042",
+  "750100075",
+  "750100083",
+  "750100091",
+  "750100109",
+  "750100125",
+  "750100166",
+  "750100208",
+  "750100216",
+  "750100232",
+  "750100273",
+  "750100299",
+  "750801441",
+  "750803447",
+  "750803454",
+  "910100015",
+  "910100023",
+  "920100013",
+  "920100021",
+  "920100039",
+  "920100047",
+  "920100054",
+  "920100062",
+  "930100011",
+  "930100037",
+  "930100045",
+  "940100027",
+  "940100035",
+  "940100043",
+  "940100050",
+  "940100068",
+  "950100016",
+  "690783154",
+  "690784137",
+  "690784152",
+  "690784178",
+  "690787478",
   "830100558"
 )
 
 build_dp_dr_conditions <- function(
-    cim10_codes_starts_with = NULL, include_dr = NULL) {
+  cim10_codes_starts_with = NULL,
+  include_dr = NULL
+) {
   starts_with_conditions_dp <- sapply(
-    cim10_codes_starts_with, function(code) glue("DGN_PAL LIKE '{code}%'")
+    cim10_codes_starts_with,
+    function(code) glue("DGN_PAL LIKE '{code}%'")
   )
   if (include_dr) {
     starts_with_conditions_dr <- sapply(
-      cim10_codes_starts_with, function(code) glue("DGN_REL LIKE '{code}%'")
+      cim10_codes_starts_with,
+      function(code) glue("DGN_REL LIKE '{code}%'")
     )
   } else {
     starts_with_conditions_dr <- NULL
   }
   starts_with_conditions <- c(
-    starts_with_conditions_dp, starts_with_conditions_dr
+    starts_with_conditions_dp,
+    starts_with_conditions_dr
   )
   combined_conditions <- paste(starts_with_conditions, collapse = " OR ")
   combined_conditions <- glue("({combined_conditions})")
@@ -1149,7 +1227,8 @@ build_dp_dr_conditions <- function(
 
 build_da_conditions <- function(cim10_codes_starts_with = NULL) {
   starts_with_conditions_da <- sapply(
-    cim10_codes_starts_with, function(code) glue("ASS_DGN LIKE '{code}%'")
+    cim10_codes_starts_with,
+    function(code) glue("ASS_DGN LIKE '{code}%'")
   )
   combined_conditions <- paste(starts_with_conditions_da, collapse = " OR ")
   combined_conditions <- glue("({combined_conditions})")
@@ -1157,30 +1236,38 @@ build_da_conditions <- function(cim10_codes_starts_with = NULL) {
 }
 
 normalize_column_number <- function(
-    df = NULL, column_prefix = NULL, max_columns_number = NULL) {
+  df = NULL,
+  column_prefix = NULL,
+  max_columns_number = NULL
+) {
   expected_cols <- paste(column_prefix, 1:max_columns_number, sep = "")
 
   missing_cols <- setdiff(expected_cols, names(df))
   df[missing_cols] <- NA
 
-  excess_cols <- names(df)[str_detect(
-    names(df), glue("^{column_prefix}\\d+$")
-  ) & !names(df) %in% expected_cols]
+  excess_cols <- names(df)[
+    str_detect(
+      names(df),
+      glue("^{column_prefix}\\d+$")
+    ) &
+      !names(df) %in% expected_cols
+  ]
   df <- df[, !(names(df) %in% excess_cols)]
   return(df)
 }
 
 extract_hospital_stays <- function(
-    start_date = NULL,
-    end_date = NULL,
-    dp_cim10_codes_starts_with = NULL,
-    or_dr_with_same_codes = NULL,
-    or_da_with_same_codes = NULL,
-    and_da_with_other_codes = NULL,
-    da_cim10_codes_starts_with = NULL,
-    ben_table_name = NULL,
-    output_table_name = NULL,
-    r_output_path = NULL) {
+  start_date = NULL,
+  end_date = NULL,
+  dp_cim10_codes_starts_with = NULL,
+  or_dr_with_same_codes = NULL,
+  or_da_with_same_codes = NULL,
+  and_da_with_other_codes = NULL,
+  da_cim10_codes_starts_with = NULL,
+  ben_table_name = NULL,
+  output_table_name = NULL,
+  r_output_path = NULL
+) {
   conn <- connect_oracle() # Connect to database
 
   start_year <- lubridate::year(start_date)
@@ -1217,7 +1304,8 @@ extract_hospital_stays <- function(
         cim10_codes_starts_with = dp_cim10_codes_starts_with
       )
       dp_dr_conditions <- build_dp_dr_conditions(
-        cim10_codes_starts_with = dp_cim10_codes_starts_with, include_dr = TRUE
+        cim10_codes_starts_with = dp_cim10_codes_starts_with,
+        include_dr = TRUE
       )
       eta_num_rsa_num_da_d <- t_mco_d %>%
         filter(sql(da_conditions)) %>%
@@ -1251,12 +1339,34 @@ extract_hospital_stays <- function(
     }
 
     selected_cols <- c(
-      "ETA_NUM", "RSA_NUM", "SEJ_NUM", "SEJ_NBJ", "NBR_DGN",
-      "NBR_RUM", "NBR_ACT", "ENT_MOD", "ENT_PRV", "SOR_MOD",
-      "SOR_DES", "DGN_PAL", "DGN_REL", "GRG_GHM", "BDI_DEP",
-      "BDI_COD", "COD_SEX", "AGE_ANN", "AGE_JOU", "NIR_ANO_17",
-      "EXE_SOI_DTD", "EXE_SOI_DTF", "FHO_RET", "NAI_RET",
-      "NIR_RET", "PMS_RET", "SEJ_RET", "SEX_RET"
+      "ETA_NUM",
+      "RSA_NUM",
+      "SEJ_NUM",
+      "SEJ_NBJ",
+      "NBR_DGN",
+      "NBR_RUM",
+      "NBR_ACT",
+      "ENT_MOD",
+      "ENT_PRV",
+      "SOR_MOD",
+      "SOR_DES",
+      "DGN_PAL",
+      "DGN_REL",
+      "GRG_GHM",
+      "BDI_DEP",
+      "BDI_COD",
+      "COD_SEX",
+      "AGE_ANN",
+      "AGE_JOU",
+      "NIR_ANO_17",
+      "EXE_SOI_DTD",
+      "EXE_SOI_DTF",
+      "FHO_RET",
+      "NAI_RET",
+      "NIR_RET",
+      "PMS_RET",
+      "SEJ_RET",
+      "SEX_RET"
     )
     # SOR_ANN and SOR_MOI have been removed from the selected columns
     # because they are not always present in the tables
@@ -1291,7 +1401,6 @@ extract_hospital_stays <- function(
     tmp1 <- tmp1 %>%
       collect()
 
-
     selected_cols <- c("ETA_NUM", "RSA_NUM", "DGN_PAL", "DGN_REL")
     tmp1_um <- t_mco_um %>%
       inner_join(selected_eta_num_rsa_num, by = c("ETA_NUM", "RSA_NUM")) %>%
@@ -1305,7 +1414,9 @@ extract_hospital_stays <- function(
       group_by(ETA_NUM, RSA_NUM) %>%
       mutate(row_id = row_number()) %>%
       pivot_wider(
-        names_from = row_id, values_from = DGN_PAL, names_prefix = "DGN_PAL_UM_"
+        names_from = row_id,
+        values_from = DGN_PAL,
+        names_prefix = "DGN_PAL_UM_"
       ) %>%
       ungroup()
 
@@ -1337,7 +1448,6 @@ extract_hospital_stays <- function(
 
     tmp_um <- tmp1_um_dp %>%
       left_join(tmp1_um_dr, by = c("ETA_NUM", "RSA_NUM"))
-
 
     selected_cols <- c("ETA_NUM", "RSA_NUM", "ASS_DGN")
     tmp1_d <- t_mco_d %>%
@@ -1426,18 +1536,24 @@ extract_hospital_stays <- function(
 
     end_time <- Sys.time()
     print(
-      glue::glue("
+      glue::glue(
+        "
       Time taken for year {year}:
-      {round(difftime(end_time, start_time, units='mins'),1)} mins.")
+      {round(difftime(end_time, start_time, units='mins'),1)} mins."
+      )
     )
   }
 
   hospital_stays <- bind_rows(hospital_stays_list)
 
-
   if (!is.null(r_output_path)) {
-    saveRDS(hospital_stays, glue::glue("
-    {r_output_path}/{tolower(output_table_name)}.RDS"))
+    saveRDS(
+      hospital_stays,
+      glue::glue(
+        "
+    {r_output_path}/{tolower(output_table_name)}.RDS"
+      )
+    )
   }
 
   dbDisconnect(conn)
@@ -1469,12 +1585,14 @@ extract_hospital_stays <- function(
 #'   NULL.
 #'
 #' @export
-sql_extract_drug_dispenses <- function(start_date, # nolint
-                                       end_date,
-                                       output_table_name,
-                                       atc_cod_starts_with_filter = NULL,
-                                       cip13_cod_filter = NULL,
-                                       conn = NULL) {
+sql_extract_drug_dispenses <- function(
+  start_date, # nolint
+  end_date,
+  output_table_name,
+  atc_cod_starts_with_filter = NULL,
+  cip13_cod_filter = NULL,
+  conn = NULL
+) {
   stopifnot(
     !is.null(start_date),
     !is.null(end_date),
@@ -1498,9 +1616,11 @@ sql_extract_drug_dispenses <- function(start_date, # nolint
 
   if (!is.null(atc_cod_starts_with_filter)) {
     starts_with_conditions <- vapply(
-      atc_cod_starts_with_filter, function(code) {
+      atc_cod_starts_with_filter,
+      function(code) {
         glue::glue("PHA_ATC_CLA LIKE '{code}%'")
-      }, character(1)
+      },
+      character(1)
     )
     atc_conditions <- paste(starts_with_conditions, collapse = " OR ")
     atc_conditions <- glue::glue("({atc_conditions})")
@@ -1510,11 +1630,18 @@ sql_extract_drug_dispenses <- function(start_date, # nolint
       "PHA_CIP_C13 IN ({paste(cip13_cod_filter, collapse = ',')})"
     )
   }
-  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) { # nolint
+  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) {
+    # nolint
     drug_filter <- atc_conditions + " OR " + cip13_conditions
-  } else if (!is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)) { # nolint
+  } else if (
+    !is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)
+  ) {
+    # nolint
     drug_filter <- cip13_conditions
-  } else if (!is.null(atc_cod_starts_with_filter) && is.null(cip13_cod_filter)) { # nolint
+  } else if (
+    !is.null(atc_cod_starts_with_filter) && is.null(cip13_cod_filter)
+  ) {
+    # nolint
     drug_filter <- atc_conditions
   } else {
     drug_filter <- NULL
@@ -1603,7 +1730,9 @@ WHERE (
     day = 1
   )
   flx_dates <- seq(
-    as.Date(dis_dtd_start_date), as.Date(dis_dtd_end_date), "month"
+    as.Date(dis_dtd_start_date),
+    as.Date(dis_dtd_end_date),
+    "month"
   )
   for (i in seq_along(flx_dates)) {
     # assign flx_date to be taken into account in glued sql_drug_query
@@ -1615,11 +1744,13 @@ WHERE (
     print(glue::glue("-flux: {dis_dtd_start} to {dis_dtd_end}"))
     if (i == 1) {
       DBI::dbExecute(
-        conn, glue::glue("CREATE TABLE {output_table_name} AS {query}")
+        conn,
+        glue::glue("CREATE TABLE {output_table_name} AS {query}")
       )
     } else {
       DBI::dbExecute(
-        conn, glue::glue("INSERT INTO {output_table_name} {query}")
+        conn,
+        glue::glue("INSERT INTO {output_table_name} {query}")
       )
     }
   }
@@ -1682,10 +1813,12 @@ connect_duckdb <- function() {
 #' @return NULL
 #'
 #' @export
-create_table_from_query <- function(conn = NULL,
-                                    output_table_name = NULL,
-                                    query = NULL,
-                                    overwrite = FALSE) {
+create_table_from_query <- function(
+  conn = NULL,
+  output_table_name = NULL,
+  query = NULL,
+  overwrite = FALSE
+) {
   stopifnot(
     !DBI::dbExistsTable(conn, output_table_name) ||
       (DBI::dbExistsTable(conn, output_table_name) && overwrite)
@@ -1710,9 +1843,10 @@ create_table_from_query <- function(conn = NULL,
 #'
 #' @export
 insert_into_table_from_query <- function(
-    conn = NULL,
-    output_table_name = NULL,
-    query = NULL) {
+  conn = NULL,
+  output_table_name = NULL,
+  query = NULL
+) {
   stopifnot(DBI::dbExistsTable(conn, output_table_name))
   query <- dbplyr::sql_render(query)
   DBI::dbExecute(

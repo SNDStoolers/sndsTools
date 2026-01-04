@@ -11,8 +11,8 @@ end_date <- as.Date("31/12/2022", format = "%d/%m/%Y")
 spe_codes <- c("01", "22", "23")
 
 consultations <- extract_hospital_consultations(
-    start_date = start_date,
-    end_date = end_date,
-    spe_codes = spe_codes,
+  start_date = start_date,
+  end_date = end_date,
+  spe_codes = spe_codes,
 )
 consultations |> head()

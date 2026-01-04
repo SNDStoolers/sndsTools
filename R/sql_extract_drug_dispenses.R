@@ -23,12 +23,14 @@
 #'   NULL.
 #'
 #' @export
-sql_extract_drug_dispenses <- function(start_date, # nolint
-                                       end_date,
-                                       output_table_name,
-                                       atc_cod_starts_with_filter = NULL,
-                                       cip13_cod_filter = NULL,
-                                       conn = NULL) {
+sql_extract_drug_dispenses <- function(
+  start_date, # nolint
+  end_date,
+  output_table_name,
+  atc_cod_starts_with_filter = NULL,
+  cip13_cod_filter = NULL,
+  conn = NULL
+) {
   stopifnot(
     !is.null(start_date),
     !is.null(end_date),
@@ -52,9 +54,11 @@ sql_extract_drug_dispenses <- function(start_date, # nolint
 
   if (!is.null(atc_cod_starts_with_filter)) {
     starts_with_conditions <- vapply(
-      atc_cod_starts_with_filter, function(code) {
+      atc_cod_starts_with_filter,
+      function(code) {
         glue::glue("PHA_ATC_CLA LIKE '{code}%'")
-      }, character(1)
+      },
+      character(1)
     )
     atc_conditions <- paste(starts_with_conditions, collapse = " OR ")
     atc_conditions <- glue::glue("({atc_conditions})")
@@ -64,11 +68,18 @@ sql_extract_drug_dispenses <- function(start_date, # nolint
       "PHA_CIP_C13 IN ({paste(cip13_cod_filter, collapse = ',')})"
     )
   }
-  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) { # nolint
+  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) {
+    # nolint
     drug_filter <- atc_conditions + " OR " + cip13_conditions
-  } else if (!is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)) { # nolint
+  } else if (
+    !is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)
+  ) {
+    # nolint
     drug_filter <- cip13_conditions
-  } else if (!is.null(atc_cod_starts_with_filter) && is.null(cip13_cod_filter)) { # nolint
+  } else if (
+    !is.null(atc_cod_starts_with_filter) && is.null(cip13_cod_filter)
+  ) {
+    # nolint
     drug_filter <- atc_conditions
   } else {
     drug_filter <- NULL
@@ -157,7 +168,9 @@ WHERE (
     day = 1
   )
   flx_dates <- seq(
-    as.Date(dis_dtd_start_date), as.Date(dis_dtd_end_date), "month"
+    as.Date(dis_dtd_start_date),
+    as.Date(dis_dtd_end_date),
+    "month"
   )
   for (i in seq_along(flx_dates)) {
     # assign flx_date to be taken into account in glued sql_drug_query
@@ -169,11 +182,13 @@ WHERE (
     print(glue::glue("-flux: {dis_dtd_start} to {dis_dtd_end}"))
     if (i == 1) {
       DBI::dbExecute(
-        conn, glue::glue("CREATE TABLE {output_table_name} AS {query}")
+        conn,
+        glue::glue("CREATE TABLE {output_table_name} AS {query}")
       )
     } else {
       DBI::dbExecute(
-        conn, glue::glue("INSERT INTO {output_table_name} {query}")
+        conn,
+        glue::glue("INSERT INTO {output_table_name} {query}")
       )
     }
   }

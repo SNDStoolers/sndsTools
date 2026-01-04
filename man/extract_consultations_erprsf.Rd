@@ -9,6 +9,7 @@ extract_consultations_erprsf(
   end_date,
   pse_spe_filter = NULL,
   prestation_filter = NULL,
+  analyse_couts = FALSE,
   dis_dtd_lag_months = 6,
   patients_ids_filter = NULL,
   output_table_name = NULL,
@@ -32,6 +33,10 @@ prestations à extraire en norme B5 (colonne \code{PRS_NAT_REF}, référentiel
 \code{IR_NAT_V}). Si \code{prestation_filter} n'est pas fourni, les consultations de
 tous les prestations sont extraites. Les codes des prestations sont
 disponibles sur la page \href{https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html}{"Cibler selon les natures de prestations"} de la documentation SNDS. Défaut à \code{NULL}.}
+
+\item{analyse_couts}{Logical (Optionnel). Si \code{TRUE}, les filtres de qualité
+liés aux coûts, écartant les actes en majorations sont ignorés. Utile pour
+des analyses portant sur les coûts. Défaut à \code{FALSE}.}
 
 \item{dis_dtd_lag_months}{Integer (Optionnel). Le nombre maximum de mois de
 décalage de \code{FLX_DIS_DTD} par rapport à \verb{EXE_SOI DTD} pris en compte pour

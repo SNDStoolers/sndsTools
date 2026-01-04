@@ -51,9 +51,17 @@ dbWriteTable(conn, "PSA_SAMP_1", psa_sample_1, overwrite = TRUE)
 # Récupération de la table en format tibble
 retrieve_all_psa_from_psa(conn = conn, ben_table_name = "PSA_SAMP_1")
 # Récupération et enregistrement de la table dans Oracle
-retrieve_all_psa_from_psa(conn = conn, ben_table_name = "PSA_SAMP_1", output_table_name = "TEST_SAVE_ORACLE")
+retrieve_all_psa_from_psa(
+  conn = conn,
+  ben_table_name = "PSA_SAMP_1",
+  output_table_name = "TEST_SAVE_ORACLE"
+)
 # Récupération de la table sans considérer la table de référentiel archivée
-retrieve_all_psa_from_psa(conn = conn, ben_table_name = "PSA_SAMP_1", check_arc_table = FALSE)
+retrieve_all_psa_from_psa(
+  conn = conn,
+  ben_table_name = "PSA_SAMP_1",
+  check_arc_table = FALSE
+)
 
 # Création et enregistrement dans Oracle de 100 couples de (BEN_NIR_PSA+BEN_RNG_GEM)
 psa_sample_2 <- dplyr::tbl(conn, "IR_BEN_R") |>

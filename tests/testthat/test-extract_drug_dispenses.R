@@ -48,7 +48,8 @@ fake_erprsf <- data.frame(
   PSP_SPE_COD = c("01", "22", "32", "34", "01"),
   DPN_QLF = c(0, 0, 0, 0, 71),
   CPL_MAJ_TOP = c(0, 0, 0, 1, 2)
-) |> cbind(fake_dcir_join_keys)
+) |>
+  cbind(fake_dcir_join_keys)
 
 fake_erphaf <- data.frame(
   PHA_PRS_C13 = c(
@@ -59,7 +60,8 @@ fake_erphaf <- data.frame(
     "3400936267343"
   ),
   PHA_ACT_QSN = c(1, 1, 1, 1, 1)
-) |> cbind(fake_dcir_join_keys)
+) |>
+  cbind(fake_dcir_join_keys)
 
 fake_irphar <- data.frame(
   PHA_CIP_C13 = c(
@@ -76,7 +78,8 @@ fake_irphar <- data.frame(
 fake_eretef <- data.frame(
   "ETE_NUM" = c(11, 12, 13),
   "ETE_IND_TAA" = c(10, 10, 10)
-) |> cbind(fake_dcir_join_keys |> head(3))
+) |>
+  cbind(fake_dcir_join_keys |> head(3))
 
 
 conn <- connect_duckdb()

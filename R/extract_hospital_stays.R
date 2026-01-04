@@ -71,13 +71,13 @@ finess_doublons <- c(
 #' build_dp_dr_conditions(c("A00", "B00"), include_dr = FALSE)
 #' }
 #' @keywords internal
-build_dp_dr_conditions <- function(cim10_codes = NULL,
-                                   include_dr = FALSE) {
+build_dp_dr_conditions <- function(cim10_codes = NULL, include_dr = FALSE) {
   starts_with_conditions <- glue::glue("DGN_PAL LIKE '{cim10_codes}%'")
   if (include_dr) {
     starts_with_conditions_dr <- glue::glue("DGN_REL LIKE '{cim10_codes}%'")
     starts_with_conditions <- c(
-      starts_with_conditions, starts_with_conditions_dr
+      starts_with_conditions,
+      starts_with_conditions_dr
     )
   }
   collapsed_conditions <- paste(starts_with_conditions, collapse = " OR ")
@@ -213,18 +213,21 @@ build_da_conditions <- function(cim10_codes = NULL) {
 #' )  @export
 #' }
 # nolint end
-extract_hospital_stays <- function(start_date,
-                                   end_date,
-                                   dp_cim10_codes_filter = NULL,
-                                   or_dr_with_same_codes_filter = FALSE,
-                                   or_da_with_same_codes_filter = FALSE,
-                                   and_da_with_other_codes_filter = FALSE,
-                                   da_cim10_codes_filter = NULL,
-                                   patients_ids_filter = NULL,
-                                   output_table_name = NULL,
-                                   conn = NULL) {
+extract_hospital_stays <- function(
+  start_date,
+  end_date,
+  dp_cim10_codes_filter = NULL,
+  or_dr_with_same_codes_filter = FALSE,
+  or_da_with_same_codes_filter = FALSE,
+  and_da_with_other_codes_filter = FALSE,
+  da_cim10_codes_filter = NULL,
+  patients_ids_filter = NULL,
+  output_table_name = NULL,
+  conn = NULL
+) {
   stopifnot(
-    !is.null(start_date), !is.null(end_date),
+    !is.null(start_date),
+    !is.null(end_date),
     inherits(start_date, "Date"),
     inherits(end_date, "Date"),
     start_date <= end_date
@@ -269,11 +272,13 @@ extract_hospital_stays <- function(start_date,
   )
   pb$tick(0)
   for (year in start_year:end_year) {
-    pb$tick(tokens = list(
-      year1 = year,
-      year2 = start_year,
-      year3 = end_year
-    ))
+    pb$tick(
+      tokens = list(
+        year1 = year,
+        year2 = start_year,
+        year3 = end_year
+      )
+    )
 
     formatted_year <- sprintf("%02d", year %% 100)
 
@@ -382,7 +387,10 @@ extract_hospital_stays <- function(start_date,
     selected_cols <- c(selected_cols_b, selected_cols_c)
     if (year >= 2013) {
       selected_cols <- c(
-        selected_cols, "DAT_RET", "COH_NAI_RET", "COH_SEX_RET"
+        selected_cols,
+        "DAT_RET",
+        "COH_NAI_RET",
+        "COH_SEX_RET"
       )
     }
 
@@ -413,7 +421,12 @@ extract_hospital_stays <- function(start_date,
         PMS_RET == 0
       ) |>
       dplyr::select(
-        -NIR_RET, -NAI_RET, -SEX_RET, -SEJ_RET, -FHO_RET, -PMS_RET
+        -NIR_RET,
+        -NAI_RET,
+        -SEX_RET,
+        -SEJ_RET,
+        -FHO_RET,
+        -PMS_RET
       ) |>
       dplyr::filter(!grepl("90", GRG_GHM), !(ETA_NUM %in% finess_doublons))
 

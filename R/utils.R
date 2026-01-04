@@ -49,10 +49,12 @@ connect_duckdb <- function() {
 #' @return NULL
 #'
 #' @export
-create_table_from_query <- function(conn = NULL,
-                                    output_table_name = NULL,
-                                    query = NULL,
-                                    overwrite = FALSE) {
+create_table_from_query <- function(
+  conn = NULL,
+  output_table_name = NULL,
+  query = NULL,
+  overwrite = FALSE
+) {
   stopifnot(
     !DBI::dbExistsTable(conn, output_table_name) ||
       (DBI::dbExistsTable(conn, output_table_name) && overwrite)
@@ -77,9 +79,10 @@ create_table_from_query <- function(conn = NULL,
 #'
 #' @export
 insert_into_table_from_query <- function(
-    conn = NULL,
-    output_table_name = NULL,
-    query = NULL) {
+  conn = NULL,
+  output_table_name = NULL,
+  query = NULL
+) {
   stopifnot(DBI::dbExistsTable(conn, output_table_name))
   query <- dbplyr::sql_render(query)
   DBI::dbExecute(

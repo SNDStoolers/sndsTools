@@ -11,7 +11,9 @@ library(lubridate)
 
 ben_ids_orauser <- "BEN_FILTERED_IDS"
 
-selected_ben <- readRDS("~/sasdata1/pathologies-retrieval-snds/data/processed/ben_filtered.RDS")
+selected_ben <- readRDS(
+  "~/sasdata1/pathologies-retrieval-snds/data/processed/ben_filtered.RDS"
+)
 selected_ben <- selected_ben %>%
   select(ben_idt_ano, first_series_date) %>%
   mutate(first_series_date = as.Date(first_series_date)) %>%
@@ -21,9 +23,23 @@ retrieval_start_date <- as.Date("01/01/2009", format = "%d/%m/%Y")
 retrieval_end_date <- as.Date("31/12/2013", format = "%d/%m/%Y")
 
 diabetes_codes <- c("E10", "E11", "E12", "E13", "E14")
-diabetes_complication_codes <- c("G590", "G632", "G730", "G990", "H280", "H360", "I792", "L97", "M142", "M146", "N083")
+diabetes_complication_codes <- c(
+  "G590",
+  "G632",
+  "G730",
+  "G990",
+  "H280",
+  "H360",
+  "I792",
+  "L97",
+  "M142",
+  "M146",
+  "N083"
+)
 
-selected_ben <- readRDS("~/sasdata1/park/visualize/data/processed/ben_filtered.RDS")
+selected_ben <- readRDS(
+  "~/sasdata1/park/visualize/data/processed/ben_filtered.RDS"
+)
 selected_ben <- selected_ben %>%
   select(ben_idt_ano, first_series_date) %>%
   mutate(first_series_date = as.Date(first_series_date)) %>%
@@ -96,7 +112,10 @@ hospital_stays_complication <- hospital_stays_complication %>%
   distinct()
 
 # Combine the two tables
-hospital_stays <- bind_rows(hospital_stays_main_diagnosis, hospital_stays_complication) %>%
+hospital_stays <- bind_rows(
+  hospital_stays_main_diagnosis,
+  hospital_stays_complication
+) %>%
   distinct()
 
 
@@ -196,12 +215,13 @@ has_diabetes <- selected_ben %>%
   left_join(has_ongoing_ald, by = "ben_idt_ano") %>%
   left_join(has_dispense, by = "ben_idt_ano") %>%
   mutate(
-    has_diabetes = (
-      (!is.na(has_hospital_stay) & has_hospital_stay) |
-        (!is.na(has_ald) & has_ald) |
-        (!is.na(has_dispense) & has_dispense)
-    )
+    has_diabetes = ((!is.na(has_hospital_stay) & has_hospital_stay) |
+      (!is.na(has_ald) & has_ald) |
+      (!is.na(has_dispense) & has_dispense))
   ) %>%
   distinct()
 
-saveRDS(has_diabetes, "~/sasdata1/pathologies-retrieval-snds/data/processed/has_diabetes.RDS")
+saveRDS(
+  has_diabetes,
+  "~/sasdata1/pathologies-retrieval-snds/data/processed/has_diabetes.RDS"
+)

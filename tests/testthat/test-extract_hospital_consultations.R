@@ -13,7 +13,9 @@ test_that("extract_hospital_consultations works", {
     SEQ_NUM = c(31, 32, 33),
     NIR_ANO_17 = c(11, 12, 13),
     EXE_SOI_DTD = as.Date(c(
-      "2019-01-10", "2019-01-02", "2019-01-03"
+      "2019-01-10",
+      "2019-01-02",
+      "2019-01-03"
     )),
     NIR_RET = c("0", "0", "0"),
     NAI_RET = c("0", "0", "0"),
@@ -42,7 +44,6 @@ test_that("extract_hospital_consultations works", {
     patient_ids_filter = patients_ids_filter,
     conn = conn
   )
-
 
   DBI::dbDisconnect(conn)
   expect_equal(

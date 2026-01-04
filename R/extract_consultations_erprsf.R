@@ -291,5 +291,5 @@ extract_consultations_erprsf <- function(
     DBI::dbDisconnect(conn)
   }
 
-  return(result)
+  result
 }

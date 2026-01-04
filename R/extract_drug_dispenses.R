@@ -91,16 +91,18 @@
 #' }
 #' @export
 # nolint end
-extract_drug_dispenses <- function(start_date, # nolint
-                                   end_date,
-                                   atc_cod_starts_with_filter = NULL,
-                                   cip13_cod_filter = NULL,
-                                   patients_ids_filter = NULL,
-                                   dis_dtd_lag_months = 6,
-                                   sup_columns = NULL,
-                                   output_table_name = NULL,
-                                   conn = NULL,
-                                   show_sql_query = TRUE) {
+extract_drug_dispenses <- function(
+  start_date, # nolint
+  end_date,
+  atc_cod_starts_with_filter = NULL,
+  cip13_cod_filter = NULL,
+  patients_ids_filter = NULL,
+  dis_dtd_lag_months = 6,
+  sup_columns = NULL,
+  output_table_name = NULL,
+  conn = NULL,
+  show_sql_query = TRUE
+) {
   stopifnot(
     !is.null(start_date),
     !is.null(end_date),
@@ -137,7 +139,9 @@ extract_drug_dispenses <- function(start_date, # nolint
     )
     patients_ids_table_name <- glue::glue("TMP_PATIENTS_IDS_{timestamp}")
     DBI::dbWriteTable(
-      conn, patients_ids_table_name, patients_ids_filter,
+      conn,
+      patients_ids_table_name,
+      patients_ids_filter,
       overwrite = TRUE
     )
   }
@@ -181,9 +185,11 @@ extract_drug_dispenses <- function(start_date, # nolint
 
   if (!is.null(atc_cod_starts_with_filter)) {
     starts_with_conditions <- vapply(
-      atc_cod_starts_with_filter, function(code) {
+      atc_cod_starts_with_filter,
+      function(code) {
         glue::glue("PHA_ATC_CLA LIKE '{code}%'")
-      }, character(1)
+      },
+      character(1)
     )
     atc_conditions <- paste(starts_with_conditions, collapse = " OR ")
     atc_conditions <- glue::glue("({atc_conditions})")
@@ -194,12 +200,19 @@ extract_drug_dispenses <- function(start_date, # nolint
       "PHA_CIP_C13 IN ({paste(cip13_cod_filter, collapse = ',')})"
     )
   }
-  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) { # nolint
+  if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) {
+    # nolint
     drug_filter <- atc_conditions + " OR " + cip13_conditions
-  } else if (!is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)) { # nolint
+  } else if (
+    !is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)
+  ) {
+    # nolint
     drug_filter <- cip13_conditions
-  } else if (!is.null(atc_cod_starts_with_filter) &&
-    is.null(cip13_cod_filter)) { # nolint
+  } else if (
+    !is.null(atc_cod_starts_with_filter) &&
+      is.null(cip13_cod_filter)
+  ) {
+    # nolint
     drug_filter <- atc_conditions
   } else {
     drug_filter <- NULL
@@ -212,9 +225,10 @@ extract_drug_dispenses <- function(start_date, # nolint
       ir_pha_needed_cols <- c(ir_pha_needed_cols, col)
     }
   }
-  ir_pha_filtered <- ir_pha_r |> dplyr::select(
-    dplyr::all_of(ir_pha_needed_cols)
-  )
+  ir_pha_filtered <- ir_pha_r |>
+    dplyr::select(
+      dplyr::all_of(ir_pha_needed_cols)
+    )
   if (!is.null(drug_filter)) {
     ir_pha_filtered_query <- ir_pha_filtered |>
       dplyr::filter(dbplyr::sql(drug_filter)) |>
@@ -237,11 +251,13 @@ extract_drug_dispenses <- function(start_date, # nolint
   )
   pb$tick(0)
   for (year in start_year:end_year) {
-    pb$tick(tokens = list(
-      year1 = year,
-      year2 = start_year,
-      year3 = end_year
-    ))
+    pb$tick(
+      tokens = list(
+        year1 = year,
+        year2 = start_year,
+        year3 = end_year
+      )
+    )
 
     if (year < first_non_archived_year) {
       er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
@@ -347,9 +363,11 @@ extract_drug_dispenses <- function(start_date, # nolint
           glue::glue("CREATE TABLE {output_table_name} AS {query}")
         )
         if (show_sql_query) {
-          message(glue::glue("
+          message(glue::glue(
+            "
           Premier mois requêté en date de flux
-          à l'aide de la requête sql suivante :\n {query}"))
+          à l'aide de la requête sql suivante :\n {query}"
+          ))
         }
       } else {
         DBI::dbExecute(
@@ -379,5 +397,5 @@ extract_drug_dispenses <- function(start_date, # nolint
     DBI::dbDisconnect(conn)
   }
 
-  return(result)
+  result
 }

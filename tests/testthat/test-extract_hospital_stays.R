@@ -66,7 +66,6 @@ test_that("extract_hospital_stays works", {
   DBI::dbWriteTable(conn, paste0("T_MCO", formatted_year, "D"), fake_d_table)
   DBI::dbWriteTable(conn, paste0("T_MCO", formatted_year, "UM"), fake_um_table)
 
-
   dp_cim10_codes_filter <- c("A", "B")
 
   hospital_stays <- extract_hospital_stays(
@@ -75,15 +74,23 @@ test_that("extract_hospital_stays works", {
     dp_cim10_codes_filter = c("A", "B"),
     patients_ids_filter = patients_ids_filter,
     conn = conn
-  ) |> dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, DGN_PAL, DGN_PAL_UM, ASS_DGN)
+  ) |>
+    dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, DGN_PAL, DGN_PAL_UM, ASS_DGN)
 
   DBI::dbDisconnect(conn)
 
   expect_equal(
     hospital_stays |>
       dplyr::select(
-        ETA_NUM, RSA_NUM, BEN_IDT_ANO, EXE_SOI_DTD,
-        DGN_PAL, DGN_REL, DGN_PAL_UM, DGN_REL_UM, ASS_DGN
+        ETA_NUM,
+        RSA_NUM,
+        BEN_IDT_ANO,
+        EXE_SOI_DTD,
+        DGN_PAL,
+        DGN_REL,
+        DGN_PAL_UM,
+        DGN_REL_UM,
+        ASS_DGN
       ),
     structure(
       list(
@@ -92,8 +99,11 @@ test_that("extract_hospital_stays works", {
         BEN_IDT_ANO = c(1, 1, 1, 2, 2),
         EXE_SOI_DTD = as.Date(
           c(
-            "2019-01-10", "2019-01-10", "2019-01-10",
-            "2019-01-02", "2019-01-02"
+            "2019-01-10",
+            "2019-01-10",
+            "2019-01-10",
+            "2019-01-02",
+            "2019-01-02"
           )
         ),
         DGN_PAL = c("A00", "A00", "A00", "B00", "B00"),

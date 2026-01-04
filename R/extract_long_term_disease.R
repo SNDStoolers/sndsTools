@@ -78,15 +78,16 @@
 #' }
 #' @export
 extract_long_term_disease <- function(
-    start_date = NULL,
-    end_date = NULL,
-    icd_cod_starts_with = NULL,
-    ald_numbers = NULL,
-    excl_etm_nat = c("11", "12", "13"),
-    patients_ids = NULL,
-    output_table_name = NULL,
-    overwrite = FALSE,
-    conn = NULL) {
+  start_date = NULL,
+  end_date = NULL,
+  icd_cod_starts_with = NULL,
+  ald_numbers = NULL,
+  excl_etm_nat = c("11", "12", "13"),
+  patients_ids = NULL,
+  output_table_name = NULL,
+  overwrite = FALSE,
+  conn = NULL
+) {
   # nolint end. Force # nolint: cyclocomp_linter for the function.
   stopifnot(
     !is.null(start_date),
@@ -139,12 +140,16 @@ extract_long_term_disease <- function(
   formatted_end_date <- format(end_date, "%Y-%m-%d")
 
   if (!is.null(icd_cod_starts_with)) {
-    print(glue::glue("Extracting LTD status for ICD 10 codes starting \
-    with {paste(icd_cod_starts_with, collapse = ' or ')}..."))
+    print(glue::glue(
+      "Extracting LTD status for ICD 10 codes starting \
+    with {paste(icd_cod_starts_with, collapse = ' or ')}..."
+    ))
   }
   if (!is.null(ald_numbers)) {
-    print(glue::glue("Extracting LTD status for ALD numbers \
-    {paste(ald_numbers, collapse = ',')}..."))
+    print(glue::glue(
+      "Extracting LTD status for ALD numbers \
+    {paste(ald_numbers, collapse = ',')}..."
+    ))
   }
   if (is.null(icd_cod_starts_with) && is.null(ald_numbers)) {
     print(glue::glue("Extracting LTD status for all ICD 10 codes..."))
@@ -246,5 +251,5 @@ extract_long_term_disease <- function(
     DBI::dbDisconnect(conn)
   }
 
-  return(result)
+  result
 }

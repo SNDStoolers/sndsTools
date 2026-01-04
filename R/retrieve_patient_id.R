@@ -1,10 +1,11 @@
 # Function to retrieve
 retrieve_psa <- function(
-    ben_table_name,
-    start_key,
-    conn = NULL,
-    check_arc_table = TRUE,
-    output_table_name = NULL) {
+  ben_table_name,
+  start_key,
+  conn = NULL,
+  check_arc_table = TRUE,
+  output_table_name = NULL
+) {
   # Check if a connection is provided
   connection_opened <- FALSE
   if (is.null(conn)) {
@@ -55,7 +56,8 @@ retrieve_psa <- function(
 
       idt <- dplyr::union(idt, idt_arc)
     }
-  } else { # Start from BEN_IDT_ANO
+  } else {
+    # Start from BEN_IDT_ANO
     idt <- dplyr::tbl(conn, ben_table_name) |>
       dplyr::distinct()
   }
@@ -77,8 +79,8 @@ retrieve_psa <- function(
     dplyr::collect() |>
     dplyr::group_by(!!!rlang::syms(psa_key)) |>
     dplyr::mutate(
-      psa_w_multiple_idt_or_nir =
-        dplyr::n_distinct(BEN_IDT_ANO) > 1 | dplyr::n_distinct(BEN_NIR_ANO) > 1
+      psa_w_multiple_idt_or_nir = dplyr::n_distinct(BEN_IDT_ANO) > 1 |
+        dplyr::n_distinct(BEN_NIR_ANO) > 1
     ) |>
     dplyr::ungroup() |>
     dplyr::group_by(!!!rlang::syms(idt_key)) |>
@@ -86,18 +88,22 @@ retrieve_psa <- function(
       psa_w_multiple_idt_or_nir = any(psa_w_multiple_idt_or_nir),
       cdi_nir_00 = !is.na(BEN_CDI_NIR) & BEN_CDI_NIR == "00",
       nir_ano_defined = !is.na(BEN_NIR_ANO),
-      birth_date_variation =
-        dplyr::n_distinct(BEN_NAI_ANN) > 1 | dplyr::n_distinct(BEN_NAI_MOI) > 1,
+      birth_date_variation = dplyr::n_distinct(BEN_NAI_ANN) > 1 |
+        dplyr::n_distinct(BEN_NAI_MOI) > 1,
       sex_variation = dplyr::n_distinct(BEN_SEX_COD) > 1
     )
 
   # Handle output: Return or save the table
   if (is.null(output_table_name)) {
-    if (connection_opened) DBI::dbDisconnect(conn)
-    return(idt_psa)
+    if (connection_opened) {
+      DBI::dbDisconnect(conn)
+    }
+    idt_psa
   } else {
-    DBI::dbWriteTable(conn,
-      output_table_name, idt_psa |> dplyr::collect(),
+    DBI::dbWriteTable(
+      conn,
+      output_table_name,
+      idt_psa |> dplyr::collect(),
       overwrite = TRUE
     )
     message(glue::glue("Results saved to table {output_table_name} in Oracle."))
@@ -206,10 +212,12 @@ retrieve_psa <- function(
 #' }
 #' @export
 # nolint end
-retrieve_all_psa_from_idt <- function(ben_table_name,
-                                      conn = NULL,
-                                      check_arc_table = TRUE,
-                                      output_table_name = NULL) {
+retrieve_all_psa_from_idt <- function(
+  ben_table_name,
+  conn = NULL,
+  check_arc_table = TRUE,
+  output_table_name = NULL
+) {
   start_key <- "BEN_IDT_ANO"
   retrieve_psa(
     ben_table_name,
@@ -319,10 +327,12 @@ retrieve_all_psa_from_idt <- function(ben_table_name,
 #' }
 #' @export
 # nolint end
-retrieve_all_psa_from_psa <- function(ben_table_name,
-                                      conn = NULL,
-                                      check_arc_table = TRUE,
-                                      output_table_name = NULL) {
+retrieve_all_psa_from_psa <- function(
+  ben_table_name,
+  conn = NULL,
+  check_arc_table = TRUE,
+  output_table_name = NULL
+) {
   start_key <- "BEN_NIR_PSA"
   retrieve_psa(
     ben_table_name,

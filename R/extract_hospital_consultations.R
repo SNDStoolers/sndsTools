@@ -64,13 +64,15 @@
 #' }
 #' @export
 # nolint end
-extract_hospital_consultations <- function(start_date,
-                                           end_date,
-                                           spe_codes_filter = NULL,
-                                           prestation_codes_filter = NULL,
-                                           patient_ids_filter = NULL,
-                                           output_table_name = NULL,
-                                           conn = NULL) {
+extract_hospital_consultations <- function(
+  start_date,
+  end_date,
+  spe_codes_filter = NULL,
+  prestation_codes_filter = NULL,
+  patient_ids_filter = NULL,
+  output_table_name = NULL,
+  conn = NULL
+) {
   stopifnot(
     !is.null(start_date),
     !is.null(end_date),
@@ -96,7 +98,6 @@ extract_hospital_consultations <- function(start_date,
     output_table_name <- glue::glue("TMP_DISP_{timestamp}")
   }
 
-
   start_year <- lubridate::year(start_date)
   end_year <- lubridate::year(end_date)
   formatted_start_date <- format(start_date, "%Y-%m-%d")
@@ -104,9 +105,7 @@ extract_hospital_consultations <- function(start_date,
 
   if (!is.null(patient_ids_filter)) {
     patient_ids_table_name <- "TMP_PATIENT_IDS"
-    try(DBI::dbRemoveTable(conn, patient_ids_table_name),
-      silent = TRUE
-    )
+    try(DBI::dbRemoveTable(conn, patient_ids_table_name), silent = TRUE)
     DBI::dbWriteTable(conn, patient_ids_table_name, patient_ids_filter)
   }
 
@@ -119,11 +118,13 @@ extract_hospital_consultations <- function(start_date,
   )
   pb$tick(0)
   for (year in start_year:end_year) {
-    pb$tick(tokens = list(
-      year1 = year,
-      year2 = start_year,
-      year3 = end_year
-    ))
+    pb$tick(
+      tokens = list(
+        year1 = year,
+        year2 = start_year,
+        year3 = end_year
+      )
+    )
 
     formatted_year <- sprintf("%02d", year %% 100)
 
@@ -166,7 +167,8 @@ extract_hospital_consultations <- function(start_date,
     if (!is.null(patient_ids_filter)) {
       patient_ids_table <- dplyr::tbl(conn, patient_ids_table_name)
       query <- patient_ids_table |>
-        dplyr::inner_join(ace,
+        dplyr::inner_join(
+          ace,
           by = c("BEN_NIR_PSA" = "NIR_ANO_17"),
           keep = TRUE
         )
@@ -217,5 +219,5 @@ extract_hospital_consultations <- function(start_date,
     DBI::dbDisconnect(conn)
   }
 
-  return(result)
+  result
 }
