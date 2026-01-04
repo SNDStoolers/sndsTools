@@ -9,4 +9,5 @@ docs
 .github_token
 .vscode/
 .idea/
+# mode for roo code (open source agentic AI)
 .roomodes

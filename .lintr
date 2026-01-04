@@ -1,5 +1,8 @@
-linters: 
-  linters_with_defaults(object_usage_linter = NULL)# see vignette("lintr")
+linters:
+  linters_with_defaults(
+    object_usage_linter = NULL,
+    indentation_linter = NULL
+  ) # see vignette("lintr")
   # Reasons for removed linters:
     # - object_usage_linter: raise warning every time we use without string a variable name in dplyr syntax.
 encoding: "UTF-8"

@@ -135,6 +135,6 @@ extract_hospital_stays(
   start_date =
     as.Date("2019-01-01"), end_date = as.Date("2019-12-31"), dp_cim10_codes =
     c("A00", "B00")
-)  @export
+)
 }
 }
