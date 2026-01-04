@@ -179,9 +179,23 @@ conflits](https://help.github.com/articles/resolving-a-merge-conflict-using-the-
     certains test de qualité :
 
 - que votre code ne casse pas de tests : `make test`
-- que votre code respecte les conventions de style : `make style-pkg`
-- que votre code respecte les conventions de lint : `make lint-pkg`
+- que votre code respecte les conventions de style : `make style`
+- que votre code respecte les conventions de lint : `make lint`
+  (nécessite l’extension [air
+  formatter](https://tidyverse.org/blog/2025/02/air/) installée)
 - que la documentation se génère correctement : `make doc-html`
+
+## Environnement de développement
+
+L’environnement de développement recommandé est Rstudio ou vscode.
+
+Un environnement de développement conteneurisé avec R et les paquets
+nécessaires au développement peut être mis en place avec vscode et
+l’extension Dev container (nécessite docker installé). Le fichier de
+configuration de l’environnement de développement est dans
+`.devcontainer/devcontainer.json`. Ce tutoriel explique [comment
+utiliser les dev containers avec
+vscode](https://code.visualstudio.com/docs/devcontainers/tutorial).
 
 ## Références pour contribuer
 

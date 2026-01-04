@@ -233,15 +233,27 @@ test de qualité :</li>
 <li>que votre code ne casse pas de tests : <code>make test</code>
 </li>
 <li>que votre code respecte les conventions de style :
-<code>make style-pkg</code>
+<code>make style</code>
 </li>
 <li>que votre code respecte les conventions de lint :
-<code>make lint-pkg</code>
-</li>
+<code>make lint</code> (nécessite l’extension <a href="https://tidyverse.org/blog/2025/02/air/" class="external-link">air formatter</a>
+installée)</li>
 <li>que la documentation se génère correctement :
 <code>make doc-html</code>
 </li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="environnement-de-développement">Environnement de développement<a class="anchor" aria-label="anchor" href="#environnement-de-d%C3%A9veloppement"></a>
+</h2>
+<p>L’environnement de développement recommandé est Rstudio ou
+vscode.</p>
+<p>Un environnement de développement conteneurisé avec R et les paquets
+nécessaires au développement peut être mis en place avec vscode et
+l’extension Dev container (nécessite docker installé). Le fichier de
+configuration de l’environnement de développement est dans
+<code>.devcontainer/devcontainer.json</code>. Ce tutoriel explique <a href="https://code.visualstudio.com/docs/devcontainers/tutorial" class="external-link">comment
+utiliser les dev containers avec vscode</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="références-pour-contribuer">Références pour contribuer<a class="anchor" aria-label="anchor" href="#r%C3%A9f%C3%A9rences-pour-contribuer"></a>
