@@ -56,6 +56,7 @@ et <code>end_date</code> (incluses) sont extraites.</p>
 <span>  <span class="va">end_date</span>,</span>
 <span>  pse_spe_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  prestation_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  analyse_couts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  dis_dtd_lag_months <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  patients_ids_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -90,6 +91,12 @@ prestations à extraire en norme B5 (colonne <code>PRS_NAT_REF</code>, référen
 <code>IR_NAT_V</code>). Si <code>prestation_filter</code> n'est pas fourni, les consultations de
 tous les prestations sont extraites. Les codes des prestations sont
 disponibles sur la page <a href="https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html" class="external-link">"Cibler selon les natures de prestations"</a> de la documentation SNDS. Défaut à <code>NULL</code>.</p></dd>
+
+
+<dt id="arg-analyse-couts">analyse_couts<a class="anchor" aria-label="anchor" href="#arg-analyse-couts"></a></dt>
+<dd><p>Logical (Optionnel). Si <code>TRUE</code>, les filtres de qualité
+liés aux coûts, écartant les actes en majorations sont ignorés. Utile pour
+des analyses portant sur les coûts. Défaut à <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-dis-dtd-lag-months">dis_dtd_lag_months<a class="anchor" aria-label="anchor" href="#arg-dis-dtd-lag-months"></a></dt>

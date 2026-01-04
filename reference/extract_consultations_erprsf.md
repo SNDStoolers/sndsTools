@@ -12,6 +12,7 @@ extract_consultations_erprsf(
   end_date,
   pse_spe_filter = NULL,
   prestation_filter = NULL,
+  analyse_couts = FALSE,
   dis_dtd_lag_months = 6,
   patients_ids_filter = NULL,
   output_table_name = NULL,
@@ -45,6 +46,12 @@ extract_consultations_erprsf(
   sur la page ["Cibler selon les natures de
   prestations"](https://documentation-snds.health-data-hub.fr/snds/fiches/prestation.html)
   de la documentation SNDS. Défaut à `NULL`.
+
+- analyse_couts:
+
+  Logical (Optionnel). Si `TRUE`, les filtres de qualité liés aux coûts,
+  écartant les actes en majorations sont ignorés. Utile pour des
+  analyses portant sur les coûts. Défaut à `FALSE`.
 
 - dis_dtd_lag_months:
 
