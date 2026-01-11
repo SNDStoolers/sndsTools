@@ -18,12 +18,15 @@ Pour une utilisation sur le portail CNAM, il est nécessaire de
 copier/coller le code source du paquet sur le portail CNAM. Pour cela,
 il faut suivre les étapes suivantes :
 
-``` r
-## 1. En local (sur votre ordinateur) : Copier le fichier contenant toutes les fonctions: [sndsTools_all.R](https://github.com/SNDStoolers/sndsTools/sndsTools_all.R)
-## 2. Sur le portail CNAM, coller le fichier sndsTools.R sur le portail CNAM
-## 3. Sur le portail CNAM, charger toutes les fonctions du paquet:
-source("sndsTools_all.R")
-```
+- 1.  En local (sur votre ordinateur) : Copier le fichier contenant
+      toutes les fonctions:
+      [`sndsTools_all.R`](https://github.com/SNDStoolers/sndsTools/blob/main/sndsTools_all.R)
+- 2.  Sur le portail CNAM, coller le contenu fichier `sndsTools_all.R`
+      dans un nouveau fichier nommé `sndsTools_all.R` dans votre dossier
+      d’étude.
+- 3.  Sur le portail CNAM, au début de votre fichier d’étude
+      `mon_etude.R`, charger toutes les fonctions du paquet:
+      `{r eval = FALSE} source("sndsTools_all.R")`.
 
 #### En local (pour le développement du paquet)
 

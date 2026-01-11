@@ -143,5 +143,5 @@ Fonctions pour générer des données factices similaires à celles du SNDS.
 - [Benchmarking dplyr vs RSQL](benchmark_dplyr_vs_rsql.md):
 - [Contribuer](contribuer.md):
 - [Gouvernance](gouvernance.md):
-- [Prise en main](paresnds.md):
+- [Prise en main](sndsTools.md):
 - [UNKNOWN TITLE](Tutoriel.md):

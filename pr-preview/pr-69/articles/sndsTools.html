@@ -29,14 +29,14 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="active nav-item"><a class="nav-link" href="../articles/sndsTools.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/benchmark_dplyr_vs_rsql.html">Benchmarking dplyr vs RSQL</a></li>
     <li><a class="dropdown-item" href="../articles/contribuer.html">Contribuer</a></li>
     <li><a class="dropdown-item" href="../articles/gouvernance.html">Gouvernance</a></li>
-    <li><a class="dropdown-item" href="../articles/paresnds.html">Prise en main</a></li>
     <li><a class="dropdown-item" href="../articles/Tutoriel.html">UNKNOWN TITLE</a></li>
   </ul>
 </li>
@@ -62,8 +62,8 @@
       <h1>Prise en main</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/SNDStoolers/sndsTools/tree/main/vignettes/paresnds.Rmd" class="external-link"><code>vignettes/paresnds.Rmd</code></a></small>
-      <div class="d-none name"><code>paresnds.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/SNDStoolers/sndsTools/tree/main/vignettes/sndsTools.Rmd" class="external-link"><code>vignettes/sndsTools.Rmd</code></a></small>
+      <div class="d-none name"><code>sndsTools.Rmd</code></div>
     </div>
 
     
@@ -89,20 +89,32 @@ bonnes pratiques pour utiliser ces données.</p>
 <p>Pour une utilisation sur le portail CNAM, il est nécessaire de
 copier/coller le code source du paquet sur le portail CNAM. Pour cela,
 il faut suivre les étapes suivantes :</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## 1. En local (sur votre ordinateur) : Copier le fichier contenant toutes les fonctions: [sndsTools_all.R](https://github.com/SNDStoolers/sndsTools/sndsTools_all.R)</span></span>
-<span><span class="co">## 2. Sur le portail CNAM, coller le fichier sndsTools.R sur le portail CNAM</span></span>
-<span><span class="co">## 3. Sur le portail CNAM, charger toutes les fonctions du paquet:</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"sndsTools_all.R"</span><span class="op">)</span></span></code></pre></div>
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>En local (sur votre ordinateur) : Copier le fichier contenant toutes
+les fonctions: <a href="https://github.com/SNDStoolers/sndsTools/blob/main/sndsTools_all.R" class="external-link"><code>sndsTools_all.R</code></a>
+</li>
+</ol></li>
+<li><ol start="2" style="list-style-type: decimal">
+<li>Sur le portail CNAM, coller le contenu fichier
+<code>sndsTools_all.R</code> dans un nouveau fichier nommé
+<code>sndsTools_all.R</code> dans votre dossier d’étude.</li>
+</ol></li>
+<li><ol start="3" style="list-style-type: decimal">
+<li>Sur le portail CNAM, au début de votre fichier d’étude
+<code>mon_etude.R</code>, charger toutes les fonctions du paquet:
+<code>{r eval = FALSE} source("sndsTools_all.R")</code>.</li>
+</ol></li>
+</ul>
 </div>
 <div class="section level4">
 <h4 id="en-local-pour-le-développement-du-paquet">En local (pour le développement du paquet)<a class="anchor" aria-label="anchor" href="#en-local-pour-le-d%C3%A9veloppement-du-paquet"></a>
 </h4>
 <p>Ouvrir le paquet avec Rstudio, puis lancer :</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span>dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Puis pour charger le paquet :</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/" class="external-link">sndsTools</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
