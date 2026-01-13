@@ -197,7 +197,8 @@ patients_avc_qualite <- patients_identifiants_avc |>
   )
 # Préparer les identifiants pour les extractions ultérieures
 patients_ids_filter <- patients_avc_qualite |>
-  select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM)
+  select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM) |>
+  distinct()
 
 paste("Nombre de patients uniques avec AVC :", nrow(patients_avc_qualite))
 #> [1] "Nombre de patients uniques avec AVC : 7"
@@ -214,7 +215,7 @@ patients en utilisant
 extract_consultations_erprsf(
   start_date = start_date,
   end_date = end_date,
-  pse_spe_filter = NULL,  # Toutes les spécialités médicales
+  pse_spe_filter = c(32, 10, 47, 3),  # Spécalités neuro ou cardio
   prestation_filter = NULL,  # Toutes les prestations
   analyse_couts = FALSE,  # Filtrer les majorations
   dis_dtd_lag_months = 6,  # Décalage standard 6 mois
@@ -222,7 +223,9 @@ extract_consultations_erprsf(
   output_table_name = "TMP_CONSULTATIONS_AVC",  # Stocker en table Oracle
   conn = conn
 )
-#> Extracting consultations from all specialties codes...
+#> Extracting consultations
+#> from all specialties among
+#> 32 or 10 or 47 or 3...
 #> Results saved to table TMP_CONSULTATIONS_AVC in Oracle.
 #> NULL
 
@@ -241,11 +244,7 @@ kable(head(consultations_par_specialite, 5))
 
 | PSE_SPE_COD |   n | pourcentage |
 |:------------|----:|------------:|
-| 05          |   7 |        26.9 |
-| 04          |   6 |        23.1 |
-| 02          |   3 |        11.5 |
-| 01          |   6 |        23.1 |
-| 03          |   4 |        15.4 |
+| 03          |   4 |         100 |
 
 ``` r
 
@@ -270,7 +269,8 @@ Nous extrayons les ALD des patients avec AVC en utilisant
 
 # Extraire les ALD des patients avec AVC
 patients_ids_for_ald <- patients_ids_filter |>
-  select(BEN_IDT_ANO, BEN_NIR_PSA)
+  select(BEN_IDT_ANO, BEN_NIR_PSA) |>
+  distinct()
 
 extract_long_term_disease(
   start_date = start_date,
@@ -299,9 +299,9 @@ kable(ald_avc_head)
 |------------:|------------:|:------------|:------------|:------------|:------------|
 |          72 |          12 | 2023-01-25  | 2024-04-24  | 02          | I70         |
 |          87 |           8 | 2023-06-07  | 2025-10-05  | 01          | I21         |
+|          43 |           8 | 2023-11-02  | 2026-03-27  | 01          | I60         |
+|          95 |           8 | 2023-05-01  | 2026-02-08  | 03          | I13         |
 |          42 |           1 | 2023-06-08  | 2026-01-23  | 01          | I20         |
-|          87 |          12 | 2023-03-05  | 2025-12-14  | 02          | I25         |
-|          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
 
 ``` r
 
@@ -309,6 +309,7 @@ kable(ald_avc_head)
 ald_resume <- dplyr::tbl(conn, "TMP_ALD_AVC") |>
   dplyr::count(MED_MTF_COD, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
+  arrange(-pourcentage) |>
   dplyr::collect()
 kable(head(ald_resume, 5))
 ```
@@ -341,11 +342,17 @@ Nous extrayons les délivrances de médicaments des patients avec AVC en
 utilisant
 [`extract_drug_dispenses()`](../reference/extract_drug_dispenses.md).
 
+C’est la requête la plus longue sur le portail. Pour les 122 887
+patients hospitalisés pour AVC en 2024, elle tourne en 5 min environ.
+Cette lenteur est dûe à la jointure nécessaire entre les deux tables
+volumineuses `ER_PHA_F` et `ER_PRS_F`.
+
 ``` r
 
 # Extraire les délivrances de médicaments des patients avec AVC
 patients_ids_for_drugs <- patients_ids_filter |>
-  select(BEN_IDT_ANO, BEN_NIR_PSA)
+  select(BEN_IDT_ANO, BEN_NIR_PSA) |>
+  distinct()
 
 # Codes ATC pour les médicaments courants post-AVC
 # N : système nerveux
@@ -408,6 +415,7 @@ kable(drugs_avc_head)
 drugs_par_atc <- dplyr::tbl(conn, "TMP_DRUG_DISPENSES_AVC") |>
   dplyr::count(PHA_ATC_CLA, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
+  arrange(-pourcentage) |>
   dplyr::collect()
 kable(head(drugs_par_atc, 5))
 ```
@@ -415,10 +423,10 @@ kable(head(drugs_par_atc, 5))
 | PHA_ATC_CLA |   n | pourcentage |
 |:------------|----:|------------:|
 | C09AA02     |   8 |        26.7 |
-| C07AB02     |   2 |         6.7 |
 | C08CA01     |   5 |        16.7 |
 | C02AC01     |   4 |        13.3 |
 | C03AA03     |   4 |        13.3 |
+| C07AB07     |   4 |        13.3 |
 
 ### Étape 6 : Nettoyage et fermeture de la session
 

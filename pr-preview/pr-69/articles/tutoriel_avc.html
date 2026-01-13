@@ -464,7 +464,8 @@ référentiel des bénéficiaires en utilisant
 <span>  <span class="op">)</span></span>
 <span><span class="co"># Préparer les identifiants pour les extractions ultérieures</span></span>
 <span><span class="va">patients_ids_filter</span> <span class="op">&lt;-</span> <span class="va">patients_avc_qualite</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BEN_IDT_ANO</span>, <span class="va">BEN_NIR_PSA</span>, <span class="va">BEN_RNG_GEM</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BEN_IDT_ANO</span>, <span class="va">BEN_NIR_PSA</span>, <span class="va">BEN_RNG_GEM</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Nombre de patients uniques avec AVC :"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">patients_avc_qualite</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Nombre de patients uniques avec AVC : 7"</span></span></code></pre></div>
@@ -479,7 +480,7 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <span><span class="fu"><a href="../reference/extract_consultations_erprsf.html">extract_consultations_erprsf</a></span><span class="op">(</span></span>
 <span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
-<span>  pse_spe_filter <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Toutes les spécialités médicales</span></span>
+<span>  pse_spe_filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">32</span>, <span class="fl">10</span>, <span class="fl">47</span>, <span class="fl">3</span><span class="op">)</span>,  <span class="co"># Spécalités neuro ou cardio</span></span>
 <span>  prestation_filter <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Toutes les prestations</span></span>
 <span>  analyse_couts <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># Filtrer les majorations</span></span>
 <span>  dis_dtd_lag_months <span class="op">=</span> <span class="fl">6</span>,  <span class="co"># Décalage standard 6 mois</span></span>
@@ -487,7 +488,9 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <span>  output_table_name <span class="op">=</span> <span class="st">"TMP_CONSULTATIONS_AVC"</span>,  <span class="co"># Stocker en table Oracle</span></span>
 <span>  conn <span class="op">=</span> <span class="va">conn</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Extracting consultations from all specialties codes...</span></span>
+<span><span class="co">#&gt; Extracting consultations</span></span>
+<span><span class="co">#&gt; from all specialties among</span></span>
+<span><span class="co">#&gt; 32 or 10 or 47 or 3...</span></span>
 <span><span class="co">#&gt; Results saved to table TMP_CONSULTATIONS_AVC in Oracle.</span></span>
 <span><span class="co">#&gt; NULL</span></span>
 <span></span>
@@ -508,33 +511,11 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <th align="right">n</th>
 <th align="right">pourcentage</th>
 </tr></thead>
-<tbody>
-<tr class="odd">
-<td align="left">05</td>
-<td align="right">7</td>
-<td align="right">26.9</td>
-</tr>
-<tr class="even">
-<td align="left">04</td>
-<td align="right">6</td>
-<td align="right">23.1</td>
-</tr>
-<tr class="odd">
-<td align="left">02</td>
-<td align="right">3</td>
-<td align="right">11.5</td>
-</tr>
-<tr class="even">
-<td align="left">01</td>
-<td align="right">6</td>
-<td align="right">23.1</td>
-</tr>
-<tr class="odd">
+<tbody><tr class="odd">
 <td align="left">03</td>
 <td align="right">4</td>
-<td align="right">15.4</td>
-</tr>
-</tbody>
+<td align="right">100</td>
+</tr></tbody>
 </table>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -558,7 +539,8 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Extraire les ALD des patients avec AVC</span></span>
 <span><span class="va">patients_ids_for_ald</span> <span class="op">&lt;-</span> <span class="va">patients_ids_filter</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BEN_IDT_ANO</span>, <span class="va">BEN_NIR_PSA</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BEN_IDT_ANO</span>, <span class="va">BEN_NIR_PSA</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/extract_long_term_disease.html">extract_long_term_disease</a></span><span class="op">(</span></span>
 <span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
@@ -616,28 +598,28 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <td align="left">I21</td>
 </tr>
 <tr class="odd">
+<td align="right">43</td>
+<td align="right">8</td>
+<td align="left">2023-11-02</td>
+<td align="left">2026-03-27</td>
+<td align="left">01</td>
+<td align="left">I60</td>
+</tr>
+<tr class="even">
+<td align="right">95</td>
+<td align="right">8</td>
+<td align="left">2023-05-01</td>
+<td align="left">2026-02-08</td>
+<td align="left">03</td>
+<td align="left">I13</td>
+</tr>
+<tr class="odd">
 <td align="right">42</td>
 <td align="right">1</td>
 <td align="left">2023-06-08</td>
 <td align="left">2026-01-23</td>
 <td align="left">01</td>
 <td align="left">I20</td>
-</tr>
-<tr class="even">
-<td align="right">87</td>
-<td align="right">12</td>
-<td align="left">2023-03-05</td>
-<td align="left">2025-12-14</td>
-<td align="left">02</td>
-<td align="left">I25</td>
-</tr>
-<tr class="odd">
-<td align="right">43</td>
-<td align="right">5</td>
-<td align="left">2023-07-28</td>
-<td align="left">2024-04-25</td>
-<td align="left">01</td>
-<td align="left">I50</td>
 </tr>
 </tbody>
 </table>
@@ -647,6 +629,7 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <span><span class="va">ald_resume</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"TMP_ALD_AVC"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">MED_MTF_COD</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pourcentage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">n</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">pourcentage</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ald_resume</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -701,11 +684,16 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 </h3>
 <p>Nous extrayons les délivrances de médicaments des patients avec AVC
 en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses()</a></code>.</p>
+<p>C’est la requête la plus longue sur le portail. Pour les 122 887
+patients hospitalisés pour AVC en 2024, elle tourne en 5 min environ.
+Cette lenteur est dûe à la jointure nécessaire entre les deux tables
+volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Extraire les délivrances de médicaments des patients avec AVC</span></span>
 <span><span class="va">patients_ids_for_drugs</span> <span class="op">&lt;-</span> <span class="va">patients_ids_filter</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BEN_IDT_ANO</span>, <span class="va">BEN_NIR_PSA</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BEN_IDT_ANO</span>, <span class="va">BEN_NIR_PSA</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Codes ATC pour les médicaments courants post-AVC</span></span>
 <span><span class="co"># N : système nerveux</span></span>
@@ -818,6 +806,7 @@ en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_dr
 <span><span class="va">drugs_par_atc</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"TMP_DRUG_DISPENSES_AVC"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">PHA_ATC_CLA</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pourcentage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">n</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="op">-</span><span class="va">pourcentage</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">drugs_par_atc</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -833,22 +822,22 @@ en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_dr
 <td align="right">26.7</td>
 </tr>
 <tr class="even">
-<td align="left">C07AB02</td>
-<td align="right">2</td>
-<td align="right">6.7</td>
-</tr>
-<tr class="odd">
 <td align="left">C08CA01</td>
 <td align="right">5</td>
 <td align="right">16.7</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">C02AC01</td>
 <td align="right">4</td>
 <td align="right">13.3</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">C03AA03</td>
+<td align="right">4</td>
+<td align="right">13.3</td>
+</tr>
+<tr class="odd">
+<td align="left">C07AB07</td>
 <td align="right">4</td>
 <td align="right">13.3</td>
 </tr>
