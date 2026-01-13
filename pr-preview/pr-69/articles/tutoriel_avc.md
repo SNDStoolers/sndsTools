@@ -1,6 +1,6 @@
 # Exemple d'étude possible avec sndsTools
 
-Cette page présente un example type d’utilisation des fonctions de
+Cette page présente un exemple type d’utilisation des fonctions de
 `sndsTools` pour étudier les données du SNDS.
 
 Le cas d’étude porte sur les patients hospitalisés pour un accident
@@ -99,8 +99,8 @@ principal d’AVC en utilisant la fonction
 
 Les [codes CIM-10 pour les
 AVC](https://fr.wikipedia.org/wiki/CIM-10_Chapitre_09_:_Maladies_de_l%27appareil_circulatoire)
-sont I61 (hémorragie intracérébrale), I62 (Autres hémorragies
-intracrâniennes non traumatique), I63 (infarctus cérébral) et I64
+sont I61 (hémorragie intracérébrale), I62 (autres hémorragies
+intracrâniennes non traumatiques), I63 (infarctus cérébral) et I64
 (accident vasculaire cérébral non précisé).
 
 ``` r
@@ -131,6 +131,7 @@ extract_hospital_stays(
 sejours_avc_head <- dplyr::tbl(conn, "TMP_SEJOURS_AVC") |>
   head(5) |>
   dplyr::collect()
+
 kable(sejours_avc_head)
 ```
 
@@ -138,9 +139,9 @@ kable(sejours_avc_head)
 |--------:|--------:|--------:|--------:|--------:|--------:|--------:|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|--------:|--------:|-----------:|:------------|:------------|:-----------|:-----------|:--------|
 |  190076 |       3 |       3 |      10 |       3 |       2 |       6 | 7       | 6       | 6       | 5       | I62     | NA      | 05K76   | 94      | 81924   | 2       |      45 |      36 |      10050 | 2024-06-22  | 2024-07-02  | I50        | I63        | NA      |
 |  190076 |       3 |       3 |      10 |       3 |       2 |       6 | 7       | 6       | 6       | 5       | I62     | NA      | 05K76   | 94      | 81924   | 2       |      45 |      36 |      10050 | 2024-06-22  | 2024-07-02  | I25        | NA         | NA      |
-|  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I10        | I10        | NA      |
 |  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I20        | I64        | NA      |
-|  490232 |      20 |      20 |      18 |       1 |       1 |       2 | 6       | 2       | 6       | 2       | I62     | I12     | 05M42   | 84      | 33760   | 1       |      73 |     310 |      10094 | 2024-08-31  | 2024-09-18  | I10        | NA         | NA      |
+|  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I10        | I10        | NA      |
+|  468916 |       9 |       9 |       7 |       2 |       1 |      14 | 6       | 8       | 7       | 6       | I62     | I61     | 05K70   | 67      | 77373   | 1       |      83 |     199 |      10042 | 2024-11-26  | 2024-12-03  | I61        | NA         | NA      |
 
 ``` r
 
@@ -149,11 +150,6 @@ avc_par_type <- dplyr::tbl(conn, "TMP_SEJOURS_AVC") |>
   dplyr::count(DGN_PAL, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
   dplyr::collect()
-#> Warning: Missing values are always removed in SQL aggregation functions.
-#> Use `na.rm = TRUE` to silence this warning
-#> This warning is displayed once every 8 hours.
-#> Warning: ORDER BY is ignored in subqueries without LIMIT
-#> ℹ Do you need to move arrange() later in the pipeline or use window_order() instead?
 kable(avc_par_type)
 ```
 
@@ -240,8 +236,6 @@ consultations_par_specialite <- dplyr::tbl(conn, "TMP_CONSULTATIONS_AVC") |>
   dplyr::count(PSE_SPE_COD, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
   dplyr::collect()
-#> Warning: ORDER BY is ignored in subqueries without LIMIT
-#> ℹ Do you need to move arrange() later in the pipeline or use window_order() instead?
 kable(head(consultations_par_specialite, 5))
 ```
 
@@ -250,8 +244,8 @@ kable(head(consultations_par_specialite, 5))
 | 05          |   7 |        26.9 |
 | 04          |   6 |        23.1 |
 | 02          |   3 |        11.5 |
-| 01          |   6 |        23.1 |
 | 03          |   4 |        15.4 |
+| 01          |   6 |        23.1 |
 
 ``` r
 
@@ -295,15 +289,14 @@ extract_long_term_disease(
 
 # Récupérer un aperçu des ALD
 ald_avc_head <- dplyr::tbl(conn, "TMP_ALD_AVC") |>
-  head(10) |>
+  head(5) |>
   dplyr::collect()
+
 kable(ald_avc_head)
 ```
 
 | BEN_IDT_ANO | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
 |------------:|------------:|:------------|:------------|:------------|:------------|
-|          43 |           8 | 2023-11-02  | 2026-03-27  | 01          | I60         |
-|          95 |           8 | 2023-05-01  | 2026-02-08  | 03          | I13         |
 |          42 |           1 | 2023-06-08  | 2026-01-23  | 01          | I20         |
 |          87 |          12 | 2023-03-05  | 2025-12-14  | 02          | I25         |
 |          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
@@ -317,8 +310,6 @@ ald_resume <- dplyr::tbl(conn, "TMP_ALD_AVC") |>
   dplyr::count(MED_MTF_COD, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
   dplyr::collect()
-#> Warning: ORDER BY is ignored in subqueries without LIMIT
-#> ℹ Do you need to move arrange() later in the pipeline or use window_order() instead?
 kable(head(ald_resume, 5))
 ```
 
@@ -398,7 +389,7 @@ extract_drug_dispenses(
 
 # Récupérer un aperçu des délivrances
 drugs_avc_head <- dplyr::tbl(conn, "TMP_DRUG_DISPENSES_AVC") |>
-  head(10) |>
+  head(5) |>
   dplyr::collect()
 kable(drugs_avc_head)
 ```
@@ -406,15 +397,10 @@ kable(drugs_avc_head)
 | BEN_IDT_ANO | EXE_SOI_DTD | PHA_ACT_QSN | PHA_ATC_CLA | PHA_PRS_C13   | PSP_SPE_COD |
 |------------:|:------------|------------:|:------------|:--------------|:------------|
 |          95 | 2024-02-17  |           1 | C08CA01     | 3400936267343 | 22          |
-|          72 | 2024-03-12  |           1 | C02AC01     | 3400932026555 | 34          |
-|          87 | 2024-07-16  |           1 | C08CA01     | 3400936267343 | 01          |
 |          36 | 2024-04-17  |           1 | C08CA01     | 3400936267343 | 02          |
-|          36 | 2024-06-01  |           1 | C02AC01     | 3400932026555 | 22          |
-|          95 | 2024-11-01  |           2 | C09AA02     | 3400955555555 | 01          |
+|          87 | 2024-07-16  |           1 | C08CA01     | 3400936267343 | 01          |
+|          72 | 2024-03-12  |           1 | C02AC01     | 3400932026555 | 34          |
 |          42 | 2024-02-13  |           1 | C08CA01     | 3400936267343 | 34          |
-|          90 | 2024-02-01  |           1 | C09AA02     | 3400955555555 | 34          |
-|          95 | 2024-11-21  |           1 | C03AA03     | 3400932725847 | 22          |
-|          90 | 2024-11-12  |           1 | C07AB02     | 3400930219874 | 32          |
 
 ``` r
 
@@ -423,9 +409,7 @@ drugs_par_atc <- dplyr::tbl(conn, "TMP_DRUG_DISPENSES_AVC") |>
   dplyr::count(PHA_ATC_CLA, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
   dplyr::collect()
-#> Warning: ORDER BY is ignored in subqueries without LIMIT
-#> ℹ Do you need to move arrange() later in the pipeline or use window_order() instead?
-kable(head(drugs_par_atc, 15))
+kable(head(drugs_par_atc, 5))
 ```
 
 | PHA_ATC_CLA |   n | pourcentage |
@@ -435,8 +419,6 @@ kable(head(drugs_par_atc, 15))
 | C08CA01     |   5 |        16.7 |
 | C02AC01     |   4 |        13.3 |
 | C03AA03     |   4 |        13.3 |
-| C09CA01     |   3 |        10.0 |
-| C07AB07     |   4 |        13.3 |
 
 ### Étape 6 : Nettoyage et fermeture de la session
 

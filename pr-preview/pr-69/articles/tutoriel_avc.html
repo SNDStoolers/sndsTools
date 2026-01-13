@@ -70,7 +70,7 @@
 
     
     
-<p>Cette page présente un example type d’utilisation des fonctions de
+<p>Cette page présente un exemple type d’utilisation des fonctions de
 <code>sndsTools</code> pour étudier les données du SNDS.</p>
 <p>Le cas d’étude porte sur les patients hospitalisés pour un accident
 vasculaire cérébral (AVC) en 2024.</p>
@@ -165,7 +165,7 @@ diagnostic principal d’AVC en utilisant la fonction
 <code><a href="../reference/extract_hospital_stays.html">extract_hospital_stays()</a></code>.</p>
 <p>Les <a href="https://fr.wikipedia.org/wiki/CIM-10_Chapitre_09_:_Maladies_de_l%27appareil_circulatoire" class="external-link">codes
 CIM-10 pour les AVC</a> sont I61 (hémorragie intracérébrale), I62
-(Autres hémorragies intracrâniennes non traumatique), I63 (infarctus
+(autres hémorragies intracrâniennes non traumatiques), I63 (infarctus
 cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Définir la période d'étude - année 2024</span></span>
@@ -195,6 +195,7 @@ cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <span><span class="va">sejours_avc_head</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"TMP_SEJOURS_AVC"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">sejours_avc_head</span><span class="op">)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
@@ -329,8 +330,8 @@ cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <td align="right">10035</td>
 <td align="left">2024-06-04</td>
 <td align="left">2024-06-21</td>
-<td align="left">I10</td>
-<td align="left">I10</td>
+<td align="left">I20</td>
+<td align="left">I64</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
@@ -356,34 +357,34 @@ cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <td align="right">10035</td>
 <td align="left">2024-06-04</td>
 <td align="left">2024-06-21</td>
-<td align="left">I20</td>
-<td align="left">I64</td>
+<td align="left">I10</td>
+<td align="left">I10</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="right">490232</td>
-<td align="right">20</td>
-<td align="right">20</td>
-<td align="right">18</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<td align="right">468916</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">7</td>
 <td align="right">2</td>
+<td align="right">1</td>
+<td align="right">14</td>
 <td align="left">6</td>
-<td align="left">2</td>
+<td align="left">8</td>
+<td align="left">7</td>
 <td align="left">6</td>
-<td align="left">2</td>
 <td align="left">I62</td>
-<td align="left">I12</td>
-<td align="left">05M42</td>
-<td align="left">84</td>
-<td align="left">33760</td>
+<td align="left">I61</td>
+<td align="left">05K70</td>
+<td align="left">67</td>
+<td align="left">77373</td>
 <td align="left">1</td>
-<td align="right">73</td>
-<td align="right">310</td>
-<td align="right">10094</td>
-<td align="left">2024-08-31</td>
-<td align="left">2024-09-18</td>
-<td align="left">I10</td>
+<td align="right">83</td>
+<td align="right">199</td>
+<td align="right">10042</td>
+<td align="left">2024-11-26</td>
+<td align="left">2024-12-03</td>
+<td align="left">I61</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
@@ -396,11 +397,6 @@ cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">DGN_PAL</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pourcentage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">n</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Missing values are always removed in SQL aggregation functions.</span></span>
-<span><span class="co">#&gt; Use `na.rm = TRUE` to silence this warning</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; Warning: ORDER BY is ignored in subqueries without LIMIT</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Do you need to move arrange() later in the pipeline or use window_order() instead?</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">avc_par_type</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -505,8 +501,6 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">PSE_SPE_COD</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pourcentage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">n</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: ORDER BY is ignored in subqueries without LIMIT</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Do you need to move arrange() later in the pipeline or use window_order() instead?</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">consultations_par_specialite</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -531,14 +525,14 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <td align="right">11.5</td>
 </tr>
 <tr class="even">
-<td align="left">01</td>
-<td align="right">6</td>
-<td align="right">23.1</td>
-</tr>
-<tr class="odd">
 <td align="left">03</td>
 <td align="right">4</td>
 <td align="right">15.4</td>
+</tr>
+<tr class="odd">
+<td align="left">01</td>
+<td align="right">6</td>
+<td align="right">23.1</td>
 </tr>
 </tbody>
 </table>
@@ -583,8 +577,9 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <span></span>
 <span><span class="co"># Récupérer un aperçu des ALD</span></span>
 <span><span class="va">ald_avc_head</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"TMP_ALD_AVC"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">ald_avc_head</span><span class="op">)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
@@ -604,22 +599,6 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <th align="left">MED_MTF_COD</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td align="right">43</td>
-<td align="right">8</td>
-<td align="left">2023-11-02</td>
-<td align="left">2026-03-27</td>
-<td align="left">01</td>
-<td align="left">I60</td>
-</tr>
-<tr class="even">
-<td align="right">95</td>
-<td align="right">8</td>
-<td align="left">2023-05-01</td>
-<td align="left">2026-02-08</td>
-<td align="left">03</td>
-<td align="left">I13</td>
-</tr>
 <tr class="odd">
 <td align="right">42</td>
 <td align="right">1</td>
@@ -669,8 +648,6 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">MED_MTF_COD</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pourcentage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">n</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: ORDER BY is ignored in subqueries without LIMIT</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Do you need to move arrange() later in the pipeline or use window_order() instead?</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ald_resume</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -772,7 +749,7 @@ en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_dr
 <span></span>
 <span><span class="co"># Récupérer un aperçu des délivrances</span></span>
 <span><span class="va">drugs_avc_head</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"TMP_DRUG_DISPENSES_AVC"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">drugs_avc_head</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -802,12 +779,12 @@ en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_dr
 <td align="left">22</td>
 </tr>
 <tr class="even">
-<td align="right">72</td>
-<td align="left">2024-03-12</td>
+<td align="right">36</td>
+<td align="left">2024-04-17</td>
 <td align="right">1</td>
-<td align="left">C02AC01</td>
-<td align="left">3400932026555</td>
-<td align="left">34</td>
+<td align="left">C08CA01</td>
+<td align="left">3400936267343</td>
+<td align="left">02</td>
 </tr>
 <tr class="odd">
 <td align="right">87</td>
@@ -818,28 +795,12 @@ en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_dr
 <td align="left">01</td>
 </tr>
 <tr class="even">
-<td align="right">36</td>
-<td align="left">2024-04-17</td>
-<td align="right">1</td>
-<td align="left">C08CA01</td>
-<td align="left">3400936267343</td>
-<td align="left">02</td>
-</tr>
-<tr class="odd">
-<td align="right">36</td>
-<td align="left">2024-06-01</td>
+<td align="right">72</td>
+<td align="left">2024-03-12</td>
 <td align="right">1</td>
 <td align="left">C02AC01</td>
 <td align="left">3400932026555</td>
-<td align="left">22</td>
-</tr>
-<tr class="even">
-<td align="right">95</td>
-<td align="left">2024-11-01</td>
-<td align="right">2</td>
-<td align="left">C09AA02</td>
-<td align="left">3400955555555</td>
-<td align="left">01</td>
+<td align="left">34</td>
 </tr>
 <tr class="odd">
 <td align="right">42</td>
@@ -848,30 +809,6 @@ en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_dr
 <td align="left">C08CA01</td>
 <td align="left">3400936267343</td>
 <td align="left">34</td>
-</tr>
-<tr class="even">
-<td align="right">90</td>
-<td align="left">2024-02-01</td>
-<td align="right">1</td>
-<td align="left">C09AA02</td>
-<td align="left">3400955555555</td>
-<td align="left">34</td>
-</tr>
-<tr class="odd">
-<td align="right">95</td>
-<td align="left">2024-11-21</td>
-<td align="right">1</td>
-<td align="left">C03AA03</td>
-<td align="left">3400932725847</td>
-<td align="left">22</td>
-</tr>
-<tr class="even">
-<td align="right">90</td>
-<td align="left">2024-11-12</td>
-<td align="right">1</td>
-<td align="left">C07AB02</td>
-<td align="left">3400930219874</td>
-<td align="left">32</td>
 </tr>
 </tbody>
 </table>
@@ -882,9 +819,7 @@ en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_dr
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">PHA_ATC_CLA</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pourcentage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">n</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: ORDER BY is ignored in subqueries without LIMIT</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">ℹ</span> Do you need to move arrange() later in the pipeline or use window_order() instead?</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">drugs_par_atc</span>, <span class="fl">15</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">drugs_par_atc</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">PHA_ATC_CLA</th>
@@ -914,16 +849,6 @@ en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_dr
 </tr>
 <tr class="odd">
 <td align="left">C03AA03</td>
-<td align="right">4</td>
-<td align="right">13.3</td>
-</tr>
-<tr class="even">
-<td align="left">C09CA01</td>
-<td align="right">3</td>
-<td align="right">10.0</td>
-</tr>
-<tr class="odd">
-<td align="left">C07AB07</td>
 <td align="right">4</td>
 <td align="right">13.3</td>
 </tr>
