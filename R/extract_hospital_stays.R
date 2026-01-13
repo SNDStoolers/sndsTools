@@ -428,7 +428,7 @@ extract_hospital_stays <- function(
         -FHO_RET,
         -PMS_RET
       ) |>
-      dplyr::filter(!grepl("90", GRG_GHM), !(ETA_NUM %in% finess_doublons))
+      dplyr::filter(!(GRG_GHM %like% "%90%"), !(ETA_NUM %in% finess_doublons))
 
     if (year >= 2013) {
       t_mco_b_c_quality_filtered <-
