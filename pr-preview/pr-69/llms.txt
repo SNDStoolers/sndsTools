@@ -136,6 +136,26 @@ Fonctions utilitaires pour manipuler les données extraites.
 
 Fonctions pour générer des données factices similaires à celles du SNDS.
 
+- [`create_mock_database()`](create_mock_database.md) : Configurer une
+  base de données DuckDB avec toutes les tables factices
+- [`create_mock_er_ete_f()`](create_mock_er_ete_f.md) : Créer des
+  données factices pour ER_ETE_F (Actes externes)
+- [`create_mock_er_pha_f()`](create_mock_er_pha_f.md) : Créer des
+  données factices pour les médicaments délivrés (ER_PHA_F)
+- [`create_mock_er_prs_f()`](create_mock_er_prs_f.md) : Créer des
+  données factices pour les délivrances de médicaments (ER_PRS_F)
+- [`create_mock_ir_ben_r()`](create_mock_ir_ben_r.md) : Créer des
+  données factices pour IR_BEN_R (référentiel bénéficiaires)
+- [`create_mock_ir_imb_r()`](create_mock_ir_imb_r.md) : Créer des
+  données factices pour les ALD (IR_IMB_R)
+- [`create_mock_ir_pha_r()`](create_mock_ir_pha_r.md) : Créer des
+  données factices pour le référentiel médicaments (IR_PHA_R)
+- [`create_mock_mco_tables()`](create_mock_mco_tables.md) : Créer des
+  données factices pour les séjours hospitaliers MCO (tables B, C, D,
+  UM)
+- [`create_mock_patients_ids()`](create_mock_patients_ids.md) :
+  Fonctions pour créer des données factices pour le tutoriel sndsTools
+
 # Articles
 
 ### All vignettes
@@ -144,4 +164,4 @@ Fonctions pour générer des données factices similaires à celles du SNDS.
 - [Contribuer](contribuer.md):
 - [Gouvernance](gouvernance.md):
 - [Prise en main](sndsTools.md):
-- [Exemple d'étude possible avec sndsTools](Tutoriel_AVC_2024.md):
+- [Exemple d'étude possible avec sndsTools](tutoriel_avc.md):

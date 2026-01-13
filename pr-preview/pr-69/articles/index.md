@@ -6,4 +6,4 @@
 - [Contribuer](contribuer.md):
 - [Gouvernance](gouvernance.md):
 - [Prise en main](sndsTools.md):
-- [Exemple d'étude possible avec sndsTools](Tutoriel_AVC_2024.md):
+- [Exemple d'étude possible avec sndsTools](tutoriel_avc.md):
