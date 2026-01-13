@@ -35,7 +35,7 @@ Les objectifs de cette étude sont :
 5.  Extraire leurs prescriptions médicamenteuses en ville via
     [`extract_drug_dispenses()`](../reference/extract_drug_dispenses.md)
 
-6.  Présenter quelques analyses descriptives sur ces données
+6.  Nettoyer et fermer la connexion à la base de données
 
 ### Prérequis
 
@@ -244,8 +244,8 @@ kable(head(consultations_par_specialite, 5))
 | 05          |   7 |        26.9 |
 | 04          |   6 |        23.1 |
 | 02          |   3 |        11.5 |
-| 03          |   4 |        15.4 |
 | 01          |   6 |        23.1 |
+| 03          |   4 |        15.4 |
 
 ``` r
 
@@ -297,11 +297,11 @@ kable(ald_avc_head)
 
 | BEN_IDT_ANO | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
 |------------:|------------:|:------------|:------------|:------------|:------------|
+|          72 |          12 | 2023-01-25  | 2024-04-24  | 02          | I70         |
+|          87 |           8 | 2023-06-07  | 2025-10-05  | 01          | I21         |
 |          42 |           1 | 2023-06-08  | 2026-01-23  | 01          | I20         |
 |          87 |          12 | 2023-03-05  | 2025-12-14  | 02          | I25         |
 |          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
-|          72 |          12 | 2023-01-25  | 2024-04-24  | 02          | I70         |
-|          87 |           8 | 2023-06-07  | 2025-10-05  | 01          | I21         |
 
 ``` r
 
@@ -316,9 +316,9 @@ kable(head(ald_resume, 5))
 | MED_MTF_COD |   n | pourcentage |
 |:------------|----:|------------:|
 | I60         |   1 |        14.3 |
-| I25         |   1 |        14.3 |
 | I70         |   1 |        14.3 |
 | I21         |   1 |        14.3 |
+| I25         |   1 |        14.3 |
 | I50         |   1 |        14.3 |
 
 ``` r
@@ -397,8 +397,8 @@ kable(drugs_avc_head)
 | BEN_IDT_ANO | EXE_SOI_DTD | PHA_ACT_QSN | PHA_ATC_CLA | PHA_PRS_C13   | PSP_SPE_COD |
 |------------:|:------------|------------:|:------------|:--------------|:------------|
 |          95 | 2024-02-17  |           1 | C08CA01     | 3400936267343 | 22          |
-|          36 | 2024-04-17  |           1 | C08CA01     | 3400936267343 | 02          |
 |          87 | 2024-07-16  |           1 | C08CA01     | 3400936267343 | 01          |
+|          36 | 2024-04-17  |           1 | C08CA01     | 3400936267343 | 02          |
 |          72 | 2024-03-12  |           1 | C02AC01     | 3400932026555 | 34          |
 |          42 | 2024-02-13  |           1 | C08CA01     | 3400936267343 | 34          |
 
