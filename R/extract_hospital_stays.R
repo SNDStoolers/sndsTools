@@ -210,8 +210,9 @@ build_da_conditions <- function(cim10_codes = NULL) {
 #'   start_date =
 #'     as.Date("2019-01-01"), end_date = as.Date("2019-12-31"), dp_cim10_codes =
 #'     c("A00", "B00")
-#' )  @export
+#' )
 #' }
+#' @export
 # nolint end
 extract_hospital_stays <- function(
   start_date,

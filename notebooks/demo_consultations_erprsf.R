@@ -5,7 +5,7 @@ library(DBI)
 library(glue)
 library(lubridate)
 
-is_package <- require(paresnds)
+is_package <- require(sndsTools)
 
 if (!is_package) {
   source("../R/extract_consultations_erprsf.R")
