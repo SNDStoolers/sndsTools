@@ -89,13 +89,22 @@ bonnes pratiques pour utiliser ces données.</p>
 copier/coller le code source du paquet sur le portail CNAM. Pour cela,
 il faut suivre les étapes suivantes :</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## 1. En local (sur votre ordinateur) : Copier le fichier contenant toutes les fonctions: [sndsTools_all.R](https://github.com/SNDStoolers/sndsTools/sndsTools_all.R)</span></span>
-<span><span class="co">## 2. Sur le portail CNAM, coller le fichier sndsTools.R sur le portail CNAM</span></span>
+<code class="sourceCode R"><span><span class="co">## 1. En local (sur votre ordinateur) : Télécharger [la dernière release du paquet disponible sur github](https://github.com/SNDStoolers/sndsTools/releases)</span></span>
+<span></span>
+<span><span class="co">## En local, copier le contenu du fichier présent dans la release nommé `sndsTool.R`. Celui-ci contient toutes les fonctions du paquet.</span></span>
+<span></span>
+<span><span class="co">## 2. Sur le portail CNAM, coller le contenu de ce fichier dans un nouveau script R `sndsTools.R`.</span></span>
+<span></span>
 <span><span class="co">## 3. Sur le portail CNAM, charger toutes les fonctions du paquet:</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"sndsTools_all.R"</span><span class="op">)</span></span></code></pre></div>
+<p>NB: La version la plus à jour de <code>sndsTools.R</code> (entre deux
+releases) est disponible comme artifact <a href="https://github.com/SNDStoolers/sndsTools/actions/workflows/concat-r-files.yaml" class="external-link">sur
+le dépôt GitHub sur la page de l’action</a>. Attention, cette version
+peut être instable, il est recommandé d’utiliser une release stable du
+paquet.</p>
 </div>
 <div class="section level4">
-<h4 id="en-local-pour-le-développement-du-paquet">En local (pour le développement du paquet)<a class="anchor" aria-label="anchor" href="#en-local-pour-le-d%C3%A9veloppement-du-paquet"></a>
+<h4 id="en-local-pour-le-développement-du-paquet-uniquement">En local (pour le développement du paquet uniquement)<a class="anchor" aria-label="anchor" href="#en-local-pour-le-d%C3%A9veloppement-du-paquet-uniquement"></a>
 </h4>
 <p>Ouvrir le paquet avec Rstudio, puis lancer :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">

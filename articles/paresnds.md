@@ -19,13 +19,23 @@ copier/coller le code source du paquet sur le portail CNAM. Pour cela,
 il faut suivre les étapes suivantes :
 
 ``` r
-## 1. En local (sur votre ordinateur) : Copier le fichier contenant toutes les fonctions: [sndsTools_all.R](https://github.com/SNDStoolers/sndsTools/sndsTools_all.R)
-## 2. Sur le portail CNAM, coller le fichier sndsTools.R sur le portail CNAM
+## 1. En local (sur votre ordinateur) : Télécharger [la dernière release du paquet disponible sur github](https://github.com/SNDStoolers/sndsTools/releases)
+
+## En local, copier le contenu du fichier présent dans la release nommé `sndsTool.R`. Celui-ci contient toutes les fonctions du paquet.
+
+## 2. Sur le portail CNAM, coller le contenu de ce fichier dans un nouveau script R `sndsTools.R`.
+
 ## 3. Sur le portail CNAM, charger toutes les fonctions du paquet:
 source("sndsTools_all.R")
 ```
 
-#### En local (pour le développement du paquet)
+NB: La version la plus à jour de `sndsTools.R` (entre deux releases) est
+disponible comme artifact [sur le dépôt GitHub sur la page de
+l’action](https://github.com/SNDStoolers/sndsTools/actions/workflows/concat-r-files.yaml).
+Attention, cette version peut être instable, il est recommandé
+d’utiliser une release stable du paquet.
+
+#### En local (pour le développement du paquet uniquement)
 
 Ouvrir le paquet avec Rstudio, puis lancer :
 
