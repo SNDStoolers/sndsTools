@@ -14,26 +14,32 @@ knitr::opts_chunk$set(
 )
 ```
 
-# A quoi sert ce paquet R de traitement de données ? 
+# A quoi sert ce paquet R de traitement de données ?
 
 Ce paquet R de traitement de données a pour objectif de faciliter l'accès aux données du Système National des Données de Santé (SNDS) pour les utilisateurs de R. Il permet de simplifier les extractions de données et de mettre à disposition des fonctions implémentants les bonnes pratiques pour utiliser ces données.
 
 # Prise en main rapide
 
-## Installation 
+## Installation
 
 ### Sur le portail CNAM
 
 Pour une utilisation sur le portail CNAM, il est nécessaire de copier/coller le code source du paquet sur le portail CNAM. Pour cela, il faut suivre les étapes suivantes :
 
 ```{r, eval = FALSE}
-## 1. En local (sur votre ordinateur) : Copier le fichier contenant toutes les fonctions: [sndsTools_all.R](https://github.com/SNDStoolers/sndsTools/sndsTools_all.R)
-## 2. Sur le portail CNAM, coller le fichier sndsTools.R sur le portail CNAM
+## 1. En local (sur votre ordinateur) : Télécharger [la dernière release du paquet disponible sur github](https://github.com/SNDStoolers/sndsTools/releases)
+
+## En local, copier le contenu du fichier présent dans la release nommé `sndsTool.R`. Celui-ci contient toutes les fonctions du paquet.
+
+## 2. Sur le portail CNAM, coller le contenu de ce fichier dans un nouveau script R `sndsTools.R`.
+
 ## 3. Sur le portail CNAM, charger toutes les fonctions du paquet:
 source("sndsTools_all.R")
 ```
 
-### En local (pour le développement du paquet)
+NB: La version la plus à jour de `sndsTools.R` (entre deux releases) est disponible comme artifact [sur le dépôt GitHub sur la page de l'action](https://github.com/SNDStoolers/sndsTools/actions/workflows/concat-r-files.yaml). Attention, cette version peut être instable, il est recommandé d'utiliser une release stable du paquet.
+
+### En local (pour le développement du paquet uniquement)
 
 Ouvrir le paquet avec Rstudio, puis lancer :
 
