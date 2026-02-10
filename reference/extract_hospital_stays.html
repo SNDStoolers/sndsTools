@@ -189,6 +189,14 @@ donc fréquent d'avoir des doublons concernant les colonnes des tables B et C
 dans les lignes de la table résultante. Une explication détaillée et un
 diagramme illustrant le fonctionnement retenu sont disponibles sur <a href="https://github.com/X-DataInitiative/SCALPEL-Flattening/blob/DREES-104-DocFlattening/README_joins.md#the-pmsi-flattening" class="external-link">le github du projet Scalpel</a>.</p>
     </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p>Other extract:
+<code><a href="extract_consultations_erprsf.html">extract_consultations_erprsf()</a></code>,
+<code><a href="extract_drug_dispenses.html">extract_drug_dispenses()</a></code>,
+<code><a href="extract_hospital_consultations.html">extract_hospital_consultations()</a></code>,
+<code><a href="extract_long_term_disease.html">extract_long_term_disease()</a></code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -197,7 +205,7 @@ diagramme illustrant le fonctionnement retenu sont disponibles sur <a href="http
 <span class="r-in"><span>  start_date <span class="op">=</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-01-01"</span><span class="op">)</span>, end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-12-31"</span><span class="op">)</span>, dp_cim10_codes <span class="op">=</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A00"</span>, <span class="st">"B00"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span>  <span class="op">@</span><span class="va">export</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

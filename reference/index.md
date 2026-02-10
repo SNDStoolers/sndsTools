@@ -29,24 +29,27 @@ SNDS en pur SQL.
 
 Fonctions utilitaires pour manipuler les données extraites.
 
-- [`insert_into_table_from_query()`](insert_into_table_from_query.md) :
-  Insertion des résultats d'une requête SQL dans une table existante.
-
-- [`get_first_non_archived_year()`](get_first_non_archived_year.md) :
-  Récupération de l'année non archivée la plus ancienne de la table
-  ER_PRS_F.
-
-- [`create_table_from_query()`](create_table_from_query.md) : Création
-  d'une table à partir d'une requête SQL.
-
 - [`connect_duckdb()`](connect_duckdb.md) : Initialisation de la
   connexion à la base de données duckdb.
 
 - [`connect_oracle()`](connect_oracle.md) : Initialisation de la
   connexion à la base de données.
 
+- [`constants_snds_tools()`](constants_snds_tools.md) : Stocke des
+  constantes pour SndsTools
+
+- [`create_table_from_query()`](create_table_from_query.md) : Création
+  d'une table à partir d'une requête SQL.
+
 - [`gather_table_stats()`](gather_table_stats.md) : Récupération des
   statistiques des tables
+
+- [`get_first_non_archived_year()`](get_first_non_archived_year.md) :
+  Récupération de l'année non archivée la plus ancienne de la table
+  ER_PRS_F.
+
+- [`insert_into_table_from_query()`](insert_into_table_from_query.md) :
+  Insertion des résultats d'une requête SQL dans une table existante.
 
 - [`retrieve_all_psa_from_idt()`](retrieve_all_psa_from_idt.md) :
 

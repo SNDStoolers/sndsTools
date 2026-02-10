@@ -111,6 +111,14 @@ sont :
 
 - MED_MTF_COD : Le code ICD 10 de la pathologie associée à l'ALD
 
+## See also
+
+Other extract:
+[`extract_consultations_erprsf()`](extract_consultations_erprsf.md),
+[`extract_drug_dispenses()`](extract_drug_dispenses.md),
+[`extract_hospital_consultations()`](extract_hospital_consultations.md),
+[`extract_hospital_stays()`](extract_hospital_stays.md)
+
 ## Examples
 
 ``` r

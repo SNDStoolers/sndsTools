@@ -133,6 +133,14 @@ soins sont remontés à 6
 mois](https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir),
 c'est-à-dire pour dis_dtd_lag_months = 6.
 
+## See also
+
+Other extract:
+[`extract_consultations_erprsf()`](extract_consultations_erprsf.md),
+[`extract_hospital_consultations()`](extract_hospital_consultations.md),
+[`extract_hospital_stays()`](extract_hospital_stays.md),
+[`extract_long_term_disease()`](extract_long_term_disease.md)
+
 ## Examples
 
 ``` r

@@ -177,6 +177,14 @@ détaillée et un diagramme illustrant le fonctionnement retenu sont
 disponibles sur [le github du projet
 Scalpel](https://github.com/X-DataInitiative/SCALPEL-Flattening/blob/DREES-104-DocFlattening/README_joins.md#the-pmsi-flattening).
 
+## See also
+
+Other extract:
+[`extract_consultations_erprsf()`](extract_consultations_erprsf.md),
+[`extract_drug_dispenses()`](extract_drug_dispenses.md),
+[`extract_hospital_consultations()`](extract_hospital_consultations.md),
+[`extract_long_term_disease()`](extract_long_term_disease.md)
+
 ## Examples
 
 ``` r
@@ -185,6 +193,6 @@ extract_hospital_stays(
   start_date =
     as.Date("2019-01-01"), end_date = as.Date("2019-12-31"), dp_cim10_codes =
     c("A00", "B00")
-)  @export
+)
 } # }
 ```

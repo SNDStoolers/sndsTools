@@ -120,6 +120,13 @@ Un guide sur l'activité des médecins libéraux est disponibles sur la
 page [Activité des médecins
 libéraux](https://documentation-snds.health-data-hub.fr/snds/fiches/activite_medecins.html#contexte).
 
+## See also
+
+Other extract: [`extract_drug_dispenses()`](extract_drug_dispenses.md),
+[`extract_hospital_consultations()`](extract_hospital_consultations.md),
+[`extract_hospital_stays()`](extract_hospital_stays.md),
+[`extract_long_term_disease()`](extract_long_term_disease.md)
+
 ## Examples
 
 ``` r
