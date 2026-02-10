@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'R/**'
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -32,7 +34,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sndsTools-all-in-one
+          name: sndsTools
           path: sndsTools.R
           retention-days: 90
 
