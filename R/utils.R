@@ -3,6 +3,7 @@
 #' @return dbConnection Connexion à la base de données oracle
 #'
 #' @export
+#' @family utils
 connect_oracle <- function() {
   require(ROracle)
   Sys.setenv(TZ = "Europe/Paris")
@@ -20,6 +21,7 @@ connect_oracle <- function() {
 #' @return dbConnection Connexion à la base de données duckdb
 #'
 #' @export
+#' @family utils
 connect_duckdb <- function() {
   print(
     "Le code ne s'exécute pas sur le portail CNAM.
@@ -49,6 +51,7 @@ connect_duckdb <- function() {
 #' @return NULL
 #'
 #' @export
+#' @family utils
 create_table_from_query <- function(
   conn = NULL,
   output_table_name = NULL,
@@ -78,6 +81,7 @@ create_table_from_query <- function(
 #' @return NULL
 #'
 #' @export
+#' @family utils
 insert_into_table_from_query <- function(
   conn = NULL,
   output_table_name = NULL,
@@ -97,6 +101,7 @@ insert_into_table_from_query <- function(
 #' @return Année non archivée la plus ancienne
 #'
 #' @export
+#' @family utils
 get_first_non_archived_year <- function(conn) {
   user_synonyms <- DBI::dbGetQuery(
     conn,
@@ -114,6 +119,9 @@ get_first_non_archived_year <- function(conn) {
 #' @param conn Connexion à la base de données
 #' @param table Chaine de caractère indiquant le nom d'une table
 #' @references https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_STATS.html#GUID-CA6A56B9-0540-45E9-B1D7-D78769B7714C #nolint
+#' @return NULL
+#' @export
+#' @family utils
 gather_table_stats <- function(conn, table) {
   user <- DBI::dbGetQuery(conn, "SELECT user FROM dual")
   user <- DBI::dbQuoteIdentifier(conn, user$USER)

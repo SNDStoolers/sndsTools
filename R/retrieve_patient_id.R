@@ -44,12 +44,18 @@ retrieve_psa <- function(
   # Retrieve BEN_IDT_ANO from initial table
   # Start from BEN_NIR_PSA
   if (start_key == "BEN_NIR_PSA") {
-    idt <- dplyr::tbl(conn, ben_table_name) |>
+    ben_table <- dplyr::tbl(conn, ben_table_name)
+    # rename BEN_IDT_ANO to avoid confusion in joins
+    if ("BEN_IDT_ANO" %in% ben_table_colnames) {
+      ben_table <- dplyr::tbl(conn, ben_table_name) |>
+        dplyr::rename(BEN_IDT_ANO_ben_table = BEN_IDT_ANO)
+    }
+    idt <- ben_table |>
       dplyr::inner_join(ben, by = setNames(psa_key, psa_key)) |>
       dplyr::select(!!!rlang::syms(idt_key)) |>
       dplyr::distinct()
     if (check_arc_table) {
-      idt_arc <- dplyr::tbl(conn, ben_table_name) |>
+      idt_arc <- ben_table |>
         dplyr::inner_join(ben_arc, by = setNames(psa_key, psa_key)) |>
         dplyr::select(!!!rlang::syms(idt_key)) |>
         dplyr::distinct()
@@ -58,7 +64,13 @@ retrieve_psa <- function(
     }
   } else {
     # Start from BEN_IDT_ANO
-    idt <- dplyr::tbl(conn, ben_table_name) |>
+    ben_table <- dplyr::tbl(conn, ben_table_name)
+    # rename BEN_NIR_PSA to avoid confusion in joins
+    if ("BEN_NIR_PSA" %in% ben_table_colnames) {
+      ben_table <- dplyr::tbl(conn, ben_table_name) |>
+        dplyr::rename(BEN_NIR_PSA_ben_table = BEN_NIR_PSA)
+    }
+    idt <- ben_table |>
       dplyr::distinct()
   }
 
@@ -211,6 +223,7 @@ retrieve_psa <- function(
 #' )
 #' }
 #' @export
+#' @family utils
 # nolint end
 retrieve_all_psa_from_idt <- function(
   ben_table_name,
@@ -326,6 +339,7 @@ retrieve_all_psa_from_idt <- function(
 #' )
 #' }
 #' @export
+#' @family utils
 # nolint end
 retrieve_all_psa_from_psa <- function(
   ben_table_name,

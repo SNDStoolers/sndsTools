@@ -135,6 +135,14 @@ extract_hospital_stays(
   start_date =
     as.Date("2019-01-01"), end_date = as.Date("2019-12-31"), dp_cim10_codes =
     c("A00", "B00")
-)  @export
+)
 }
 }
+\seealso{
+Other extract: 
+\code{\link{extract_consultations_erprsf}()},
+\code{\link{extract_drug_dispenses}()},
+\code{\link{extract_hospital_consultations}()},
+\code{\link{extract_long_term_disease}()}
+}
+\concept{extract}

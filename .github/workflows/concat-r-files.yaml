@@ -1,0 +1,43 @@
+name: Concatenate R Files
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'R/**'
+  workflow_dispatch:
+
+jobs:
+  concat-r-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Concatenate R files
+        run: |
+          echo "# sndsTools - All R functions in one file" > sndsTools.R
+          echo "# Generated automatically from R/* files" >> sndsTools.R
+          echo "# Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> sndsTools.R
+          echo "" >> sndsTools.R
+          for file in R/*.R; do
+            echo "" >> sndsTools.R
+            echo "# ============================================================" >> sndsTools.R
+            echo "# Source: $(basename "$file")" >> sndsTools.R
+            echo "# ============================================================" >> sndsTools.R
+            echo "" >> sndsTools.R
+            cat "$file" >> sndsTools.R
+            echo "" >> sndsTools.R
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sndsTools-all-in-one
+          path: sndsTools.R
+          retention-days: 90
+
+      - name: Create release asset (optional)
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: sndsTools.R

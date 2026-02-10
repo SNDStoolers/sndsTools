@@ -15,3 +15,15 @@ Année non archivée la plus ancienne
 \description{
 Récupération de l'année non archivée la plus ancienne de la table ER_PRS_F.
 }
+\seealso{
+Other utils: 
+\code{\link{connect_duckdb}()},
+\code{\link{connect_oracle}()},
+\code{\link{constants_snds_tools}()},
+\code{\link{create_table_from_query}()},
+\code{\link{gather_table_stats}()},
+\code{\link{insert_into_table_from_query}()},
+\code{\link{retrieve_all_psa_from_idt}()},
+\code{\link{retrieve_all_psa_from_psa}()}
+}
+\concept{utils}

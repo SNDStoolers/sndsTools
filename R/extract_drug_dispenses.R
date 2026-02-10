@@ -90,6 +90,7 @@
 #' )
 #' }
 #' @export
+#' @family extract
 # nolint end
 extract_drug_dispenses <- function(
   start_date, # nolint

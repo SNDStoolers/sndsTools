@@ -77,6 +77,7 @@
 #' )
 #' }
 #' @export
+#' @family extract
 # nolint end
 extract_consultations_erprsf <- function(
   start_date,

@@ -77,6 +77,7 @@
 #' )
 #' }
 #' @export
+#' @family extract
 extract_long_term_disease <- function(
   start_date = NULL,
   end_date = NULL,

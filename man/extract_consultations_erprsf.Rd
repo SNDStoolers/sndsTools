@@ -105,3 +105,11 @@ dispenses <- extract_consultations_erprsf(
 )
 }
 }
+\seealso{
+Other extract: 
+\code{\link{extract_drug_dispenses}()},
+\code{\link{extract_hospital_consultations}()},
+\code{\link{extract_hospital_stays}()},
+\code{\link{extract_long_term_disease}()}
+}
+\concept{extract}

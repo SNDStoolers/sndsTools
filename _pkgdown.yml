@@ -24,25 +24,18 @@ authors:
     href: https://github.com/abelloir-zz
   Matthieu Doutreligne:
     href: https://info.m2dou.fr/
-  Thomas Soeiro: 
+  Thomas Soeiro:
     href: https://github.com/ThomasSoeiro
   Marc Dibling:
     href: https://github.com/MarcDibling
 reference:
 - title: Extraction SNDS
   desc: Fonctions pour extraire les données de soins individuelles à partir du SNDS.
-- contents: starts_with("extract")
+- contents: has_concept("extract")
 - title: Extraction SNDS en SQL
   desc: Fonctions pour extraire les données de soins individuelles à partir du SNDS en pur SQL.
 - contents: starts_with("sql_extract")
 - title: Utilitaires
   desc: Fonctions utilitaires pour manipuler les données extraites.
 - contents:
-  - insert_into_table_from_query
-  - get_first_non_archived_year
-  - create_table_from_query
-  - connect_duckdb
-  - connect_oracle
-  - gather_table_stats
-  - retrieve_all_psa_from_idt
-  - retrieve_all_psa_from_psa
+  - has_concept("utils")

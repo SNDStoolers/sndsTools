@@ -17,3 +17,15 @@ Récupération des statistiques des tables
 \references{
 https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_STATS.html#GUID-CA6A56B9-0540-45E9-B1D7-D78769B7714C #nolint
 }
+\seealso{
+Other utils: 
+\code{\link{connect_duckdb}()},
+\code{\link{connect_oracle}()},
+\code{\link{constants_snds_tools}()},
+\code{\link{create_table_from_query}()},
+\code{\link{get_first_non_archived_year}()},
+\code{\link{insert_into_table_from_query}()},
+\code{\link{retrieve_all_psa_from_idt}()},
+\code{\link{retrieve_all_psa_from_psa}()}
+}
+\concept{utils}

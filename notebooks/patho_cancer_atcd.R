@@ -4,10 +4,6 @@ library(dbplyr)
 library(DBI)
 library(glue)
 library(lubridate)
-# source("~/sasdata1/pathologies-retrieval-snds/common/utils.R")
-# source("~/sasdata1/pathologies-retrieval-snds/common/retrieve_hosp.R")
-# source("~/sasdata1/pathologies-retrieval-snds/common/retrieve_ald.R")
-# source("~/sasdata1/pathologies-retrieval-snds/common/retrieve_atc.R")
 
 ben_ids_orauser <- "BEN_FILTERED_IDS"
 

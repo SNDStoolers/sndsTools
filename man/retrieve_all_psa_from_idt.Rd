@@ -120,3 +120,15 @@ retrieve_all_psa_from_idt(
 )
 }
 }
+\seealso{
+Other utils: 
+\code{\link{connect_duckdb}()},
+\code{\link{connect_oracle}()},
+\code{\link{constants_snds_tools}()},
+\code{\link{create_table_from_query}()},
+\code{\link{gather_table_stats}()},
+\code{\link{get_first_non_archived_year}()},
+\code{\link{insert_into_table_from_query}()},
+\code{\link{retrieve_all_psa_from_psa}()}
+}
+\concept{utils}

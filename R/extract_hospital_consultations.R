@@ -63,6 +63,7 @@
 #' )
 #' }
 #' @export
+#' @family extract
 # nolint end
 extract_hospital_consultations <- function(
   start_date,
@@ -130,7 +131,7 @@ extract_hospital_consultations <- function(
 
     cstc <-
       dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}CSTC")) |>
-      filter(
+      dplyr::filter(
         NIR_RET == "0",
         NAI_RET == "0",
         SEX_RET == "0",
@@ -149,19 +150,19 @@ extract_hospital_consultations <- function(
       "EXE_SOI_DTD <= DATE '{formatted_end_date}' AND EXE_SOI_DTD >= DATE '{formatted_start_date}'" # nolint
     )
     ace <- cstc |>
-      filter(dbplyr::sql(date_condition)) |>
+      dplyr::filter(dbplyr::sql(date_condition)) |>
       dplyr::left_join(fcstc, by = c("ETA_NUM", "SEQ_NUM")) |>
       dplyr::select(NIR_ANO_17, EXE_SOI_DTD, ACT_COD, EXE_SPE) |>
       dplyr::distinct()
 
     if (!is.null(spe_codes_filter)) {
       ace <- ace |>
-        filter(EXE_SPE %in% spe_codes_filter)
+        dplyr::filter(EXE_SPE %in% spe_codes_filter)
     }
 
     if (!is.null(prestation_codes_filter)) {
       ace <- ace |>
-        filter(ACT_COD %in% prestation_codes_filter)
+        dplyr::filter(ACT_COD %in% prestation_codes_filter)
     }
 
     if (!is.null(patient_ids_filter)) {
