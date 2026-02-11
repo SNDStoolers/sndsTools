@@ -1,4 +1,4 @@
-# `SndsTools` : Extraction de recours aux soins dans le SNDS avec R
+# `sndsTools` : Extraction de recours aux soins dans le SNDS avec R
 
 ## Description
 
@@ -37,6 +37,24 @@ développement actif.
 C’est un projet communautaire, évolutif par nature, qui vise à
 rassembler les différents utilisateurs du SNDS.
 
+## Installation sur le portail de l’assurance maladie (CNAM)
+
+Il est nécessaire de copier/coller le code source du paquet sur le
+portail CNAM. Pour cela, il faut suivre les étapes suivantes :
+
+\`\``{r, eval = FALSE} ## 1. En local (sur votre ordinateur) : Télécharger [le fichier`sndsTool.R\`
+de la dernière release du paquet disponible sur
+github\](<https://github.com/SNDStoolers/sndsTools/releases>). Celui-ci
+contient toutes les fonctions du paquet.
+
+## En local, ouvrir le fichier `sndsTool.R` et copier tout son contenu.
+
+## 2. Sur le portail CNAM, coller le contenu de ce fichier dans un nouveau script R `sndsTools.R`.
+
+## 3. Sur le portail CNAM, charger toutes les fonctions du paquet: `source("sndsTools.R")`
+
+\`\`\`
+
 ## Contexte technique
 
 ### Données
@@ -66,10 +84,14 @@ TODO (figure à mettre dans man/figures)
 - **Description des extractions et des tables de données créées** : TODO
   [Flux de données](data.md)
 
-- **Prise en main rapide** : [Prise en main](sndsTools.md)
+- **Prise en main rapide** : [Prise en
+  main](%5BsndsTools.html%5D(https://sndstoolers.github.io/sndsTools/articles/paresnds.html))
 
-- [Référence](reference/index.md) des fonctions utilisées
+- [Référence](%5Breference/index.html%5D(https://sndstoolers.github.io/sndsTools/reference/index.html))
+  des fonctions utilisées
 
-- [Guide de contribution](contributing.md)
+- [Guide de
+  contribution](%5Bcontributing.html%5D(https://sndstoolers.github.io/sndsTools/articles/contribuer.html))
 
-- [Principes de gouvernance](gouvernance.md)
+- [Principes de
+  gouvernance](%5Bgouvernance.html%5D(https://sndstoolers.github.io/sndsTools/articles/gouvernance.html))
