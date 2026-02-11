@@ -1,6 +1,6 @@
-#' @title Stocke des constantes pour SndsTools
+#' @title Stocke des constantes pour sndsTools
 
-#' @return A list of constants for SNDs tools.
+#' @return A list of constants for sndsTools.
 #' @export
 #' @family utils
 constants_snds_tools <- function() {
