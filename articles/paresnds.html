@@ -87,14 +87,26 @@ bonnes pratiques pour utiliser ces données.</p>
 </h4>
 <p>Il est nécessaire de copier/coller le code source du paquet sur le
 portail CNAM. Pour cela, il faut suivre les étapes suivantes :</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## 1. En local (sur votre ordinateur) : Télécharger [le fichier `sndsTool.R` de la dernière release du paquet disponible sur github](https://github.com/SNDStoolers/sndsTools/releases). Celui-ci contient toutes les fonctions du paquet.</span></span>
-<span></span>
-<span><span class="co">## En local, ouvrir le fichier `sndsTool.R` et copier tout son contenu.</span></span>
-<span></span>
-<span><span class="co">## 2. Sur le portail CNAM, coller le contenu de ce fichier dans un nouveau script R `sndsTools.R`.</span></span>
-<span></span>
-<span><span class="co">## 3. Sur le portail CNAM, charger toutes les fonctions du paquet: `source("sndsTools.R")`</span></span></code></pre></div>
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>En local (sur votre ordinateur) : Télécharger <a href="https://github.com/SNDStoolers/sndsTools/releases" class="external-link">le fichier
+<code>sndsTool.R</code> de la dernière release du paquet disponible sur
+github</a>. Celui-ci contient toutes les fonctions du paquet.</li>
+</ol></li>
+<li><ol start="2" style="list-style-type: decimal">
+<li>En local, ouvrir le fichier <code>sndsTool.R</code> et copier tout
+son contenu.</li>
+</ol></li>
+<li><ol start="3" style="list-style-type: decimal">
+<li>Sur le portail CNAM, coller le contenu de ce fichier dans un nouveau
+script R <code>sndsTools.R</code>.</li>
+</ol></li>
+<li><ol start="4" style="list-style-type: decimal">
+<li>Sur le portail CNAM, charger toutes les fonctions du paquet:
+<code>source("sndsTools.R")</code>
+</li>
+</ol></li>
+</ul>
 <p>NB: La version la plus à jour de <code>sndsTools.R</code> (entre deux
 releases) est disponible comme artifact <a href="https://github.com/SNDStoolers/sndsTools/actions/workflows/concat-r-files.yaml" class="external-link">sur
 le dépôt GitHub sur la page de l’action</a>. Attention, cette version
@@ -105,10 +117,10 @@ paquet.</p>
 <h4 id="en-local-pour-le-développement-du-paquet-uniquement">En local (pour le développement du paquet uniquement)<a class="anchor" aria-label="anchor" href="#en-local-pour-le-d%C3%A9veloppement-du-paquet-uniquement"></a>
 </h4>
 <p>Ouvrir le paquet avec Rstudio, puis lancer :</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install</span><span class="op">(</span>dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Puis pour charger le paquet :</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/" class="external-link">sndsTools</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>

@@ -17,15 +17,16 @@ bonnes pratiques pour utiliser ces données.
 Il est nécessaire de copier/coller le code source du paquet sur le
 portail CNAM. Pour cela, il faut suivre les étapes suivantes :
 
-``` r
-## 1. En local (sur votre ordinateur) : Télécharger [le fichier `sndsTool.R` de la dernière release du paquet disponible sur github](https://github.com/SNDStoolers/sndsTools/releases). Celui-ci contient toutes les fonctions du paquet.
-
-## En local, ouvrir le fichier `sndsTool.R` et copier tout son contenu.
-
-## 2. Sur le portail CNAM, coller le contenu de ce fichier dans un nouveau script R `sndsTools.R`.
-
-## 3. Sur le portail CNAM, charger toutes les fonctions du paquet: `source("sndsTools.R")`
-```
+- 1.  En local (sur votre ordinateur) : Télécharger [le fichier
+      `sndsTool.R` de la dernière release du paquet disponible sur
+      github](https://github.com/SNDStoolers/sndsTools/releases).
+      Celui-ci contient toutes les fonctions du paquet.
+- 2.  En local, ouvrir le fichier `sndsTool.R` et copier tout son
+      contenu.
+- 3.  Sur le portail CNAM, coller le contenu de ce fichier dans un
+      nouveau script R `sndsTools.R`.
+- 4.  Sur le portail CNAM, charger toutes les fonctions du paquet:
+      `source("sndsTools.R")`
 
 NB: La version la plus à jour de `sndsTools.R` (entre deux releases) est
 disponible comme artifact [sur le dépôt GitHub sur la page de
