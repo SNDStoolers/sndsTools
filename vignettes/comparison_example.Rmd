@@ -1,0 +1,47 @@
+---
+title: "Comparaison sndsTools vs requête manuelle avec R"
+author: "SNDStoolers"
+date: "2026-03-03"
+output:
+  html_document:
+    bookdown::html_document2:
+      base_format: rmarkdown::html_vignette
+vignette: >
+    %\VignetteIndexEntry{Comparaison sndsTools vs requête manuelle avec R}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+resources:
+- name: img
+  files: img/
+---
+
+
+## La requête {.tabset}
+
+### `sndsTools`
+
+```{r, echo = T}
+print("SNDS TOOLS")
+plot(rnorm(30))
+```
+
+
+### base R
+
+```{r, echo = T}
+plot(rnorm(30))
+```
+
+
+## Les résultats {.tabset}
+
+### `sndsTools`
+
+```{r}
+print("TODO sndsTOOLS")
+```
+
+### base R
+```{r}
+print("TODO base R")
+```

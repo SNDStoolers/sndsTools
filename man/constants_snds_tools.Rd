@@ -2,15 +2,15 @@
 % Please edit documentation in R/constants.R
 \name{constants_snds_tools}
 \alias{constants_snds_tools}
-\title{Stocke des constantes pour SndsTools}
+\title{Stocke des constantes pour sndsTools}
 \usage{
 constants_snds_tools()
 }
 \value{
-A list of constants for SNDs tools.
+A list of constants for sndsTools.
 }
 \description{
-Stocke des constantes pour SndsTools
+Stocke des constantes pour sndsTools
 }
 \seealso{
 Other utils: 
