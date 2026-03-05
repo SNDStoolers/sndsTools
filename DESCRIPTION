@@ -3,15 +3,6 @@ Package: sndsTools
 Version: 0.1.2
 Date: 2026-02-10
 Depends: R (>= 3.5.0)
-Imports:
-    dplyr (>= 1.0.7),
-    dbplyr (>= 2.1.1),
-    tidyr (>= 1.1.3),
-    DBI,
-    glue,
-    lubridate,
-    progress,
-    logger
 Authors@R: c(
     person(
         "Antoine", "Belloir", ,
@@ -39,6 +30,17 @@ License: EUPL
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+Imports:
+    dplyr (>= 1.0.7),
+    dbplyr (>= 2.1.1),
+    tidyr (>= 1.1.3),
+    DBI,
+    glue,
+    lubridate,
+    progress,
+    parallel,
+    here,
+    logger
 Suggests:
     knitr,
     rmarkdown,

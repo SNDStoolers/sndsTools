@@ -1,4 +1,9 @@
+# Only on portail
 test_that("extract and retrieve functions work with real SNDS data", {
+  cons <- constants_snds()
+  skip_if(!cons$is_portail)
+  source("sndsTools.R")
+  source("debug.R")
   library(testthat)
   skip_if(!dir.exists("~/sasdata1"))
   source(here::here("sndsTools.R"))
@@ -20,14 +25,15 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_hospital_stays))
   expect_true(nrow(result_hospital_stays) >= 0)
 
-  # Test : extract_drug_dispenses with dis_dtd_lag_months = 0
-  result_drug_dispenses <- extract_drug_dispenses(
+  # Test 2: extract_drug_erprsf with dis_dtd_lag_months = 0
+  result_drug_dispenses <- extract_drug_erprsf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = "N",
     dis_dtd_lag_months = 1,
     conn = conn,
-    show_sql_query = FALSE
+    show_sql_query = FALSE,
+    r_cluster_cores = 2
   )
   expect_true(is.data.frame(result_drug_dispenses))
   expect_true(nrow(result_drug_dispenses) >= 0)
@@ -43,7 +49,6 @@ test_that("extract and retrieve functions work with real SNDS data", {
   )
   expect_true(is.data.frame(result_drug_erucdf))
   expect_true(nrow(result_drug_erucdf) >= 0)
-
 
   # Test : extract_consultations_erprsf with dis_dtd_lag_months = 0
   result_consultations_erprsf <- extract_consultations_erprsf(

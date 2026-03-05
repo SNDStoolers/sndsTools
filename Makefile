@@ -52,5 +52,5 @@ mv-binary:
 
 # Concatenate all R functions into a single file to move into the CNAM server
 # Should only be used in the CI
-concat-r-files:
+concat:
 	cat R/* > sndsTools.R

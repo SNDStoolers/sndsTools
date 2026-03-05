@@ -27,7 +27,7 @@ ald <- extract_long_term_disease(
 head(ald)
 
 # You can also provide your own database connection
-# to the extract_drug_dispenses function. This is useful
+# to the extract_drug_erprsf function. This is useful
 # to avoid opening and closing a connection for each
 # extraction function call.
 conn <- connect_oracle()
