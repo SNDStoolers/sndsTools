@@ -131,3 +131,71 @@ gather_table_stats <- function(conn, table) {
     data = data.frame(user, table)
   )
 }
+
+
+query_by_month_parallel <- function(
+  conn,
+  query,
+  start_date,
+  end_date,
+  r_cluster_cores
+) {
+  if (!is.null(r_cluster_cores) && r_cluster_cores > 1) {
+    #TODO: find a way to insert start and end month in the query
+    # Parallélisme au niveau des mois avec R
+    message(glue::glue(
+      "Starting parallel processing with {r_cluster_cores} cores"
+    ))
+
+    cl <- parallel::makeCluster(r_cluster_cores)
+    on.exit(parallel::stopCluster(cl), add = TRUE)
+
+    # Exporter les packages et fonctions nécessaires aux workers
+    parallel::clusterEvalQ(cl, {
+      library(dplyr)
+      library(dbplyr)
+      library(glue)
+      library(DBI)
+      source(here::here("sndsTools.R"))
+
+      # Établir la connexion Oracle dans chaque worker
+      conn <<- connect_oracle()
+    })
+
+    # Exporter la fonction helper aux workers
+    parallel::clusterExport(
+      cl,
+      ".process_month_for_extraction",
+      envir = environment()
+    )
+
+    # first month to create the table
+    first_month_params <- months_to_process[[1]]
+    first_month_params$conn <- conn
+    .process_month_for_extraction(first_month_params)
+
+    # Traiter les autres mois en parallèle
+    parallel::parLapply(
+      cl,
+      months_to_process[-1],
+      .process_month_for_extraction
+    )
+
+    # Fermer les connexions dans chaque worker
+    parallel::clusterEvalQ(cl, {
+      DBI::dbDisconnect(conn)
+    })
+
+    message("Parallel processing completed")
+  } else {
+    # Traitement séquentiel
+    months_to_process_with_conn <- lapply(months_to_process, function(m) {
+      m$conn <- conn
+      m
+    })
+    invisible(lapply(
+      months_to_process_with_conn,
+      .process_month_for_extraction
+    ))
+  }
+}
