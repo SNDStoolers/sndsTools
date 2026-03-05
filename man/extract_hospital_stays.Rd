@@ -146,8 +146,9 @@ extract_hospital_stays(
 }
 \seealso{
 Other extract: 
+\code{\link{.extract_drug_by_month}()},
 \code{\link{extract_consultations_erprsf}()},
-\code{\link{extract_drug_dispenses}()},
+\code{\link{extract_drug_erprsf}()},
 \code{\link{extract_hospital_consultations}()},
 \code{\link{extract_long_term_disease}()}
 }

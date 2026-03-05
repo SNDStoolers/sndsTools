@@ -43,8 +43,8 @@ atc_vitamine_d_5 <- c("A12AX", "A11JA", "A11BA")
 
 cip_vitamine_d_b <- c(3400935657190, 3400936584969, 3400936923751, 3400934880254)
 
-# Colonnes supplémentaires pour la fonction `extract_drug_dispenses`.
-# Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_dispenses`.
+# Colonnes supplémentaires pour la fonction `extract_drug_erprsf`.
+# Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_erprsf`.
 sup_columns <- c(
   "BEN_CMU_TOP",
   "BEN_AMA_COD",
@@ -86,7 +86,7 @@ for (i in seq_along(start_dates)) {
   formatted_study_dates <- glue::glue('{format(start_date, "%Y%m%d")}_{format(end_date, "%Y%m%d")}')
   dplyr_table_name <- glue::glue("dplyr_{formatted_study_dates}")
   time_0_dplyr <- Sys.time()
-  extract_drug_dispenses(
+  extract_drug_erprsf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = atc_vitamine_d_7,
@@ -106,7 +106,7 @@ for (i in seq_along(start_dates)) {
   # benchmark de RSQL
   sql_table_name <- glue::glue("sql_{formatted_study_dates}")
   time_0_sql <- Sys.time()
-  sql_extract_drug_dispenses(
+  sql_extract_drug_erprsf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = atc_vitamine_d_7,
@@ -155,8 +155,8 @@ atc_vitamine_d_7 <- c("M05BB03", "M05BB04", "A11CC05", "A11CC01", "A12CD51")
 atc_vitamine_d_5 <- c("A12AX", "A11JA", "A11BA")
 cip_vitamine_d_b <- c(3400935657190, 3400936584969, 3400936923751, 3400934880254)
 
-# Colonnes supplémentaires pour la fonction `extract_drug_dispenses`.
-# Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_dispenses`.
+# Colonnes supplémentaires pour la fonction `extract_drug_erprsf`.
+# Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_erprsf`.
 columns_to_extract <- c(
   "BEN_CMU_TOP",
   "BEN_AMA_COD",
@@ -198,7 +198,7 @@ for (i in seq_along(start_dates)) {
     )
     dplyr_table_name <- glue::glue("dplyr_{formatted_study_dates}")
     time_0_dplyr <- Sys.time()
-    extract_drug_dispenses(
+    extract_drug_erprsf(
       start_date = start_date,
       end_date = end_date,
       atc_cod_starts_with_filter = atc_vitamine_d_7,

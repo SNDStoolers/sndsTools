@@ -11,8 +11,26 @@ template:
 lang: fr
 navbar:
   structure:
-    left: [intro, reference, articles]
+    left: [intro, reference, benchmarks, contribuer]
     right: [search, github]
+  components:
+    intro:
+      text: Prise en main
+      href: articles/paresnds.html
+    benchmarks:
+      text: Benchmarks
+      menu:
+      - text: "Benchmark dplyr vs RSQL"
+        href: articles/benchmark_dplyr_vs_rsql.html
+      - text: "Benchmark R parallelism"
+        href: articles/benchmark_r_parallelism.html
+    contribuer:
+      text: Contribuer
+      menu:
+      - text: "Contribuer"
+        href: articles/contribuer.html
+      - text: "Gouvernance"
+        href: articles/gouvernance.html
 home:
   sidebar:
     structure:
@@ -39,3 +57,7 @@ reference:
   desc: Fonctions utilitaires pour manipuler les données extraites.
 - contents:
   - has_concept("utils")
+- title: Constantes
+  desc: Constantes (variable globales) utilisées dans le package. Par exemple, noms de tables temporaires, listes de colonnes importantes, etc.
+- contents:
+  - has_concept("constants")
