@@ -64,8 +64,7 @@ Les délivrances dont les dates <code>EXE_SOI_DTD</code> sont comprises entre
 <span>  sup_columns <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  conn <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  show_sql_query <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  oracle_parallelism <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  show_sql_query <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  r_cluster_cores <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -127,20 +126,6 @@ Défault à NULL.</p></dd>
 <dd><p>DBI connection (Optionnel). Une connexion à la base de données
 Oracle. Si non fournie, une connexion est établie par défaut. Défaut à
 NULL.</p></dd>
-
-
-<dt id="arg-oracle-parallelism">oracle_parallelism<a class="anchor" aria-label="anchor" href="#arg-oracle-parallelism"></a></dt>
-<dd><p>Integer (Optionnel). Le nombre de degrés de
-parallélisme Oracle à appliquer pour les opérations DML (INSERT SELECT).
-Si fourni, force le parallélisme au niveau de la session et utilise un hint
-PARALLEL dans les requêtes INSERT. Défaut à NULL (pas de parallélisme).</p></dd>
-
-
-<dt id="arg-r-cluster-cores">r_cluster_cores<a class="anchor" aria-label="anchor" href="#arg-r-cluster-cores"></a></dt>
-<dd><p>Integer (Optionnel). Le nombre de cores à utiliser
-pour le parallélisme au niveau des mois. Si fourni (&gt; 0), la fonction
-utilisera <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">parallel::makeCluster()</a></code> pour traiter plusieurs mois en
-parallèle. Défaut à NULL (pas de parallélisme au niveau des mois).</p></dd>
 
 </dl></div>
     <div class="section level2">

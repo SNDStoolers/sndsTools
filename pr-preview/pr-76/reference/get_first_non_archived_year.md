@@ -23,7 +23,7 @@ Année non archivée la plus ancienne
 
 Other utils: [`connect_duckdb()`](connect_duckdb.md),
 [`connect_oracle()`](connect_oracle.md),
-[`constants_snds_tools()`](constants_snds_tools.md),
+[`constants_snds()`](constants_snds.md),
 [`create_table_from_query()`](create_table_from_query.md),
 [`gather_table_stats()`](gather_table_stats.md),
 [`insert_into_table_from_query()`](insert_into_table_from_query.md),

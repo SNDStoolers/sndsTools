@@ -35,8 +35,8 @@ Fonctions utilitaires pour manipuler les données extraites.
 - [`connect_oracle()`](connect_oracle.md) : Initialisation de la
   connexion à la base de données.
 
-- [`constants_snds_tools()`](constants_snds_tools.md) : Stocke des
-  constantes pour SndsTools
+- [`constants_snds()`](constants_snds.md) : Stocke des constantes pour
+  sndsTools
 
 - [`create_table_from_query()`](create_table_from_query.md) : Création
   d'une table à partir d'une requête SQL.

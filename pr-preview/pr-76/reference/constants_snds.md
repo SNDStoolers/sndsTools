@@ -1,16 +1,16 @@
-# Stocke des constantes pour SndsTools
+# Stocke des constantes pour sndsTools
 
-Stocke des constantes pour SndsTools
+Stocke des constantes pour sndsTools
 
 ## Usage
 
 ``` r
-constants_snds_tools()
+constants_snds()
 ```
 
 ## Value
 
-A list of constants for SNDs tools.
+A list of constants for sndsTools.
 
 ## See also
 

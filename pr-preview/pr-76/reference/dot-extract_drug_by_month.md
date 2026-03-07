@@ -6,7 +6,7 @@ mois de flux en parallèle avec parLapply.
 ## Usage
 
 ``` r
-.process_month_for_extraction(month_params)
+.extract_drug_by_month(kwargs)
 ```
 
 ## Arguments
@@ -35,9 +35,17 @@ mois de flux en parallèle avec parLapply.
 
   - show_sql_query: Logical, afficher la requête SQL du premier mois
 
-  - oracle_parallelism: Integer ou NULL, degré de parallélisme Oracle
-
   - first_non_archived_year: Integer, première année non archivée
+
+  - ir_pha_r_filtered_name: Character, nom de la table IR_PHA_R filtrée
+
+  - sup_columns: Character vector, colonnes supplémentaires
+
+  - patients_ids_table_name: Character ou NULL, nom de la table des IDs
+    patients
+
+  - conn: Connexion DBI (peut être NULL en contexte parallèle où conn
+    est global)
 
 ## Value
 
@@ -47,4 +55,6 @@ Invisible NULL (modifie la table output_table_name en base de données)
 
 Cette fonction est destinée à être utilisée via
 [`parallel::parLapply()`](https://rdrr.io/r/parallel/clusterApply.html)
-et ne doit pas être appelée directement par l'utilisateur.
+et ne doit pas être appelée directement par l'utilisateur. En contexte
+parallèle, la connexion 'conn' est disponible comme variable globale
+dans l'environnement du worker.

@@ -7,7 +7,7 @@ tests.
 ## Usage
 
 ``` r
-connect_duckdb()
+connect_duckdb(db_dir = NULL)
 ```
 
 ## Value
@@ -17,7 +17,7 @@ dbConnection Connexion à la base de données duckdb
 ## See also
 
 Other utils: [`connect_oracle()`](connect_oracle.md),
-[`constants_snds_tools()`](constants_snds_tools.md),
+[`constants_snds()`](constants_snds.md),
 [`create_table_from_query()`](create_table_from_query.md),
 [`gather_table_stats()`](gather_table_stats.md),
 [`get_first_non_archived_year()`](get_first_non_archived_year.md),

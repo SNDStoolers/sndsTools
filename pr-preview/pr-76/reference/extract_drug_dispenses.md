@@ -17,8 +17,7 @@ extract_drug_dispenses(
   sup_columns = NULL,
   output_table_name = NULL,
   conn = NULL,
-  show_sql_query = TRUE,
-  oracle_parallelism = NULL,
+  show_sql_query = FALSE,
   r_cluster_cores = NULL
 )
 ```
@@ -78,22 +77,6 @@ extract_drug_dispenses(
 
   DBI connection (Optionnel). Une connexion à la base de données Oracle.
   Si non fournie, une connexion est établie par défaut. Défaut à NULL.
-
-- oracle_parallelism:
-
-  Integer (Optionnel). Le nombre de degrés de parallélisme Oracle à
-  appliquer pour les opérations DML (INSERT SELECT). Si fourni, force le
-  parallélisme au niveau de la session et utilise un hint PARALLEL dans
-  les requêtes INSERT. Défaut à NULL (pas de parallélisme).
-
-- r_cluster_cores:
-
-  Integer (Optionnel). Le nombre de cores à utiliser pour le
-  parallélisme au niveau des mois. Si fourni (\> 0), la fonction
-  utilisera
-  [`parallel::makeCluster()`](https://rdrr.io/r/parallel/makeCluster.html)
-  pour traiter plusieurs mois en parallèle. Défaut à NULL (pas de
-  parallélisme au niveau des mois).
 
 ## Value
 

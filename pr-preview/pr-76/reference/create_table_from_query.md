@@ -42,7 +42,7 @@ table `output_table_name` existe déjà, elle est écrasée si le paramètre
 
 Other utils: [`connect_duckdb()`](connect_duckdb.md),
 [`connect_oracle()`](connect_oracle.md),
-[`constants_snds_tools()`](constants_snds_tools.md),
+[`constants_snds()`](constants_snds.md),
 [`gather_table_stats()`](gather_table_stats.md),
 [`get_first_non_archived_year()`](get_first_non_archived_year.md),
 [`insert_into_table_from_query()`](insert_into_table_from_query.md),
