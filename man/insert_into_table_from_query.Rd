@@ -24,7 +24,7 @@ Insertion des résultats d'une requête SQL dans une table existante.
 Other utils: 
 \code{\link{connect_duckdb}()},
 \code{\link{connect_oracle}()},
-\code{\link{constants_snds_tools}()},
+\code{\link{constants_snds}()},
 \code{\link{create_table_from_query}()},
 \code{\link{gather_table_stats}()},
 \code{\link{get_first_non_archived_year}()},

@@ -21,7 +21,7 @@ https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_STATS.h
 Other utils: 
 \code{\link{connect_duckdb}()},
 \code{\link{connect_oracle}()},
-\code{\link{constants_snds_tools}()},
+\code{\link{constants_snds}()},
 \code{\link{create_table_from_query}()},
 \code{\link{get_first_non_archived_year}()},
 \code{\link{insert_into_table_from_query}()},

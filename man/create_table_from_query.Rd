@@ -33,7 +33,7 @@ le paramètre \code{overwrite} est TRUE.
 Other utils: 
 \code{\link{connect_duckdb}()},
 \code{\link{connect_oracle}()},
-\code{\link{constants_snds_tools}()},
+\code{\link{constants_snds}()},
 \code{\link{gather_table_stats}()},
 \code{\link{get_first_non_archived_year}()},
 \code{\link{insert_into_table_from_query}()},

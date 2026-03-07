@@ -15,7 +15,7 @@ Initialisation de la connexion à la base de données.
 \seealso{
 Other utils: 
 \code{\link{connect_duckdb}()},
-\code{\link{constants_snds_tools}()},
+\code{\link{constants_snds}()},
 \code{\link{create_table_from_query}()},
 \code{\link{gather_table_stats}()},
 \code{\link{get_first_non_archived_year}()},

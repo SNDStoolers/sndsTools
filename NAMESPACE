@@ -2,7 +2,7 @@
 
 export(connect_duckdb)
 export(connect_oracle)
-export(constants_snds_tools)
+export(constants_snds)
 export(create_table_from_query)
 export(extract_consultations_erprsf)
 export(extract_drug_dispenses)

@@ -1,5 +1,6 @@
+# Only on portail
 test_that("extract and retrieve functions work with real SNDS data", {
-  cons <- constants_snds_tools()
+  cons <- constants_snds()
   skip_if(!cons$is_portail)
   source("sndsTools.R")
   source("debug.R")
@@ -24,11 +25,12 @@ test_that("extract and retrieve functions work with real SNDS data", {
   # Test 2: extract_drug_dispenses with dis_dtd_lag_months = 0
   result_drug_dispenses <- extract_drug_dispenses(
     start_date = start_date,
-    end_date = end_date,
+    end_date = as.Date("2023-03-01"),
     atc_cod_starts_with_filter = "N04A",
     dis_dtd_lag_months = 0,
     conn = conn,
-    show_sql_query = FALSE
+    show_sql_query = FALSE,
+    r_cluster_cores = 2
   )
   expect_true(is.data.frame(result_drug_dispenses))
   expect_true(nrow(result_drug_dispenses) >= 0)
