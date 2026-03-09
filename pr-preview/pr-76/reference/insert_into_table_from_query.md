@@ -34,5 +34,6 @@ Other utils: [`connect_duckdb()`](connect_duckdb.md),
 [`create_table_from_query()`](create_table_from_query.md),
 [`gather_table_stats()`](gather_table_stats.md),
 [`get_first_non_archived_year()`](get_first_non_archived_year.md),
+[`parallelize_query_by_flx_month()`](parallelize_query_by_flx_month.md),
 [`retrieve_all_psa_from_idt()`](retrieve_all_psa_from_idt.md),
 [`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md)

@@ -180,8 +180,9 @@ Scalpel](https://github.com/X-DataInitiative/SCALPEL-Flattening/blob/DREES-104-D
 ## See also
 
 Other extract:
+[`.extract_drug_by_month()`](dot-extract_drug_by_month.md),
 [`extract_consultations_erprsf()`](extract_consultations_erprsf.md),
-[`extract_drug_dispenses()`](extract_drug_dispenses.md),
+[`extract_drug_erprsf()`](extract_drug_erprsf.md),
 [`extract_hospital_consultations()`](extract_hospital_consultations.md),
 [`extract_long_term_disease()`](extract_long_term_disease.md)
 

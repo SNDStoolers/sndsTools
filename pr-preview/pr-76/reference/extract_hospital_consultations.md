@@ -116,8 +116,9 @@ sont extraites.
 ## See also
 
 Other extract:
+[`.extract_drug_by_month()`](dot-extract_drug_by_month.md),
 [`extract_consultations_erprsf()`](extract_consultations_erprsf.md),
-[`extract_drug_dispenses()`](extract_drug_dispenses.md),
+[`extract_drug_erprsf()`](extract_drug_erprsf.md),
 [`extract_hospital_stays()`](extract_hospital_stays.md),
 [`extract_long_term_disease()`](extract_long_term_disease.md)
 

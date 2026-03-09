@@ -106,8 +106,8 @@ flux.</p>
 <span></span>
 <span><span class="va">cip_vitamine_d_b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3400935657190</span>, <span class="fl">3400936584969</span>, <span class="fl">3400936923751</span>, <span class="fl">3400934880254</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Colonnes supplémentaires pour la fonction `extract_drug_dispenses`.</span></span>
-<span><span class="co"># Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_dispenses`.</span></span>
+<span><span class="co"># Colonnes supplémentaires pour la fonction `extract_drug_erprsf`.</span></span>
+<span><span class="co"># Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_erprsf`.</span></span>
 <span><span class="va">sup_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"BEN_CMU_TOP"</span>,</span>
 <span>  <span class="st">"BEN_AMA_COD"</span>,</span>
@@ -149,7 +149,7 @@ flux.</p>
 <span>  <span class="va">formatted_study_dates</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">'{format(start_date, "%Y%m%d")}_{format(end_date, "%Y%m%d")}'</span><span class="op">)</span></span>
 <span>  <span class="va">dplyr_table_name</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"dplyr_{formatted_study_dates}"</span><span class="op">)</span></span>
 <span>  <span class="va">time_0_dplyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/extract_drug_erprsf.html">extract_drug_erprsf</a></span><span class="op">(</span></span>
 <span>    start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>    end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
 <span>    atc_cod_starts_with_filter <span class="op">=</span> <span class="va">atc_vitamine_d_7</span>,</span>
@@ -169,7 +169,7 @@ flux.</p>
 <span>  <span class="co"># benchmark de RSQL</span></span>
 <span>  <span class="va">sql_table_name</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"sql_{formatted_study_dates}"</span><span class="op">)</span></span>
 <span>  <span class="va">time_0_sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="../reference/sql_extract_drug_dispenses.html">sql_extract_drug_dispenses</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/sql_extract_drug_erprsf.html">sql_extract_drug_erprsf</a></span><span class="op">(</span></span>
 <span>    start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>    end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
 <span>    atc_cod_starts_with_filter <span class="op">=</span> <span class="va">atc_vitamine_d_7</span>,</span>
@@ -219,8 +219,8 @@ de lignes et de colonnes extraites.</p>
 <span><span class="va">atc_vitamine_d_5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A12AX"</span>, <span class="st">"A11JA"</span>, <span class="st">"A11BA"</span><span class="op">)</span></span>
 <span><span class="va">cip_vitamine_d_b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3400935657190</span>, <span class="fl">3400936584969</span>, <span class="fl">3400936923751</span>, <span class="fl">3400934880254</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Colonnes supplémentaires pour la fonction `extract_drug_dispenses`.</span></span>
-<span><span class="co"># Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_dispenses`.</span></span>
+<span><span class="co"># Colonnes supplémentaires pour la fonction `extract_drug_erprsf`.</span></span>
+<span><span class="co"># Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_erprsf`.</span></span>
 <span><span class="va">columns_to_extract</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"BEN_CMU_TOP"</span>,</span>
 <span>  <span class="st">"BEN_AMA_COD"</span>,</span>
@@ -262,7 +262,7 @@ de lignes et de colonnes extraites.</p>
 <span>    <span class="op">)</span></span>
 <span>    <span class="va">dplyr_table_name</span> <span class="op">&lt;-</span> <span class="fu">glue</span><span class="fu">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"dplyr_{formatted_study_dates}"</span><span class="op">)</span></span>
 <span>    <span class="va">time_0_dplyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="../reference/extract_drug_erprsf.html">extract_drug_erprsf</a></span><span class="op">(</span></span>
 <span>      start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>      end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
 <span>      atc_cod_starts_with_filter <span class="op">=</span> <span class="va">atc_vitamine_d_7</span>,</span>

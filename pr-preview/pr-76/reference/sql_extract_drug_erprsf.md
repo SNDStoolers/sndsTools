@@ -7,7 +7,7 @@ comprises entre `start_date` et `end_date` (incluses) sont extraites.
 ## Usage
 
 ``` r
-sql_extract_drug_dispenses(
+sql_extract_drug_erprsf(
   start_date,
   end_date,
   output_table_name,

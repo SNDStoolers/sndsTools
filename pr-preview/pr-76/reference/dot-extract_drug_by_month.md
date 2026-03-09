@@ -1,7 +1,11 @@
-# Fonction helper pour traiter un mois individuel dans extract_drug_dispenses
+# Fonction pour traiter un mois de délivrances de médicaments
 
-Fonction interne utilisée par extract_drug_dispenses pour traiter un
-mois de flux en parallèle avec parLapply.
+Cette fonction est appelée par
+[`extract_drug_erprsf`](extract_drug_erprsf.md) via pour construire et
+exécuter la requête SQL d'un mois de flux. Elle reçoit une liste de
+paramètres (`kwargs`) contenant les valeurs spécifiques au mois et les
+autres paramètres de la fonction principale (noms des tables filtres,
+nom de la table de sortie, ...).
 
 ## Usage
 
@@ -11,50 +15,59 @@ mois de flux en parallèle avec parLapply.
 
 ## Arguments
 
-- month_params:
+- kwargs:
 
-  List contenant les paramètres pour un mois :
+  Liste. Éléments :
 
-  - year: Integer, l'année du flux
+  - `dis_dtd_year` entier. Année du flux FLX_DIS_DTD.
 
-  - month: Integer, le mois du flux
+  - `dis_dtd_month` entier. Mois du flux FLX_DIS_DTD.
 
-  - is_first_month: Logical, TRUE si c'est le premier mois traité
+  - `is_first_month` logique. `TRUE` pour le premier mois (crée la table
+    de sortie), `FALSE` pour les mois suivants (insère les lignes).
 
-  - start_year: Integer, l'année de début de la période
+  - `formatted_start_date` caractère. Date de début de la période
+    (YYYY‑MM‑DD).
 
-  - end_year: Integer, l'année de fin de la période
+  - `formatted_end_date` caractère. Date de fin de la période
+    (YYYY‑MM‑DD).
 
-  - dis_dtd_end_month: Integer, le mois de fin pour FLX_DIS_DTD
+  - `end_year` entier. Année de fin de la période.
 
-  - formatted_start_date: Character, date formatée de début (YYYY-MM-DD)
+  - `output_table_name` caractère. Nom de la table de destination.
 
-  - formatted_end_date: Character, date formatée de fin (YYYY-MM-DD)
+  - `show_sql_query` logique. Si `TRUE`, la requête SQL du premier mois
+    est journalisée.
 
-  - output_table_name: Character, nom de la table de sortie
+  - `ir_pha_r_filtered_name` caractère. Nom de la table temporaire
+    contenant les lignes filtrées de `IR_PHA_R`.
 
-  - show_sql_query: Logical, afficher la requête SQL du premier mois
+  - `sup_columns` vecteur de caractères. Colonnes supplémentaires à
+    conserver.
 
-  - first_non_archived_year: Integer, première année non archivée
+  - `patients_ids_table_name` caractère ou `NULL`. Table temporaire avec
+    les IDs patients.
 
-  - ir_pha_r_filtered_name: Character, nom de la table IR_PHA_R filtrée
-
-  - sup_columns: Character vector, colonnes supplémentaires
-
-  - patients_ids_table_name: Character ou NULL, nom de la table des IDs
-    patients
-
-  - conn: Connexion DBI (peut être NULL en contexte parallèle où conn
-    est global)
+  - `conn` connexion DBI. Connexion à la base (peut être `NULL` en
+    workers parallèles).
 
 ## Value
 
-Invisible NULL (modifie la table output_table_name en base de données)
+Invisible `NULL`. La fonction crée ou ajoute des lignes à
+`output_table_name` dans la base Oracle.
 
 ## Details
 
-Cette fonction est destinée à être utilisée via
-[`parallel::parLapply()`](https://rdrr.io/r/parallel/clusterApply.html)
-et ne doit pas être appelée directement par l'utilisateur. En contexte
-parallèle, la connexion 'conn' est disponible comme variable globale
-dans l'environnement du worker.
+La fonction construit une requête joignant les tables de prescription et
+de délivrance, applique les filtres médicaments, les filtres patients et
+les colonnes additionnelles éventuelles, puis crée la table de sortie
+(premier mois) ou y insère les lignes (mois suivants).
+
+## See also
+
+Other extract:
+[`extract_consultations_erprsf()`](extract_consultations_erprsf.md),
+[`extract_drug_erprsf()`](extract_drug_erprsf.md),
+[`extract_hospital_consultations()`](extract_hospital_consultations.md),
+[`extract_hospital_stays()`](extract_hospital_stays.md),
+[`extract_long_term_disease()`](extract_long_term_disease.md)

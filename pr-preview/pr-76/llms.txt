@@ -101,10 +101,12 @@ TODO (figure à mettre dans man/figures)
 Fonctions pour extraire les données de soins individuelles à partir du
 SNDS.
 
+- [`.extract_drug_by_month()`](dot-extract_drug_by_month.md) : Fonction
+  pour traiter un mois de délivrances de médicaments
 - [`extract_consultations_erprsf()`](extract_consultations_erprsf.md) :
   Extraction des consultations dans le DCIR.
-- [`extract_drug_dispenses()`](extract_drug_dispenses.md) : Extraction
-  des délivrances de médicaments.
+- [`extract_drug_erprsf()`](extract_drug_erprsf.md) : Extraction des
+  délivrances de médicaments.
 - [`extract_hospital_consultations()`](extract_hospital_consultations.md)
   : Extraction des consultations externes à l'hôpital (MCO).
 - [`extract_hospital_stays()`](extract_hospital_stays.md) : Extraction
@@ -117,9 +119,9 @@ SNDS.
 Fonctions pour extraire les données de soins individuelles à partir du
 SNDS en pur SQL.
 
-- [`sql_extract_drug_dispenses()`](sql_extract_drug_dispenses.md) :
-  Extraction des délivrances de médicaments à partir de SQL injecté dans
-  du R (modèle dbExecute de Thomas Soeiro).
+- [`sql_extract_drug_erprsf()`](sql_extract_drug_erprsf.md) : Extraction
+  des délivrances de médicaments à partir de SQL injecté dans du R
+  (modèle dbExecute de Thomas Soeiro).
 
 ## Utilitaires
 
@@ -147,6 +149,9 @@ Fonctions utilitaires pour manipuler les données extraites.
 - [`insert_into_table_from_query()`](insert_into_table_from_query.md) :
   Insertion des résultats d'une requête SQL dans une table existante.
 
+- [`parallelize_query_by_flx_month()`](parallelize_query_by_flx_month.md)
+  : Exécute une fonction de construction de requête par mois de flux
+
 - [`retrieve_all_psa_from_idt()`](retrieve_all_psa_from_idt.md) :
 
   Gestion des identifiants patients à l'aide de `BEN_IDT_ANO`
@@ -154,6 +159,16 @@ Fonctions utilitaires pour manipuler les données extraites.
 - [`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md) :
 
   Gestion des identifiants patients à l'aide de `BEN_NIR_PSA`
+
+## Constantes
+
+Constantes (variable globales) utilisées dans le package. Par exemple,
+noms de tables temporaires, listes de colonnes importantes, etc.
+
+- [`TNAME_FILTER_IR_PHA_R`](TNAME_FILTER_IR_PHA_R.md) : Nom de la table
+  temporaire pour les filtres ir_pha_r
+- [`TNAME_FILTER_PATIENTS`](TNAME_FILTER_PATIENTS.md) : Nom de la table
+  temporaire pour les IDs de patients
 
 # Articles
 

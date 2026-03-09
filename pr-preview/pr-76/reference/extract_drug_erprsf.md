@@ -7,7 +7,7 @@ comprises entre `start_date` et `end_date` (incluses) sont extraites.
 ## Usage
 
 ``` r
-extract_drug_dispenses(
+extract_drug_erprsf(
   start_date,
   end_date,
   atc_cod_starts_with_filter = NULL,
@@ -78,6 +78,17 @@ extract_drug_dispenses(
   DBI connection (Optionnel). Une connexion à la base de données Oracle.
   Si non fournie, une connexion est établie par défaut. Défaut à NULL.
 
+- show_sql_query:
+
+  Logical (Optionnel). Si TRUE, la requête SQL du premier mois de flux
+  est affichée dans les logs. TRUE par défaut.
+
+- r_cluster_cores:
+
+  Integer (Optionnel). Si fourni, le nombre de sessions R à utiliser
+  pour l'exécution parallèle de la requête par mois de flux. Si NULL,
+  l'exécution n'est pas parallélisée. Défaut à NULL.
+
 ## Value
 
 Si output_table_name est NULL, retourne un data.frame contenant les
@@ -137,6 +148,7 @@ c'est-à-dire pour dis_dtd_lag_months = 6.
 ## See also
 
 Other extract:
+[`.extract_drug_by_month()`](dot-extract_drug_by_month.md),
 [`extract_consultations_erprsf()`](extract_consultations_erprsf.md),
 [`extract_hospital_consultations()`](extract_hospital_consultations.md),
 [`extract_hospital_stays()`](extract_hospital_stays.md),
@@ -150,7 +162,7 @@ start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-01-03")
 atc_cod_starts_with <- c("N04A")
 
-dispenses <- extract_drug_dispenses(
+dispenses <- extract_drug_erprsf(
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with = atc_cod_starts_with
