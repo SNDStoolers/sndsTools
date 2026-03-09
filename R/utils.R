@@ -135,6 +135,54 @@ gather_table_stats <- function(conn, table) {
 }
 
 
+# nolint start
+#' @title Exécute une fonction de construction de requête par mois de flux
+#' @description Cette fonction découpe la période d'extraction en mois de flux,
+#'   prépare les paramètres spécifiques à chaque mois et invoque la fonction
+#'   `query_builder_function` soit en mode séquentiel, soit en parallèle via le
+#'   package `parallel`. Elle gère la création de la table de sortie lors du
+#'   premier mois.
+#' @param conn Connexion DBI à la base de données.
+#' @param start_date Date. Date de début de la période d'extraction.
+#' @param end_date Date. Date de fin de la période d'extraction.
+#' @param query_builder_function Fonction qui construit la requête SQL pour un
+#'   mois donné. Exemple : \code{\link{.extract_drug_by_month}} depuis le
+#'   fichier `R/extract_drug_dispenses.R`.
+#' @param query_builder_kwargs Liste d'arguments supplémentaires transmis à la
+#'   fonction de construction. Elle contient typiquement les paramètres globaux
+#'   comme `sup_columns`, `output_table_name`, etc.
+#' @param dis_dtd_lag_months Entier. Nombre de mois de retard pris en compte
+#'   pour la date `FLX_DIS_DTD`. Valeur par défaut : 6.
+#' @param r_cluster_cores Entier. Nombre de cœurs à utiliser pour le
+#' parallélisme.
+#'   Valeur par défaut : 1 (exécution séquentielle).
+#' @return Invisible NULL. La fonction orchestre l'exécution de la fonction de
+#'   construction de requête pour chaque mois, en créant ou insérant les
+#'   résultats dans la table de sortie.
+#' @details La fonction construit une liste `months_to_process` contenant pour
+#'   chaque mois les paramètres `dis_dtd_year`, `dis_dtd_month`,
+#'   `is_first_month`, `formatted_start_date`, `formatted_end_date`,
+#'   `end_year` ainsi que les arguments fournis dans `query_builder_kwargs`.
+#'   Elle crée ensuite un cluster si `r_cluster_cores` > 1, exporte les packages
+#'   nécessaires et la connexion, exécute le premier mois pour créer la table,
+#'   puis traite les mois restants en parallèle avec `parallel::parLapply`.
+#' @examples
+#' \dontrun{
+#' parallelize_query_by_flx_month(
+#'   conn = conn,
+#'   start_date = as.Date("2020-01-01"),
+#'   end_date = as.Date("2020-03-31"),
+#'   query_builder_function = .extract_drug_by_month,
+#'   query_builder_kwargs = list(
+#'     sup_columns = NULL,
+#'     output_table_name = "TMP_DISP",
+#'     show_sql_query = FALSE
+#'   )
+#' )
+#' }
+#' @family utils
+#' @export
+# nolint end
 parallelize_query_by_flx_month <- function(
   conn,
   start_date,
@@ -240,7 +288,6 @@ parallelize_query_by_flx_month <- function(
 
     logger::log_info("Parallel processing completed")
   } else {
-    #
     logger::log_info("Starting sequential processing")
     months_to_process_with_conn <- lapply(months_to_process, function(m) {
       m$conn <- conn

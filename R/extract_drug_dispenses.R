@@ -1,5 +1,5 @@
 # nolint start
-#' Extraction des délivrances de médicaments.
+#' @title Extraction des délivrances de médicaments.
 #'
 #' @description Cette fonction permet
 #' d'extraire les délivrances de médicaments par code ATC ou par code CIP13.
@@ -58,6 +58,9 @@
 #' @param conn DBI connection (Optionnel). Une connexion à la base de données
 #'   Oracle. Si non fournie, une connexion est établie par défaut. Défaut à
 #'   NULL.
+#' @param show_sql_query Logical (Optionnel). Si TRUE, la requête SQL du premier
+#'   mois de flux est affichée dans les logs. TRUE par défaut.
+#' @param r_cluster_cores Integer (Optionnel). Si fourni, le nombre de sessions R à utiliser pour l'exécution parallèle de la requête par mois de flux. Si NULL, l'exécution n'est pas parallélisée. Défaut à NULL.
 #' @return Si output_table_name est NULL, retourne un data.frame contenant les
 #'   délivrances de médicaments. Si output_table_name est fourni, sauvegarde les
 #'   résultats dans la table spécifiée dans Oracle et retourne NULL de manière
@@ -124,6 +127,17 @@ extract_drug_dispenses <- function(
   if (is.null(conn)) {
     conn <- connect_oracle()
     connection_opened <- TRUE
+    on.exit(DBI::dbDisconnect(conn), add = TRUE)
+  }
+  # limit oracle parallelism in case of parallel execution in R
+  if (!is.null(r_cluster_cores) && r_cluster_cores > 1L) {
+    DBI::dbExecute(conn, "ALTER SESSION SET parallel_degree_limit = 6;")
+    # TODO: is it AUTO as in oracle doc? cf. https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/PARALLEL_DEGREE_LIMIT.html
+    # Gemini tells me that DEFAULT is ok....
+    on.exit(
+      DBI::dbExecute(conn, "ALTER SESSION SET parallel_degree_limit = AUTO;"),
+      add = TRUE
+    )
   }
   # check output table
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
@@ -136,11 +150,11 @@ extract_drug_dispenses <- function(
   } else {
     output_table_name_is_temp <- TRUE
     output_table_name <- glue::glue("TMP_DISP_{timestamp}")
+    on.exit(DBI::dbRemoveTable(conn, output_table_name), add = TRUE)
   }
 
   # Initialize filter tables
   ## Patient filters
-  patients_ids_table_name <- NULL
   if (!is.null(patients_ids_filter)) {
     stopifnot(
       identical(
@@ -149,12 +163,18 @@ extract_drug_dispenses <- function(
       ),
       !anyDuplicated(patients_ids_filter)
     )
-    patients_ids_table_name <- "TMP_PATIENTS_IDS"
     DBI::dbWriteTable(
       conn,
-      patients_ids_table_name,
+      TNAME_FILTER_PATIENTS,
       patients_ids_filter,
       overwrite = TRUE
+    )
+    on.exit(DBI::dbRemoveTable(conn, TNAME_FILTER_PATIENTS), add = TRUE)
+  } else {
+    DBI::dbExecute(
+      conn,
+      glue::glue("DROP TABLE {TNAME_FILTER_PATIENTS}"),
+      silent = TRUE # avoid error if not existing
     )
   }
   # Drug filters
@@ -228,100 +248,73 @@ extract_drug_dispenses <- function(
     ir_pha_filtered_query <- ir_pha_filtered |>
       dplyr::filter(dbplyr::sql(drug_filter))
   }
-  ir_pha_r_filtered_name <- "TMP_IR_PHA_R"
-  # overwrite
+  # create filter table
   create_table_from_query(
     conn = conn,
-    output_table_name = ir_pha_r_filtered_name,
+    output_table_name = TNAME_FILTER_IR_PHA_R,
     query = ir_pha_filtered_query,
     overwrite = TRUE
   )
-  # DBI::dbExecute(
-  #   conn,
-  #   glue::glue(
-  #     "CREATE TABLE {ir_pha_r_filtered_name} AS {ir_pha_filtered_query}"
-  #   )
-  # )
-  ir_pha_filtered_table <- dplyr::tbl(conn, ir_pha_r_filtered_name)
+  on.exit(DBI::dbRemoveTable(conn, TNAME_FILTER_IR_PHA_R), add = TRUE)
+  ir_pha_filtered_table <- dplyr::tbl(conn, TNAME_FILTER_IR_PHA_R)
 
-  # Iterate by month and execute queries
-
+  # iterate by flx month to execute queries
   parallelize_query_by_flx_month(
     conn = conn,
     query_builder_function = .extract_drug_by_month,
     query_builder_kwargs = list(
       sup_columns = sup_columns,
       output_table_name = output_table_name,
-      show_sql_query = show_sql_query,
-      ir_pha_r_filtered_name = ir_pha_r_filtered_name,
-      patients_ids_table_name = patients_ids_table_name
+      show_sql_query = show_sql_query
     ),
     start_date = start_date,
     end_date = end_date,
     r_cluster_cores = r_cluster_cores
   )
-  # Clean up temporary tables
-  on.exit(DBI::dbRemoveTable(conn, ir_pha_r_filtered_name))
-  on.exit(
-    if (!is.null(patients_ids_filter)) {
-      DBI::dbRemoveTable(conn, patients_ids_table_name)
-    },
-    add = TRUE
-  )
 
   if (output_table_name_is_temp) {
     query <- dplyr::tbl(conn, output_table_name)
     result <- dplyr::collect(query)
-    DBI::dbRemoveTable(conn, output_table_name)
   } else {
     result <- invisible(NULL)
     message(glue::glue("Results saved to table {output_table_name} in Oracle."))
     result <- output_table_name
   }
 
-  if (connection_opened) {
-    DBI::dbDisconnect(conn)
-  }
   result
 }
 
 # nolint start
-#' Fonction helper pour traiter un mois individuel dans extract_drug_dispenses
-#'
-#' @description Fonction interne utilisée par extract_drug_dispenses pour traiter
-#' un mois de flux en parallèle avec parLapply.
-#'
-#' @param month_params List contenant les paramètres pour un mois :
-#'   - year: Integer, l'année du flux
-#'   - month: Integer, le mois du flux
-#'   - is_first_month: Logical, TRUE si c'est le premier mois traité
-#'   - start_year: Integer, l'année de début de la période
-#'   - end_year: Integer, l'année de fin de la période
-#'   - dis_dtd_end_month: Integer, le mois de fin pour FLX_DIS_DTD
-#'   - formatted_start_date: Character, date formatée de début (YYYY-MM-DD)
-#'   - formatted_end_date: Character, date formatée de fin (YYYY-MM-DD)
-#'   - output_table_name: Character, nom de la table de sortie
-#'   - show_sql_query: Logical, afficher la requête SQL du premier mois
-#'   - first_non_archived_year: Integer, première année non archivée
-#'   - ir_pha_r_filtered_name: Character, nom de la table IR_PHA_R filtrée
-#'   - sup_columns: Character vector, colonnes supplémentaires
-#'   - patients_ids_table_name: Character ou NULL, nom de la table des IDs patients
-#'   - conn: Connexion DBI (peut être NULL en contexte parallèle où conn est global)
-#'
-#' @return Invisible NULL (modifie la table output_table_name en base de données)
-#'
-#' @details Cette fonction est destinée à être utilisée via `parallel::parLapply()`
-#' et ne doit pas être appelée directement par l'utilisateur.
-#' En contexte parallèle, la connexion 'conn' est disponible comme variable globale
-#' dans l'environnement du worker.
-#'
-#' @keywords internal
+#' @title Fonction pour traiter un mois de délivrances de médicaments
+#' @description Cette fonction est appelée par
+#' \code{\link{extract_drug_dispenses}} via
+#' \code{\link[parallelize_query_by_flx_month]} pour construire et exécuter la
+#' requête SQL d'un mois de flux. Elle reçoit une liste de paramètres (`kwargs`)
+#' contenant les valeurs spécifiques au mois et les autres paramètres de la fonction principale (noms des tables filtres, nom de la table de sortie, ...).
+#' @param kwargs Liste. Éléments :
+#'   - `dis_dtd_year` entier. Année du flux FLX_DIS_DTD.
+#'   - `dis_dtd_month` entier. Mois du flux FLX_DIS_DTD.
+#'   - `is_first_month` logique. `TRUE` pour le premier mois (crée la table
+#'     de sortie), `FALSE` pour les mois suivants (insère les lignes).
+#'   - `formatted_start_date` caractère. Date de début de la période (YYYY‑MM‑DD).
+#'   - `formatted_end_date` caractère. Date de fin de la période (YYYY‑MM‑DD).
+#'   - `end_year` entier. Année de fin de la période.
+#'   - `output_table_name` caractère. Nom de la table de destination.
+#'   - `show_sql_query` logique. Si `TRUE`, la requête SQL du premier mois est journalisée.
+#'   - `ir_pha_r_filtered_name` caractère. Nom de la table temporaire contenant
+#'     les lignes filtrées de `IR_PHA_R`.
+#'   - `sup_columns` vecteur de caractères. Colonnes supplémentaires à conserver.
+#'   - `patients_ids_table_name` caractère ou `NULL`. Table temporaire avec les IDs patients.
+#'   - `conn` connexion DBI. Connexion à la base (peut être `NULL` en workers parallèles).
+#' @return Invisible `NULL`. La fonction crée ou ajoute des lignes à
+#' `output_table_name` dans la base Oracle.
+#' @details La fonction construit une requête joignant les tables de
+#' prescription et de délivrance, applique les filtres médicaments, les filtres
+#' patients et les colonnes additionnelles éventuelles, puis crée la table de
+#' sortie (premier mois) ou y insère les lignes (mois suivants).
+#' @family extract
+#' @export
 # nolint end
-# TODO : refacto :
-# target API
-# extract_drug_dispense( ) : user facing function with SNDS-friendly parameters
-# query_builder_function(year, month, **kwargs) : helper function building the query for a given month and year with the provided parameters (executed in parallel)
-# query_by_month_parallel(conn, query_builder_function, query_kwargs, start_date, end_date, r_cluster_cores)
 .extract_drug_by_month <- function(kwargs) {
   # Get back parameters
   conn <- kwargs$conn # for no parallel context
@@ -336,9 +329,7 @@ extract_drug_dispenses <- function(
   # other parameters
   output_table_name <- kwargs$output_table_name
   show_sql_query <- kwargs$show_sql_query
-  ir_pha_r_filtered_name <- kwargs$ir_pha_r_filtered_name
   sup_columns <- kwargs$sup_columns
-  patients_ids_table_name <- kwargs$patients_ids_table_name
 
   # Use global connexion
   if (!is.null(conn)) {
@@ -362,7 +353,7 @@ extract_drug_dispenses <- function(
   }
 
   # Charger la table IR_PHA filtrée
-  ir_pha_filtered_table <- dplyr::tbl(conn, ir_pha_r_filtered_name)
+  ir_pha_filtered_table <- dplyr::tbl(conn, TNAME_FILTER_IR_PHA_R)
 
   # Construire les dates de flux
   dis_dtd_start <- glue::glue(
@@ -437,8 +428,9 @@ extract_drug_dispenses <- function(
     dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select)) |>
     dplyr::distinct()
 
-  if (!is.null(patients_ids_table_name)) {
-    patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
+  is_patient_ids_filter <- DBI::dbExistsTable(conn, TNAME_FILTER_PATIENTS)
+  if (is_patient_ids_filter) {
+    patients_ids_table <- dplyr::tbl(conn, TNAME_FILTER_PATIENTS)
     patients_ids_table <- patients_ids_table |>
       dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA) |>
       dplyr::distinct()
@@ -457,9 +449,7 @@ extract_drug_dispenses <- function(
     )
     if (show_sql_query) {
       logger::log_info(glue::glue(
-        "
-     Premier mois requêté en date de flux
-     à l'aide de la requête sql suivante :\n {query}"
+        "  Premier mois requêté en date de flux avec la requête sql :\n{query}"
       ))
     }
   } else {
