@@ -22,8 +22,8 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_hospital_stays))
   expect_true(nrow(result_hospital_stays) >= 0)
 
-  # Test 2: extract_drug_dispenses with dis_dtd_lag_months = 0
-  result_drug_dispenses <- extract_drug_dispenses(
+  # Test 2: extract_drug_erprsf with dis_dtd_lag_months = 0
+  result_drug_dispenses <- extract_drug_erprsf(
     start_date = start_date,
     end_date = as.Date("2023-03-01"),
     atc_cod_starts_with_filter = "N04A",

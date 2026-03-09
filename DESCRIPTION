@@ -2,7 +2,7 @@ Title: Extraction de recours aux soins sur le SNDS en R
 Package: sndsTools
 Version: 0.1.2
 Date: 2026-02-10
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.1.0)
 Authors@R: c(
     person(
         "Antoine", "Belloir", ,

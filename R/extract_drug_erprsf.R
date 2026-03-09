@@ -86,7 +86,7 @@
 #' end_date <- as.Date("2010-01-03")
 #' atc_cod_starts_with <- c("N04A")
 #'
-#' dispenses <- extract_drug_dispenses(
+#' dispenses <- extract_drug_erprsf(
 #'   start_date = start_date,
 #'   end_date = end_date,
 #'   atc_cod_starts_with = atc_cod_starts_with
@@ -95,7 +95,7 @@
 #' @export
 #' @family extract
 # nolint end
-extract_drug_dispenses <- function(
+extract_drug_erprsf <- function(
   start_date,
   end_date,
   atc_cod_starts_with_filter = NULL,
@@ -287,7 +287,7 @@ extract_drug_dispenses <- function(
 # nolint start
 #' @title Fonction pour traiter un mois de délivrances de médicaments
 #' @description Cette fonction est appelée par
-#' \code{\link{extract_drug_dispenses}} via
+#' \code{\link{extract_drug_erprsf}} via
 #' \code{\link[parallelize_query_by_flx_month]} pour construire et exécuter la
 #' requête SQL d'un mois de flux. Elle reçoit une liste de paramètres (`kwargs`)
 #' contenant les valeurs spécifiques au mois et les autres paramètres de la fonction principale (noms des tables filtres, nom de la table de sortie, ...).

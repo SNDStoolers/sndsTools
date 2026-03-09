@@ -23,7 +23,7 @@
 #'   NULL.
 #'
 #' @export
-sql_extract_drug_dispenses <- function(
+sql_extract_drug_erprsf <- function(
   start_date, # nolint
   end_date,
   output_table_name,
@@ -49,7 +49,7 @@ sql_extract_drug_dispenses <- function(
   formatted_end_date <- format(end_date, "%Y-%m-%d") # nolint
 
   # Create the subset of IR_PHA_V table that should be joined to the DCIR
-  # tables(same code as extract_drug_dispenses)
+  # tables(same code as extract_drug_erprsf)
   ir_pha_r <- dplyr::tbl(conn, "IR_PHA_R")
 
   if (!is.null(atc_cod_starts_with_filter)) {

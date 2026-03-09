@@ -87,15 +87,14 @@ fake_patients_ids <- data.frame(
   BEN_NIR_PSA = c(11, 12, 13)
 )
 
-test_that("extract_drug_dispenses works for ATC", {
+test_that("extract_drug_erprsf works for ATC", {
   conn <- connect_duckdb()
-  #on.exit(unlink("tmp_db", recursive = TRUE))
 
   simulate_drug_data(conn)
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
 
-  drug_dispenses <- extract_drug_dispenses(
+  drug_dispenses <- extract_drug_erprsf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = c("J05"),
@@ -122,13 +121,13 @@ test_that("extract_drug_dispenses works for ATC", {
   DBI::dbDisconnect(conn)
 })
 
-test_that("extract_drug_dispenses works for CIP13", {
+test_that("extract_drug_erprsf works for CIP13", {
   conn <- connect_duckdb()
   simulate_drug_data(conn)
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
 
-  drug_dispenses <- extract_drug_dispenses(
+  drug_dispenses <- extract_drug_erprsf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = c("J05"),

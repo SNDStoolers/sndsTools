@@ -23,6 +23,7 @@ Other utils:
 \code{\link{create_table_from_query}()},
 \code{\link{gather_table_stats}()},
 \code{\link{insert_into_table_from_query}()},
+\code{\link{parallelize_query_by_flx_month}()},
 \code{\link{retrieve_all_psa_from_idt}()},
 \code{\link{retrieve_all_psa_from_psa}()}
 }

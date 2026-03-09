@@ -147,7 +147,7 @@ gather_table_stats <- function(conn, table) {
 #' @param end_date Date. Date de fin de la période d'extraction.
 #' @param query_builder_function Fonction qui construit la requête SQL pour un
 #'   mois donné. Exemple : \code{\link{.extract_drug_by_month}} depuis le
-#'   fichier `R/extract_drug_dispenses.R`.
+#'   fichier `R/extract_drug_erprsf.R`.
 #' @param query_builder_kwargs Liste d'arguments supplémentaires transmis à la
 #'   fonction de construction. Elle contient typiquement les paramètres globaux
 #'   comme `sup_columns`, `output_table_name`, etc.
@@ -245,7 +245,7 @@ parallelize_query_by_flx_month <- function(
 
     # Export packages and fonctions to workers
     parallel::clusterEvalQ(cl, {
-      # TODO: should not be necessary since prefix usage in query_builder_function.
+      # TODO: not necessary since prefix usage in query_builder_function?
       library(dplyr)
       library(dbplyr)
       library(glue)
@@ -255,7 +255,7 @@ parallelize_query_by_flx_month <- function(
       is_portail <- constants_snds()$is_portail
       # Export the same Oracle connexion to workers
       if (!is_portail) {
-        #TODO: not possible to use month parallelization in duckdb since there is a lock on the database
+        # Not possible to parallelize in duckdb because of read lock
         conn <<- connect_duckdb("tmp_db")
       } else {
         conn <<- connect_oracle()
