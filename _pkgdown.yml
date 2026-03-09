@@ -39,3 +39,8 @@ reference:
   desc: Fonctions utilitaires pour manipuler les données extraites.
 - contents:
   - has_concept("utils")
+- title: Constantes
+  desc: Constantes (variable globales) utilisées dans le package. Par exemple, noms de tables temporaires, listes de colonnes importantes, etc.
+- contents:
+  - has_concept("constants")
+

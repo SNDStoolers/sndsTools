@@ -24,10 +24,11 @@ Insertion des résultats d'une requête SQL dans une table existante.
 Other utils: 
 \code{\link{connect_duckdb}()},
 \code{\link{connect_oracle}()},
-\code{\link{constants_snds_tools}()},
+\code{\link{constants_snds}()},
 \code{\link{create_table_from_query}()},
 \code{\link{gather_table_stats}()},
 \code{\link{get_first_non_archived_year}()},
+\code{\link{parallelize_query_by_flx_month}()},
 \code{\link{retrieve_all_psa_from_idt}()},
 \code{\link{retrieve_all_psa_from_psa}()}
 }

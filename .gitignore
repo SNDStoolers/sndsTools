@@ -3,6 +3,8 @@
 .RData
 .Ruserdata
 docs
+# package R file
+sndsTools.R
 
 *.tar.gz
 # github https token
