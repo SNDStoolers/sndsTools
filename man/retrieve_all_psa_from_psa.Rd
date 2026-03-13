@@ -6,9 +6,9 @@
 \usage{
 retrieve_all_psa_from_psa(
   ben_table_name,
-  conn = NULL,
   check_arc_table = TRUE,
-  output_table_name = NULL
+  output_table_name = NULL,
+  conn = NULL
 )
 }
 \arguments{
@@ -17,10 +17,6 @@ comprenant au moins la variable \code{BEN_IDT_ANO}.
 Si la variable \code{BEN_RNG_GEM} est incluse, elle sera également
 utilisée pour les jointures avec les référentiels.}
 
-\item{conn}{DBI connection Optionnel Une connexion à la base de données
-Oracle.
-Si non fournie, une connexion est établie par défaut.}
-
 \item{check_arc_table}{Logical Optionnel. Si TRUE (par défaut), les tables
 \code{IR_BEN_R_ARC} sont également consultées pour la recherche des
 \code{BEN_IDT_ANO} et des critères de sélection.}
@@ -28,6 +24,9 @@ Si non fournie, une connexion est établie par défaut.}
 \item{output_table_name}{Character Optionnel. Si fourni, les résultats seront
 sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en
 sortie est retournée sous la forme d'un data.frame(/tibble).}
+
+\item{conn}{DBI connection Optionnel Une connexion à la base de données
+Oracle. Si non fournie, une connexion est établie par défaut.}
 }
 \value{
 A partir d'une table avec \code{BEN_IDT_ANO}, la fonction retournera
@@ -106,15 +105,15 @@ dbWriteTable(conn, "PSA_SAMP_2", psa_sample_2, overwrite = TRUE)
 retrieve_all_psa_from_psa(conn = conn, ben_table_name = "PSA_SAMP_2")
 # Récupération et enregistrement de la table dans Oracle
 retrieve_all_psa_from_psa(
-  conn = conn,
   ben_table_name = "PSA_SAMP_2",
-  output_table_name = "TEST_SAVE_ORACLE"
+  output_table_name = "TEST_SAVE_ORACLE",
+  conn = conn,
 )
 # Récupération de la table sans considérer la table de référentiel archivée
 retrieve_all_psa_from_psa(
-  conn = conn,
   ben_table_name = "PSA_SAMP_2",
-  check_arc_table = FALSE
+  check_arc_table = FALSE,
+  conn = conn,
 )
 }
 }
@@ -127,6 +126,7 @@ Other utils:
 \code{\link{gather_table_stats}()},
 \code{\link{get_first_non_archived_year}()},
 \code{\link{insert_into_table_from_query}()},
-\code{\link{retrieve_all_psa_from_idt}()}
+\code{\link{retrieve_all_psa_from_idt}()},
+\code{\link{retrieve_psa}()}
 }
 \concept{utils}

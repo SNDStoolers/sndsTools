@@ -1,10 +1,29 @@
-# Function to retrieve
+#' @title Generic function retrieving patient identifiers
+#' @description
+#' Refer to `retrieve_all_psa_from_idt` and `retrieve_all_psa_from_psa` for
+#' details.
+#' @param ben_table_name Character Obligatoire. Nom de la table d'entrée
+#' comprenant au moins la variable `BEN_IDT_ANO` ou `BEN_NIR
+#' PSA`. Si la variable `BEN_RNG_GEM` est incluse, elle sera également
+#' utilisée pour les jointures avec les référentiels.
+#' @param start_key Character Obligatoire. Doit être égal à "BEN_IDT_ANO" ou
+#' "BEN_NIR_PSA".
+#' @param check_arc_table Logical Optionnel. Si TRUE (par défaut), les tables
+#' `IR_BEN_R_ARC` sont également consultées pour la recherche des
+#' `BEN_IDT_ANO` et des critères de sélection.
+#' @param output_table_name Character Optionnel. Si fourni, les résultats seront
+#' sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en
+#' sortie est retournée sous la forme d'un data.frame(/tibble).
+#' @param conn DBI connection Optionnel Une connexion à la base de données
+#' Oracle. Si non fournie, une connexion est établie par défaut.
+#' @export
+#' @family utils
 retrieve_psa <- function(
   ben_table_name,
   start_key,
-  conn = NULL,
   check_arc_table = TRUE,
-  output_table_name = NULL
+  output_table_name = NULL,
+  conn = NULL
 ) {
   # Check if a connection is provided
   connection_opened <- FALSE
@@ -126,7 +145,7 @@ retrieve_psa <- function(
 # nolint start
 #' Gestion des identifiants patients à l'aide de `BEN_IDT_ANO`
 #' @description
-#' La fonction `retrieve_all_psa_from_idt` permet d'extraire le reférentiel des
+#' La fonction `retrieve_all_psa_from_idt` permet d'extraire le référentiel des
 #' bénéficiaires avec la clé de jointure la plus fine (l'ensemble des
 #' `BEN_NIR_PSA`) à partir d'une table contenant un identifiant patient
 #' `BEN_IDT_ANO`.
@@ -152,15 +171,14 @@ retrieve_psa <- function(
 #' comprenant au moins la variable `BEN_NIR_PSA`.
 #' Si la variable `BEN_RNG_GEM` est incluse, elle sera également
 #' utilisée pour les jointures avec les référentiels.
-#' @param conn DBI connection Optionnel Une connexion à la base de données
-#' Oracle.
-#' Si non fournie, une connexion est établie par défaut.
 #' @param check_arc_table Logical Optionnel. Si TRUE (par défaut), les tables
 #' `IR_BEN_R_ARC` sont également consultées pour la recherche des
 #' `BEN_IDT_ANO` et des critères de sélection.
 #' @param output_table_name Character Optionnel. Si fourni, les résultats seront
 #' sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en
 #' sortie est retournée sous la forme d'un data.frame(/tibble).
+#' @param conn DBI connection Optionnel Une connexion à la base de données
+#' Oracle. Si non fournie, une connexion est établie par défaut.
 #' @return A partir d'une table avec `BEN_IDT_ANO`, la fonction retournera
 #' l'ensemble des `BEN_NIR_PSA` + `BEN_RNG_GEM` associés au `BEN_IDT_ANO`
 #' dans une table dédoublonnée.
@@ -227,17 +245,17 @@ retrieve_psa <- function(
 # nolint end
 retrieve_all_psa_from_idt <- function(
   ben_table_name,
-  conn = NULL,
   check_arc_table = TRUE,
-  output_table_name = NULL
+  output_table_name = NULL,
+  conn = NULL
 ) {
   start_key <- "BEN_IDT_ANO"
   retrieve_psa(
-    ben_table_name,
-    start_key,
-    conn,
-    check_arc_table,
-    output_table_name
+    ben_table_name = ben_table_name,
+    start_key = start_key,
+    check_arc_table = check_arc_table,
+    output_table_name = output_table_name,
+    conn = conn
   )
 }
 
@@ -270,15 +288,14 @@ retrieve_all_psa_from_idt <- function(
 #' comprenant au moins la variable `BEN_IDT_ANO`.
 #' Si la variable `BEN_RNG_GEM` est incluse, elle sera également
 #' utilisée pour les jointures avec les référentiels.
-#' @param conn DBI connection Optionnel Une connexion à la base de données
-#' Oracle.
-#' Si non fournie, une connexion est établie par défaut.
 #' @param check_arc_table Logical Optionnel. Si TRUE (par défaut), les tables
 #' `IR_BEN_R_ARC` sont également consultées pour la recherche des
 #' `BEN_IDT_ANO` et des critères de sélection.
 #' @param output_table_name Character Optionnel. Si fourni, les résultats seront
 #' sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en
 #' sortie est retournée sous la forme d'un data.frame(/tibble).
+#' @param conn DBI connection Optionnel Une connexion à la base de données
+#' Oracle. Si non fournie, une connexion est établie par défaut.
 #' @return A partir d'une table avec `BEN_IDT_ANO`, la fonction retournera
 #' l'ensemble des `BEN_NIR_PSA` + `BEN_RNG_GEM` associés au `BEN_IDT_ANO`
 #' dans une table dédoublonnée.
@@ -327,15 +344,15 @@ retrieve_all_psa_from_idt <- function(
 #' retrieve_all_psa_from_psa(conn = conn, ben_table_name = "PSA_SAMP_2")
 #' # Récupération et enregistrement de la table dans Oracle
 #' retrieve_all_psa_from_psa(
-#'   conn = conn,
 #'   ben_table_name = "PSA_SAMP_2",
-#'   output_table_name = "TEST_SAVE_ORACLE"
+#'   output_table_name = "TEST_SAVE_ORACLE",
+#'   conn = conn,
 #' )
 #' # Récupération de la table sans considérer la table de référentiel archivée
 #' retrieve_all_psa_from_psa(
-#'   conn = conn,
 #'   ben_table_name = "PSA_SAMP_2",
-#'   check_arc_table = FALSE
+#'   check_arc_table = FALSE,
+#'   conn = conn,
 #' )
 #' }
 #' @export
@@ -343,16 +360,16 @@ retrieve_all_psa_from_idt <- function(
 # nolint end
 retrieve_all_psa_from_psa <- function(
   ben_table_name,
-  conn = NULL,
   check_arc_table = TRUE,
-  output_table_name = NULL
+  output_table_name = NULL,
+  conn = NULL
 ) {
   start_key <- "BEN_NIR_PSA"
   retrieve_psa(
-    ben_table_name,
-    start_key,
-    conn,
-    check_arc_table,
-    output_table_name
+    ben_table_name = ben_table_name,
+    start_key = start_key,
+    check_arc_table = check_arc_table,
+    output_table_name = output_table_name,
+    conn = conn
   )
 }

@@ -3,8 +3,8 @@
 #' @description
 #' Cette fonction permet d'extraire des ALD actives au
 #' moins un jour sur une période donnée.
-#' Les ALD dont l'intersection [IMB_ALD_DTD, IMB_ALD_DTF]
-#' avec la période [start_date, end_date] n'est pas vide
+#' Les ALD dont l'intersection (`MB_ALD_DTD`, `IMB_ALD_DTF`)
+#' avec la période (`start_date`, `end_date`) n'est pas vide
 #' sont extraites.
 #' Si des codes ICD 10 ou des numéros d'ALD sont fournis,
 #' seules les ALD associées à ces codes ICD 10 ou numéros
@@ -22,12 +22,12 @@
 #'   ICD 10. Si `icd_cod_starts_with` ou `ald_numbers` sont fournis,
 #'   seules les ALD associées à ces codes ICD 10 ou numéros d'ALD
 #'   sont extraites. Sinon, toutes les ALD actives sur la période
-#'   [start_date, end_date] sont extraites.
+#'   (`start_date`, `end_date`) sont extraites.
 #' @param ald_numbers numeric vector Un vecteur de numéros d'ALD.
 #'   Si `icd_cod_starts_with` ou `ald_numbers` sont fournis,
 #'   seules les ALD associées à ces codes ICD 10 ou numéros d'ALD
 #'   sont extraites. Sinon, toutes les ALD actives sur la période
-#'   [start_date, end_date] sont extraites.
+#'   (`start_date`, `end_date`) sont extraites.
 #' @param excl_etm_nat character vector Un vecteur de codes
 #'   IMB_ETM_NAT à exclure. Par défaut, les ALD de nature
 #'   11, 12 et 13 sont exclues car elles correspondent à des
@@ -40,11 +40,11 @@
 #'   médicaments doivent être extraites. Les colonnes de ce data.frame
 #'   doivent être "BEN_IDT_ANO" et "BEN_NIR_PSA". Les "BEN_NIR_PSA" doivent
 #'   être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.
+#' @param overwrite Logical. Indique si la table `output_table_name`
+#'  doit être écrasée dans le cas où elle existe déjà.
 #' @param output_table_name Character Optionnel. Si fourni, les résultats seront
 #'   sauvegardés dans une table portant ce nom dans la base de données au lieu
 #'   d'être retournés sous forme de data frame.
-#' @param overwrite Logical. Indique si la table `output_table_name`
-#'  doit être écrasée dans le cas où elle existe déjà.
 #' @param conn DBI connection Une connexion à la base de données Oracle.
 #'   Si non fournie, une connexion est établie par défaut.
 #' @return Si output_table_name est NULL, retourne un data.frame contenant les
@@ -85,8 +85,8 @@ extract_long_term_disease <- function(
   ald_numbers = NULL,
   excl_etm_nat = c("11", "12", "13"),
   patients_ids = NULL,
-  output_table_name = NULL,
   overwrite = FALSE,
+  output_table_name = NULL,
   conn = NULL
 ) {
   # nolint end. Force # nolint: cyclocomp_linter for the function.

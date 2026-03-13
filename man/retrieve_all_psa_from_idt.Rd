@@ -6,9 +6,9 @@
 \usage{
 retrieve_all_psa_from_idt(
   ben_table_name,
-  conn = NULL,
   check_arc_table = TRUE,
-  output_table_name = NULL
+  output_table_name = NULL,
+  conn = NULL
 )
 }
 \arguments{
@@ -17,10 +17,6 @@ comprenant au moins la variable \code{BEN_NIR_PSA}.
 Si la variable \code{BEN_RNG_GEM} est incluse, elle sera également
 utilisée pour les jointures avec les référentiels.}
 
-\item{conn}{DBI connection Optionnel Une connexion à la base de données
-Oracle.
-Si non fournie, une connexion est établie par défaut.}
-
 \item{check_arc_table}{Logical Optionnel. Si TRUE (par défaut), les tables
 \code{IR_BEN_R_ARC} sont également consultées pour la recherche des
 \code{BEN_IDT_ANO} et des critères de sélection.}
@@ -28,6 +24,9 @@ Si non fournie, une connexion est établie par défaut.}
 \item{output_table_name}{Character Optionnel. Si fourni, les résultats seront
 sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en
 sortie est retournée sous la forme d'un data.frame(/tibble).}
+
+\item{conn}{DBI connection Optionnel Une connexion à la base de données
+Oracle. Si non fournie, une connexion est établie par défaut.}
 }
 \value{
 A partir d'une table avec \code{BEN_IDT_ANO}, la fonction retournera
@@ -69,7 +68,7 @@ présentant des codes sexe différents pour un même \code{BEN_IDT_ANO}
 }
 }
 \description{
-La fonction \code{retrieve_all_psa_from_idt} permet d'extraire le reférentiel des
+La fonction \code{retrieve_all_psa_from_idt} permet d'extraire le référentiel des
 bénéficiaires avec la clé de jointure la plus fine (l'ensemble des
 \code{BEN_NIR_PSA}) à partir d'une table contenant un identifiant patient
 \code{BEN_IDT_ANO}.
@@ -129,6 +128,7 @@ Other utils:
 \code{\link{gather_table_stats}()},
 \code{\link{get_first_non_archived_year}()},
 \code{\link{insert_into_table_from_query}()},
-\code{\link{retrieve_all_psa_from_psa}()}
+\code{\link{retrieve_all_psa_from_psa}()},
+\code{\link{retrieve_psa}()}
 }
 \concept{utils}

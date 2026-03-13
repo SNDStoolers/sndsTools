@@ -29,6 +29,7 @@ Other utils:
 \code{\link{gather_table_stats}()},
 \code{\link{get_first_non_archived_year}()},
 \code{\link{retrieve_all_psa_from_idt}()},
-\code{\link{retrieve_all_psa_from_psa}()}
+\code{\link{retrieve_all_psa_from_psa}()},
+\code{\link{retrieve_psa}()}
 }
 \concept{utils}
