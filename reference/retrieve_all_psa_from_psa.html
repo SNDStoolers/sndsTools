@@ -95,9 +95,9 @@ présentant des inconsistances relatives aux codes sexe.</p></li>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">retrieve_all_psa_from_psa</span><span class="op">(</span></span>
 <span>  <span class="va">ben_table_name</span>,</span>
-<span>  conn <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  check_arc_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  conn <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -112,12 +112,6 @@ Si la variable <code>BEN_RNG_GEM</code> est incluse, elle sera également
 utilisée pour les jointures avec les référentiels.</p></dd>
 
 
-<dt id="arg-conn">conn<a class="anchor" aria-label="anchor" href="#arg-conn"></a></dt>
-<dd><p>DBI connection Optionnel Une connexion à la base de données
-Oracle.
-Si non fournie, une connexion est établie par défaut.</p></dd>
-
-
 <dt id="arg-check-arc-table">check_arc_table<a class="anchor" aria-label="anchor" href="#arg-check-arc-table"></a></dt>
 <dd><p>Logical Optionnel. Si TRUE (par défaut), les tables
 <code>IR_BEN_R_ARC</code> sont également consultées pour la recherche des
@@ -128,6 +122,11 @@ Si non fournie, une connexion est établie par défaut.</p></dd>
 <dd><p>Character Optionnel. Si fourni, les résultats seront
 sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en
 sortie est retournée sous la forme d'un data.frame(/tibble).</p></dd>
+
+
+<dt id="arg-conn">conn<a class="anchor" aria-label="anchor" href="#arg-conn"></a></dt>
+<dd><p>DBI connection Optionnel Une connexion à la base de données
+Oracle. Si non fournie, une connexion est établie par défaut.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -183,7 +182,8 @@ présentant des codes sexe différents pour un même <code>BEN_IDT_ANO</code></p
 <code><a href="gather_table_stats.html">gather_table_stats()</a></code>,
 <code><a href="get_first_non_archived_year.html">get_first_non_archived_year()</a></code>,
 <code><a href="insert_into_table_from_query.html">insert_into_table_from_query()</a></code>,
-<code><a href="retrieve_all_psa_from_idt.html">retrieve_all_psa_from_idt()</a></code></p></div>
+<code><a href="retrieve_all_psa_from_idt.html">retrieve_all_psa_from_idt()</a></code>,
+<code><a href="retrieve_psa.html">retrieve_psa()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -199,15 +199,15 @@ présentant des codes sexe différents pour un même <code>BEN_IDT_ANO</code></p
 <span class="r-in"><span><span class="fu">retrieve_all_psa_from_psa</span><span class="op">(</span>conn <span class="op">=</span> <span class="va">conn</span>, ben_table_name <span class="op">=</span> <span class="st">"PSA_SAMP_2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Récupération et enregistrement de la table dans Oracle</span></span></span>
 <span class="r-in"><span><span class="fu">retrieve_all_psa_from_psa</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  conn <span class="op">=</span> <span class="va">conn</span>,</span></span>
 <span class="r-in"><span>  ben_table_name <span class="op">=</span> <span class="st">"PSA_SAMP_2"</span>,</span></span>
-<span class="r-in"><span>  output_table_name <span class="op">=</span> <span class="st">"TEST_SAVE_ORACLE"</span></span></span>
+<span class="r-in"><span>  output_table_name <span class="op">=</span> <span class="st">"TEST_SAVE_ORACLE"</span>,</span></span>
+<span class="r-in"><span>  conn <span class="op">=</span> <span class="va">conn</span>,</span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Récupération de la table sans considérer la table de référentiel archivée</span></span></span>
 <span class="r-in"><span><span class="fu">retrieve_all_psa_from_psa</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  conn <span class="op">=</span> <span class="va">conn</span>,</span></span>
 <span class="r-in"><span>  ben_table_name <span class="op">=</span> <span class="st">"PSA_SAMP_2"</span>,</span></span>
-<span class="r-in"><span>  check_arc_table <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>  check_arc_table <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  conn <span class="op">=</span> <span class="va">conn</span>,</span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
