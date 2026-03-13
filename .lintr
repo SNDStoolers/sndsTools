@@ -1,6 +1,11 @@
 linters: 
-  linters_with_defaults(object_usage_linter = NULL)# see vignette("lintr")
+  linters_with_defaults(
+    object_usage_linter = NULL,
+    object_name_linter = object_name_linter(
+      styles = c("snake_case", "lower_case", "SNAKE_CASE") # allow upper case for global constants
+    )
+    )# see vignette("lintr")
   # Reasons for removed linters:
     # - object_usage_linter: raise warning every time we use without string a variable name in dplyr syntax.
 encoding: "UTF-8"
-exclusions: "vignettes/"
+exclusions: c("vignettes/", "tests/")

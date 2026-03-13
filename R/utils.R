@@ -131,3 +131,66 @@ gather_table_stats <- function(conn, table) {
     data = data.frame(user, table)
   )
 }
+
+#' Requêtage d'une table Oracle (SNDS ou ORAUSER).
+#'
+#' @param conn Connexion à la base de données.
+#' @param table_name Nom de la table Oracle à explorer.
+#' @param profile Nom de profil. Par défaut, profile = 108.
+#' @param schema Si table hors du schéma standard, renseigner ici le schéma à
+#' explorer. NULL par défaut.
+#'
+#' @details La fonction détecte automatiquement les tables de l'ESND et de la
+#' cartographie. Normalement, pas besoin d'utiliser l'argument schéma pour ces
+#' tables.
+#'
+#' @returns tbl_dbi. Exploration paresseuse (lazy query) d'une table Oracle
+#' (ORAUSER, ou SNDS).
+#'
+#' @examples
+#'\dontrun{
+#' # Connexion au SNDS
+#' conn <- connect_oracle()
+#'
+#' # Exploration paresseuse de la table ER_PRS_F
+#' conn |>
+#'  snds_table("ER_PRS_F") |>
+#'  # Filtre sur la date de flux
+#'  dplyr::filter(FLX_DIS_DTD == TO_DATE("2024-02-01", "yyyy-MM-dd"))
+#'
+#' # Déconnexion du SNDS
+#' DBI::dbDisconnect(conn)
+#'}
+#' @export
+#' @family utils
+snds_table <- function(
+  conn,
+  table_name,
+  profile = 108,
+  schema = NULL
+) {
+  # Ajout du schéma si la table fait partie de l'ESND ou la cartographie.
+  if (!is.null(schema)) {
+    query <- dplyr::tbl(conn, in_schema(schema, table_name))
+  } else {
+    if (grepl(x = table_name, pattern = "ESND_|CRTO_")) {
+      # gestion différente pour duckdb, mais nécessaire pour les tests
+      if (!IS_PORTAIL) {
+        table_id <- DBI::Id(
+          schema = paste0("MEPSGP_", profile),
+          table = table_name
+        )
+        query <- dplyr::tbl(conn, table_id)
+      } else {
+        query <- dplyr::tbl(
+          conn,
+          dbplyr::in_schema(paste0("MEPSGP_", profile), table_name)
+        )
+      }
+    } else {
+      query <- dplyr::tbl(conn, table_name)
+    }
+  }
+
+  query
+}

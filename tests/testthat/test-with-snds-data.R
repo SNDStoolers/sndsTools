@@ -1,6 +1,8 @@
 test_that("extract and retrieve functions work with real SNDS data", {
-  cons <- constants_snds_tools()
-  skip_if(!cons$is_portail)
+  skip_if(
+    !IS_PORTAIL,
+    "Tests d'extraction et de récupération avec de vraies données SNDS : ignorés car non exécutés dans l'environnement de travail du Portail."
+  )
   source("sndsTools.R")
   source("debug.R")
   library(testthat)
