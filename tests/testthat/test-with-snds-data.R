@@ -1,9 +1,8 @@
 test_that("extract and retrieve functions work with real SNDS data", {
-  cons <- constants_snds_tools()
-  skip_if(!cons$is_portail)
-  source("sndsTools.R")
-  source("debug.R")
   library(testthat)
+  skip_if(!dir.exists("~/sasdata1"))
+  source(here::here("sndsTools.R"))
+
   # Connection to Oracle
   conn <- connect_oracle()
 
@@ -11,7 +10,7 @@ test_that("extract and retrieve functions work with real SNDS data", {
   start_date <- as.Date("2023-01-01")
   end_date <- as.Date("2023-01-01")
 
-  # Test 1: extract_hospital_stays
+  # Test : extract_hospital_stays
   result_hospital_stays <- extract_hospital_stays(
     start_date = start_date,
     end_date = end_date,
@@ -21,19 +20,32 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_hospital_stays))
   expect_true(nrow(result_hospital_stays) >= 0)
 
-  # Test 2: extract_drug_dispenses with dis_dtd_lag_months = 0
+  # Test : extract_drug_dispenses with dis_dtd_lag_months = 0
   result_drug_dispenses <- extract_drug_dispenses(
     start_date = start_date,
     end_date = end_date,
-    atc_cod_starts_with_filter = "N04A",
-    dis_dtd_lag_months = 0,
+    atc_cod_starts_with_filter = "N",
+    dis_dtd_lag_months = 1,
     conn = conn,
     show_sql_query = FALSE
   )
   expect_true(is.data.frame(result_drug_dispenses))
   expect_true(nrow(result_drug_dispenses) >= 0)
 
-  # Test 3: extract_consultations_erprsf with dis_dtd_lag_months = 0
+  # Test : extract_drug_erucdf with dis_dtd_lag_months = 0 and UCD filter
+  result_drug_erucdf <- extract_drug_erucdf(
+    start_date = start_date,
+    end_date = as.Date("2023-01-31"),
+    ucd_codes_filter = c("0000009419723"),
+    dis_dtd_lag_months = 1,
+    conn = conn,
+    show_sql_query = FALSE
+  )
+  expect_true(is.data.frame(result_drug_erucdf))
+  expect_true(nrow(result_drug_erucdf) >= 0)
+
+
+  # Test : extract_consultations_erprsf with dis_dtd_lag_months = 0
   result_consultations_erprsf <- extract_consultations_erprsf(
     start_date = start_date,
     end_date = end_date,
@@ -44,7 +56,7 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_consultations_erprsf))
   expect_true(nrow(result_consultations_erprsf) >= 0)
 
-  # Test 4: extract_hospital_consultations
+  # Test : extract_hospital_consultations
   result_hospital_consultations <- extract_hospital_consultations(
     start_date = start_date,
     end_date = end_date,
@@ -54,7 +66,7 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_hospital_consultations))
   expect_true(nrow(result_hospital_consultations) >= 0)
 
-  # Test 5: extract_long_term_disease
+  # Test : extract_long_term_disease
   result_long_term_disease <- extract_long_term_disease(
     start_date = start_date,
     end_date = end_date,
@@ -64,7 +76,7 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_long_term_disease))
   expect_true(nrow(result_long_term_disease) >= 0)
 
-  # Test 6: retrieve_all_psa_from_idt
+  # Test : retrieve_all_psa_from_idt
   # Small test table with patient IDs from referentiel beneficiaires
   if (nrow(result_hospital_stays) > 0) {
     # Take first 10 patients
@@ -85,7 +97,7 @@ test_that("extract and retrieve functions work with real SNDS data", {
     expect_true(is.data.frame(result_psa_from_idt))
     expect_true(nrow(result_psa_from_idt) >= 0)
 
-    # Test 7: retrieve_all_psa_from_psa
+    # Test : retrieve_all_psa_from_psa
 
     result_psa_from_psa <- retrieve_all_psa_from_psa(
       ben_table_name = test_table_name,

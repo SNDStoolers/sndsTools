@@ -10,7 +10,8 @@ Imports:
     DBI,
     glue,
     lubridate,
-    progress
+    progress,
+    logger
 Authors@R: c(
     person(
         "Antoine", "Belloir", ,
