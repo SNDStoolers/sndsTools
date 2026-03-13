@@ -71,3 +71,7 @@ TODO (figure à mettre dans man/figures)
 - [Guide de contribution]([contributing.html](https://sndstoolers.github.io/sndsTools/articles/contribuer.html))
 
 - [Principes de gouvernance]([gouvernance.html](https://sndstoolers.github.io/sndsTools/articles/gouvernance.html))
+
+- [Présentation du package à l'Institut du Cerveau, janvier 2026](https://info.m2dou.fr/_static/files/presentations/2026-01-26_sndsTools_ICM.pdf)
+
+- [Canal de discussion Tchap](https://tchap.gouv.fr/#/room/!VvGizERQTCBTXKScgj:agent.social.tchap.gouv.fr?via=agent.social.tchap.gouv.fr&via=agent.tchap.gouv.fr&via=agent.finances.tchap.gouv.fr)
