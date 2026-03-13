@@ -206,10 +206,16 @@ build_da_conditions <- function(cim10_codes = NULL) {
 #' - `ASS_DGN` : Diagnostic associé
 #'
 #' @examples \dontrun{
+#' # Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
 #' extract_hospital_stays(
-#'   start_date =
-#'     as.Date("2019-01-01"), end_date = as.Date("2019-12-31"), dp_cim10_codes =
-#'     c("A00", "B00")
+#'  start_date = as.Date("2019-01-01"),
+#'  end_date = as.Date("2019-12-31"),
+#'  dp_cim10_codes = c("A", "B")
+#' )
+#' # Extrait tous les séjours en 2019
+#' extract_hospital_stays(
+#'  start_date = as.Date("2019-01-01"),
+#'  end_date = as.Date("2019-12-31")
 #' )
 #' }
 #' @export
@@ -289,17 +295,23 @@ extract_hospital_stays <- function(
     t_mco_d <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}D"))
     t_mco_um <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}UM"))
 
-    dp_dr_conditions <- build_dp_dr_conditions(
-      cim10_codes = dp_cim10_codes_filter,
-      include_dr = or_dr_with_same_codes_filter
-    )
-
-    eta_num_rsa_num <-
-      t_mco_b |>
-      dplyr::filter(dbplyr::sql(dp_dr_conditions)) |>
-      dplyr::select(ETA_NUM, RSA_NUM) |>
-      dplyr::distinct()
-
+    if (is.null(dp_cim10_codes_filter)) {
+      eta_num_rsa_num <-
+        t_mco_b |>
+        dplyr::select(ETA_NUM, RSA_NUM) |>
+        dplyr::distinct()
+    } else {
+      dp_dr_conditions <- build_dp_dr_conditions(
+        cim10_codes = dp_cim10_codes_filter,
+        include_dr = or_dr_with_same_codes_filter
+      )
+      eta_num_rsa_num <-
+        t_mco_b |>
+        dplyr::filter(dbplyr::sql(dp_dr_conditions)) |>
+        dplyr::select(ETA_NUM, RSA_NUM) |>
+        dplyr::distinct()
+    }
+    # Ajoute les identifiants séjours de la table D en plus de la table B
     if (or_da_with_same_codes_filter) {
       da_conditions <- build_da_conditions(cim10_codes = dp_cim10_codes_filter)
       dp_dr_conditions <- build_dp_dr_conditions(

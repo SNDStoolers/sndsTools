@@ -1,17 +1,6 @@
 require(dplyr)
 
-test_that("extract_hospital_stays works", {
-  conn <- connect_duckdb()
-
-  patients_ids_filter <- data.frame(
-    BEN_IDT_ANO = c(1, 2, 3),
-    BEN_NIR_PSA = c("12345", "23456", "34567")
-  )
-
-  test_year <- 2019
-  start_date <- as.Date(glue::glue("01/01/{test_year}"), format = "%d/%m/%Y")
-  end_date <- as.Date(glue::glue("31/12/{test_year}"), format = "%d/%m/%Y")
-  formatted_year <- format(start_date, "%y")
+create_mock_hospital_stays <- function(conn) {
   fake_b_table <- data.frame(
     ETA_NUM = c(1, 2, 3),
     RSA_NUM = c(1, 2, 3),
@@ -61,23 +50,32 @@ test_that("extract_hospital_stays works", {
     RSA_NUM = c(1, 1, 2, 3)
   )
 
-  DBI::dbWriteTable(conn, paste0("T_MCO", formatted_year, "B"), fake_b_table)
-  DBI::dbWriteTable(conn, paste0("T_MCO", formatted_year, "C"), fake_c_table)
-  DBI::dbWriteTable(conn, paste0("T_MCO", formatted_year, "D"), fake_d_table)
-  DBI::dbWriteTable(conn, paste0("T_MCO", formatted_year, "UM"), fake_um_table)
+  DBI::dbWriteTable(conn, "T_MCO19B", fake_b_table)
+  DBI::dbWriteTable(conn, "T_MCO19C", fake_c_table)
+  DBI::dbWriteTable(conn, "T_MCO19D", fake_d_table)
+  DBI::dbWriteTable(conn, "T_MCO19UM", fake_um_table)
+}
 
+test_that("extract_hospital_stays works", {
+  conn <- connect_duckdb()
+  on.exit(DBI::dbDisconnect(conn))
+
+  create_mock_hospital_stays(conn)
+  # parameters
   dp_cim10_codes_filter <- c("A", "B")
+  patients_ids_filter <- data.frame(
+    BEN_IDT_ANO = c(1, 2, 3),
+    BEN_NIR_PSA = c("12345", "23456", "34567")
+  )
 
   hospital_stays <- extract_hospital_stays(
-    start_date = start_date,
-    end_date = end_date,
+    start_date = as.Date("01/01/2019", format = "%d/%m/%Y"),
+    end_date = as.Date("31/12/2019", format = "%d/%m/%Y"),
     dp_cim10_codes_filter = c("A", "B"),
     patients_ids_filter = patients_ids_filter,
     conn = conn
   ) |>
     dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, DGN_PAL, DGN_PAL_UM, ASS_DGN)
-
-  DBI::dbDisconnect(conn)
 
   expect_equal(
     hospital_stays |>
@@ -114,6 +112,62 @@ test_that("extract_hospital_stays works", {
       ),
       class = c("tbl_df", "tbl", "data.frame"),
       row.names = c(NA, -5L)
+    )
+  )
+})
+
+test_that("extract_hospital_stays works without any filters", {
+  conn <- connect_duckdb()
+  on.exit(DBI::dbDisconnect(conn))
+
+  create_mock_hospital_stays(conn)
+  patients_ids_filter <- patients_ids_filter <- data.frame(
+    BEN_IDT_ANO = c(1),
+    BEN_NIR_PSA = c("12345")
+  )
+
+  hospital_stays <- extract_hospital_stays(
+    start_date = as.Date("01/01/2019", format = "%d/%m/%Y"),
+    end_date = as.Date("31/12/2019", format = "%d/%m/%Y"),
+    dp_cim10_codes_filter = NULL,
+    patients_ids_filter = patients_ids_filter,
+    conn = conn
+  ) |>
+    dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, DGN_PAL, DGN_PAL_UM, ASS_DGN)
+
+  expect_equal(
+    hospital_stays |>
+      dplyr::select(
+        ETA_NUM,
+        RSA_NUM,
+        BEN_IDT_ANO,
+        EXE_SOI_DTD,
+        DGN_PAL,
+        DGN_REL,
+        DGN_PAL_UM,
+        DGN_REL_UM,
+        ASS_DGN
+      ),
+    structure(
+      list(
+        ETA_NUM = c(1, 1, 1),
+        RSA_NUM = c(1, 1, 1),
+        BEN_IDT_ANO = c(1, 1, 1),
+        EXE_SOI_DTD = as.Date(
+          c(
+            "2019-01-10",
+            "2019-01-10",
+            "2019-01-10"
+          )
+        ),
+        DGN_PAL = c("A00", "A00", "A00"),
+        DGN_REL = c("A01", "A01", "A01"),
+        DGN_PAL_UM = c("A00", "A01", NA),
+        DGN_REL_UM = c("Z00", "Z01", NA),
+        ASS_DGN = c(NA, NA, "E00")
+      ),
+      class = c("tbl_df", "tbl", "data.frame"),
+      row.names = c(NA, -3L)
     )
   )
 })
