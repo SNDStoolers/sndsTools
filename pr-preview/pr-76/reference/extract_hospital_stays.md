@@ -190,10 +190,16 @@ Other extract:
 
 ``` r
 if (FALSE) { # \dontrun{
+# Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
 extract_hospital_stays(
-  start_date =
-    as.Date("2019-01-01"), end_date = as.Date("2019-12-31"), dp_cim10_codes =
-    c("A00", "B00")
+ start_date = as.Date("2019-01-01"),
+ end_date = as.Date("2019-12-31"),
+ dp_cim10_codes = c("A", "B")
+)
+# Extrait tous les séjours en 2019
+extract_hospital_stays(
+ start_date = as.Date("2019-01-01"),
+ end_date = as.Date("2019-12-31")
 )
 } # }
 ```

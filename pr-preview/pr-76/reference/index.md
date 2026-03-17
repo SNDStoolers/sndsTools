@@ -64,6 +64,9 @@ Fonctions utilitaires pour manipuler les données extraites.
 
   Gestion des identifiants patients à l'aide de `BEN_NIR_PSA`
 
+- [`retrieve_psa()`](retrieve_psa.md) : Generic function retrieving
+  patient identifiers
+
 ## Constantes
 
 Constantes (variable globales) utilisées dans le package. Par exemple,

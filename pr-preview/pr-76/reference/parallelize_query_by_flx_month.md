@@ -86,19 +86,3 @@ Other utils: [`connect_duckdb()`](connect_duckdb.md),
 [`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md)
 
 ## Examples
-
-``` r
-if (FALSE) { # \dontrun{
-parallelize_query_by_flx_month(
-  conn = conn,
-  start_date = as.Date("2020-01-01"),
-  end_date = as.Date("2020-03-31"),
-  query_builder_function = .extract_drug_by_month,
-  query_builder_kwargs = list(
-    sup_columns = NULL,
-    output_table_name = "TMP_DISP",
-    show_sql_query = FALSE
-  )
-)
-} # }
-```

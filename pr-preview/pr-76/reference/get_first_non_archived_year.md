@@ -29,4 +29,5 @@ Other utils: [`connect_duckdb()`](connect_duckdb.md),
 [`insert_into_table_from_query()`](insert_into_table_from_query.md),
 [`parallelize_query_by_flx_month()`](parallelize_query_by_flx_month.md),
 [`retrieve_all_psa_from_idt()`](retrieve_all_psa_from_idt.md),
-[`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md)
+[`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md),
+[`retrieve_psa()`](retrieve_psa.md)

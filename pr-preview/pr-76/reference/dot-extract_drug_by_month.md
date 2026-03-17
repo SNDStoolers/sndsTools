@@ -1,11 +1,11 @@
 # Fonction pour traiter un mois de délivrances de médicaments
 
-Cette fonction est appelée par
-[`extract_drug_erprsf`](extract_drug_erprsf.md) via pour construire et
-exécuter la requête SQL d'un mois de flux. Elle reçoit une liste de
-paramètres (`kwargs`) contenant les valeurs spécifiques au mois et les
-autres paramètres de la fonction principale (noms des tables filtres,
-nom de la table de sortie, ...).
+Cette fonction est appelée par `extract_drug_erprsf` via
+`parallelize_query_by_flx_month` pour construire et exécuter la requête
+SQL d'un mois de flux. Elle reçoit une liste de paramètres (`kwargs`)
+contenant les valeurs spécifiques au mois et les autres paramètres de la
+fonction principale (noms des tables filtres, nom de la table de sortie,
+...).
 
 ## Usage
 

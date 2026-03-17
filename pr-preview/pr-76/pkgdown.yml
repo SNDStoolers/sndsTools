@@ -3,7 +3,8 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   benchmark_dplyr_vs_rsql: benchmark_dplyr_vs_rsql.html
+  benchmark_r_parallelism: benchmark_r_parallelism.html
   contribuer: contribuer.html
   gouvernance: gouvernance.html
   paresnds: paresnds.html
-last_built: 2026-03-09T10:12Z
+last_built: 2026-03-17T11:55Z
