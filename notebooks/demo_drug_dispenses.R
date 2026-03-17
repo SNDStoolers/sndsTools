@@ -10,7 +10,7 @@ library(progress)
 # - get_first_non_archived_year
 # - create_table_from_query
 # - insert_into_table_from_query
-# - extract_drug_dispenses
+# - extract_drug_erprsf
 
 # Retrieve all N04A drug dispenses over three days
 # The output will contain ben_nir_psa as the patient
@@ -19,7 +19,7 @@ start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-01-03")
 atc_cod_starts_with <- c("N04A")
 
-dispenses <- extract_drug_dispenses(
+dispenses <- extract_drug_erprsf(
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with = atc_cod_starts_with
@@ -35,7 +35,7 @@ atc_cod_starts_with <- c(
   "A10"
 )
 
-dispenses <- extract_drug_dispenses(
+dispenses <- extract_drug_erprsf(
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with = atc_cod_starts_with
@@ -44,7 +44,7 @@ head(dispenses)
 stopifnot(all(grepl("^N04A|^A10", dispenses$PHA_ATC_CLA)))
 
 # You can also provide your own database connection
-# to the extract_drug_dispenses function. This is useful
+# to the extract_drug_erprsf function. This is useful
 # to avoid opening and closing a connection for each
 # extraction function call.
 conn <- connect_oracle()
@@ -52,7 +52,7 @@ start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-01-03")
 atc_cod_starts_with <- c("N04A")
 
-dispenses <- extract_drug_dispenses(
+dispenses <- extract_drug_erprsf(
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with = atc_cod_starts_with,
@@ -84,7 +84,7 @@ start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-01-31")
 atc_cod_starts_with <- c("A10")
 
-dispenses <- extract_drug_dispenses(
+dispenses <- extract_drug_erprsf(
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with = atc_cod_starts_with,
@@ -101,7 +101,7 @@ stopifnot(all(grepl("^A10", dispenses$PHA_ATC_CLA)))
 start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-01-07")
 
-dispenses <- extract_drug_dispenses(
+dispenses <- extract_drug_erprsf(
   start_date = start_date,
   end_date = end_date,
   patients_ids = patients_ids_sample
@@ -119,7 +119,7 @@ output_table_name <- "TMP_DISPENSES"
 
 conn <- connect_oracle()
 print(dbExistsTable(conn, output_table_name))
-extract_drug_dispenses(
+extract_drug_erprsf(
   start_date = start_date,
   end_date = end_date,
   patients_ids = patients_ids_sample,
