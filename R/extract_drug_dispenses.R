@@ -260,16 +260,6 @@ extract_drug_dispenses <- function(
       )
     )
 
-    if (year < first_non_archived_year) {
-      er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
-      er_pha_f <- dplyr::tbl(conn, glue::glue("ER_PHA_F_{year}"))
-      er_ete_f <- dplyr::tbl(conn, glue::glue("ER_ETE_F_{year}"))
-    } else {
-      er_prs_f <- dplyr::tbl(conn, "ER_PRS_F")
-      er_pha_f <- dplyr::tbl(conn, "ER_PHA_F")
-      er_ete_f <- dplyr::tbl(conn, "ER_ETE_F")
-    }
-
     flux_start_month <- 1
     flux_end_month <- 12
     if (year == end_year) {
@@ -280,13 +270,12 @@ extract_drug_dispenses <- function(
     }
     for (month in c(flux_start_month:flux_end_month)) {
       dis_dtd_start <- glue::glue("DATE '{year}-{sprintf('%02d', month)}-01'")
-      dis_dtd_end <- glue::glue("DATE '{year}-{sprintf('%02d', month + 1)}-01'")
-
-      if ((year != end_year) && (month == 12)) {
-        # For archived years, some lines of decembers are indexed in the
-        # following year: https://github.com/SNDStoolers/sndsTools/issues/26
+      if (month == 12) {
         dis_dtd_end <- glue::glue("DATE '{year + 1}-01-01'")
+      } else {
+        dis_dtd_end <- glue::glue("DATE '{year}-{sprintf('%02d', month + 1)}-01'") # nolint
       }
+
       dis_dtd_condition <- glue::glue(
         "FLX_DIS_DTD >= {dis_dtd_start} AND FLX_DIS_DTD < {dis_dtd_end}"
       )
@@ -297,84 +286,103 @@ extract_drug_dispenses <- function(
 
       print(glue::glue("-flux: {dis_dtd_start} to {dis_dtd_end}"))
 
-      dcir_join_keys <- c(
-        "DCT_ORD_NUM",
-        "FLX_DIS_DTD",
-        "FLX_EMT_ORD",
-        "FLX_EMT_NUM",
-        "FLX_EMT_TYP",
-        "FLX_TRT_DTD",
-        "ORG_CLE_NUM",
-        "PRS_ORD_NUM",
-        "REM_TYP_AFF"
-      )
-      ir_pha_cols_not_in_er_pha <- setdiff(
-        colnames(ir_pha_filtered_table),
-        colnames(er_pha_f)
-      )
-
-      query <- er_prs_f |>
-        dplyr::inner_join(er_pha_f, by = dcir_join_keys) |>
-        dplyr::inner_join(
-          ir_pha_filtered_table |>
-            dplyr::select(dplyr::all_of(ir_pha_cols_not_in_er_pha)),
-          by = c("PHA_PRS_C13" = "PHA_CIP_C13")
-        ) |>
-        dplyr::left_join(er_ete_f, by = dcir_join_keys) |>
-        dplyr::filter(
-          dbplyr::sql(soi_dtd_condition),
-          dbplyr::sql(dis_dtd_condition)
-        ) |>
-        dplyr::filter(
-          DPN_QLF != 71L,
-          CPL_MAJ_TOP < 2L,
-          (ETE_IND_TAA != 1L) | is.na(ETE_IND_TAA)
-        )
-
-      cols_to_select <- c(
-        "EXE_SOI_DTD",
-        "PHA_ACT_QSN",
-        "PHA_ATC_CLA",
-        "PHA_PRS_C13",
-        "PSP_SPE_COD"
-      )
-      if (!is.null(sup_columns)) {
-        cols_to_select <- c(cols_to_select, sup_columns)
+      # Flx distrb for jan-feb of a year Y are in Y-1 for archived years
+      if (year <= first_non_archived_year && month %in% c(1:2)) {
+        years_to_query <- c(year - 1L, year)
+      } else {
+        years_to_query <- year
       }
 
-      query <- query |>
-        dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select)) |>
-        dplyr::distinct()
+      for (year_q in years_to_query) {
+        if (year_q < first_non_archived_year) {
+          er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year_q}"))
+          er_pha_f <- dplyr::tbl(conn, glue::glue("ER_PHA_F_{year_q}"))
+          er_ete_f <- dplyr::tbl(conn, glue::glue("ER_ETE_F_{year_q}"))
+        } else {
+          er_prs_f <- dplyr::tbl(conn, "ER_PRS_F")
+          er_pha_f <- dplyr::tbl(conn, "ER_PHA_F")
+          er_ete_f <- dplyr::tbl(conn, "ER_ETE_F")
+        }
 
-      if (!is.null(patients_ids_filter)) {
-        patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
-        patients_ids_table <- patients_ids_table |>
-          dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA) |>
-          dplyr::distinct()
+        dcir_join_keys <- c(
+          "DCT_ORD_NUM",
+          "FLX_DIS_DTD",
+          "FLX_EMT_ORD",
+          "FLX_EMT_NUM",
+          "FLX_EMT_TYP",
+          "FLX_TRT_DTD",
+          "ORG_CLE_NUM",
+          "PRS_ORD_NUM",
+          "REM_TYP_AFF"
+        )
+        ir_pha_cols_not_in_er_pha <- setdiff(
+          colnames(ir_pha_filtered_table),
+          colnames(er_pha_f)
+        )
+
+        query <- er_prs_f |>
+          dplyr::inner_join(er_pha_f, by = dcir_join_keys) |>
+          dplyr::inner_join(
+            ir_pha_filtered_table |>
+              dplyr::select(dplyr::all_of(ir_pha_cols_not_in_er_pha)),
+            by = c("PHA_PRS_C13" = "PHA_CIP_C13")
+          ) |>
+          dplyr::left_join(er_ete_f, by = dcir_join_keys) |>
+          dplyr::filter(
+            dbplyr::sql(soi_dtd_condition),
+            dbplyr::sql(dis_dtd_condition)
+          ) |>
+          dplyr::filter(
+            DPN_QLF != 71L,
+            CPL_MAJ_TOP < 2L,
+            (ETE_IND_TAA != 1L) | is.na(ETE_IND_TAA)
+          )
+
+        cols_to_select <- c(
+          "EXE_SOI_DTD",
+          "PHA_ACT_QSN",
+          "PHA_ATC_CLA",
+          "PHA_PRS_C13",
+          "PSP_SPE_COD"
+        )
+        if (!is.null(sup_columns)) {
+          cols_to_select <- c(cols_to_select, sup_columns)
+        }
+
         query <- query |>
-          dplyr::inner_join(patients_ids_table, by = "BEN_NIR_PSA") |>
-          dplyr::select(BEN_IDT_ANO, dplyr::all_of(cols_to_select)) |>
+          dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select)) |>
           dplyr::distinct()
-      }
 
-      query <- query |> dbplyr::sql_render()
-      if (year == start_year && month == flux_start_month) {
-        DBI::dbExecute(
-          conn,
-          glue::glue("CREATE TABLE {output_table_name} AS {query}")
-        )
-        if (show_sql_query) {
-          message(glue::glue(
-            "
+        if (!is.null(patients_ids_filter)) {
+          patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
+          patients_ids_table <- patients_ids_table |>
+            dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA) |>
+            dplyr::distinct()
+          query <- query |>
+            dplyr::inner_join(patients_ids_table, by = "BEN_NIR_PSA") |>
+            dplyr::select(BEN_IDT_ANO, dplyr::all_of(cols_to_select)) |>
+            dplyr::distinct()
+        }
+
+        query <- query |> dbplyr::sql_render()
+        if (!dbExistsTable(conn, output_table_name)) {
+          DBI::dbExecute(
+            conn,
+            glue::glue("CREATE TABLE {output_table_name} AS {query}")
+          )
+          if (show_sql_query) {
+            message(glue::glue(
+              "
           Premier mois requêté en date de flux
           à l'aide de la requête sql suivante :\n {query}"
-          ))
+            ))
+          }
+        } else {
+          DBI::dbExecute(
+            conn,
+            glue::glue("INSERT INTO {output_table_name} {query}")
+          )
         }
-      } else {
-        DBI::dbExecute(
-          conn,
-          glue::glue("INSERT INTO {output_table_name} {query}")
-        )
       }
     }
   }
