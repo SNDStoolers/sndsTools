@@ -58,3 +58,6 @@ Fonctions utilitaires pour manipuler les données extraites.
 - [`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md) :
 
   Gestion des identifiants patients à l'aide de `BEN_NIR_PSA`
+
+- [`retrieve_psa()`](retrieve_psa.md) : Generic function retrieving
+  patient identifiers
