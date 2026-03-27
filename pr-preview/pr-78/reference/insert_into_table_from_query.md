@@ -35,4 +35,5 @@ Other utils: [`connect_duckdb()`](connect_duckdb.md),
 [`gather_table_stats()`](gather_table_stats.md),
 [`get_first_non_archived_year()`](get_first_non_archived_year.md),
 [`retrieve_all_psa_from_idt()`](retrieve_all_psa_from_idt.md),
-[`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md)
+[`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md),
+[`retrieve_psa()`](retrieve_psa.md)

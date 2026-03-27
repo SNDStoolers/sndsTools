@@ -56,6 +56,7 @@ end_date sont extraites.</p>
 <span>  <span class="va">end_date</span>,</span>
 <span>  spe_codes_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  prestation_codes_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ccam_codes_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  patient_ids_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  conn <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -78,15 +79,22 @@ consultations.</p></dd>
 
 <dt id="arg-spe-codes-filter">spe_codes_filter<a class="anchor" aria-label="anchor" href="#arg-spe-codes-filter"></a></dt>
 <dd><p>character vector Optionnel. Les codes spécialités des
-médecins effectuant les consultations à extraire. Si <code>spe_codes</code> n'est pas
+médecins effectuant les consultations à extraire. Si <code>spe_codes_filter</code> n'est pas
 fourni, les consultations de tous les spécialités sont extraites.</p></dd>
 
 
 <dt id="arg-prestation-codes-filter">prestation_codes_filter<a class="anchor" aria-label="anchor" href="#arg-prestation-codes-filter"></a></dt>
 <dd><p>character vector Optionnel. Les codes des
-prestations à extraire. Si <code>prestation_codes</code> n'est pas fourni, les
+prestations à extraire. Si <code>prestation_codes_filter</code> n'est pas fourni, les
 consultations de tous les prestations sont extraites. Les codes des
 prestations sont disponibles sur la page <a href="https://documentation-snds.health-data-hub.fr/snds/fiches/actes_consult_externes.html#exemple-de-requetes-pour-analyse" class="external-link">actes et consultations externes de la documentation SNDS</a>.</p></dd>
+
+
+<dt id="arg-ccam-codes-filter">ccam_codes_filter<a class="anchor" aria-label="anchor" href="#arg-ccam-codes-filter"></a></dt>
+<dd><p>character vector Optionnel. Les codes CCAM des actes
+médicaux des consultations à extraire. Si <code>ccam_codes_filter</code> n'est pas fourni, les
+consultations de tous les actes sont extraites. Les codes des actes médicaux
+d'après la CCAM est disponible sur <a href="https://www.ameli.fr/accueil-de-la-ccam/index.php" class="external-link">le site de cette dernière</a>.</p></dd>
 
 
 <dt id="arg-patient-ids-filter">patient_ids_filter<a class="anchor" aria-label="anchor" href="#arg-patient-ids-filter"></a></dt>
@@ -94,8 +102,8 @@ prestations sont disponibles sur la page <a href="https://documentation-snds.hea
 paires d'identifiants des patients pour lesquels les consultations doivent
 être extraites. Les colonnes de ce data.frame doivent être <code>BEN_IDT_ANO</code> et
 <code>BEN_NIR_PSA</code> (en majuscules). Les <code>BEN_NIR_PSA</code> doivent être tous les
-<code>BEN_NIR_PSA</code> associés aux <code>BEN_IDT_ANO</code> fournis. Si <code>patients_ids</code> n'est pas
-fourni, les consultations de tous les patients sont extraites.</p></dd>
+<code>BEN_NIR_PSA</code> associés aux <code>BEN_IDT_ANO</code> fournis. Si <code>patient_ids_filter</code>
+n'est pas fourni, les consultations de tous les patients sont extraites.</p></dd>
 
 
 <dt id="arg-output-table-name">output_table_name<a class="anchor" aria-label="anchor" href="#arg-output-table-name"></a></dt>
@@ -115,22 +123,27 @@ une connexion est établie avec oracle.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Un data.frame contenant les consultations. Les colonnes sont les
-suivantes :</p><ul><li><p><code>BEN_IDT_ANO</code> : Identifiant bénéficiaire anonymisé (seulement si</p></li>
-<li><p>patient_ids
-non nul)</p></li>
+suivantes :</p><ul><li><p><code>BEN_IDT_ANO</code> : Identifiant bénéficiaire anonymisé (seulement si
+patient_ids_filter non nul)</p></li>
 <li><p><code>NIR_ANO_17</code> : NIR anonymisé</p></li>
 <li><p><code>EXE_SOI_DTD</code> : Date de la délivrance</p></li>
-<li><p><code>ACT_COD</code> : Code de l'acte</p></li>
+<li><p><code>ACT_COD</code> : Code prestation de l'acte</p></li>
 <li><p><code>EXE_SPE</code> : Code de spécialité du professionnel de soin prescripteur</p></li>
+<li><p><code>CCAM_COD</code> : Code de l'acte médical classifié avec la CCAM.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Si spe_codes est renseigné, seules les consultations des spécialités
+    <p>Si spe_codes_filter est renseigné, seules les consultations des spécialités
 correspondantes sont extraites.</p>
-<p>Si prestation_codes est renseigné, seules les consultations des prestations
-correspondantes sont extraites.</p>
-<p>Si patients_ids est fourni, seules les délivrances de médicaments pour les
-patients dont les identifiants sont dans patients_ids sont extraites.</p>
+<p>Si prestation_codes_filter est renseigné, seules les consultations des
+prestations correspondantes sont extraites.</p>
+<p>Si ccam_codes_filter est renseigné, seules les consultations des actes
+médicaux correspondants sont extraites. Notez que si <code>ccam_codes_filter</code> est
+fourni, <code>spe_codes_filter</code> et <code>prestation_codes_filter</code> peuvent être nuls, et
+vice versa.</p>
+<p>Si patients_ids_filter est fourni, seules les délivrances de médicaments pour
+les patients dont les identifiants sont dans patients_ids_filter sont
+extraites.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -144,10 +157,25 @@ patients dont les identifiants sont dans patients_ids sont extraites.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># Extraction des consultations à l'hôpital en 2019 pour les spécialités 01 et 02</span></span></span>
 <span class="r-in"><span><span class="fu">extract_hospital_consultations</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-01-01"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-12-31"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  spe_codes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"01"</span>, <span class="st">"02"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  spe_codes_filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"01"</span>, <span class="st">"02"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Extraction de consultations à l'hôpital à partir de code CCAM</span></span></span>
+<span class="r-in"><span><span class="fu">extract_hospital_consultations</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-01-01"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-12-31"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ccam_codes_filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ACQK001"</span>, <span class="st">"ACQH003"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Extraction de consultations à l'hôpital à partir de code CCAM et de spécialités</span></span></span>
+<span class="r-in"><span><span class="fu">extract_hospital_consultations</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-01-01"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-12-31"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ccam_codes_filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ACQK001"</span>, <span class="st">"ACQH003"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  spe_codes_filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"01"</span>, <span class="st">"02"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>

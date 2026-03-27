@@ -28,9 +28,9 @@ d'inclusion :
 ``` r
 retrieve_all_psa_from_psa(
   ben_table_name,
-  conn = NULL,
   check_arc_table = TRUE,
-  output_table_name = NULL
+  output_table_name = NULL,
+  conn = NULL
 )
 ```
 
@@ -41,11 +41,6 @@ retrieve_all_psa_from_psa(
   Character Obligatoire. Nom de la table d'entrée comprenant au moins la
   variable `BEN_IDT_ANO`. Si la variable `BEN_RNG_GEM` est incluse, elle
   sera également utilisée pour les jointures avec les référentiels.
-
-- conn:
-
-  DBI connection Optionnel Une connexion à la base de données Oracle. Si
-  non fournie, une connexion est établie par défaut.
 
 - check_arc_table:
 
@@ -58,6 +53,11 @@ retrieve_all_psa_from_psa(
   Character Optionnel. Si fourni, les résultats seront sauvegardés dans
   une table portant ce nom dans Oracle. Sinon la table en sortie est
   retournée sous la forme d'un data.frame(/tibble).
+
+- conn:
+
+  DBI connection Optionnel Une connexion à la base de données Oracle. Si
+  non fournie, une connexion est établie par défaut.
 
 ## Value
 
@@ -118,7 +118,8 @@ Other utils: [`connect_duckdb()`](connect_duckdb.md),
 [`gather_table_stats()`](gather_table_stats.md),
 [`get_first_non_archived_year()`](get_first_non_archived_year.md),
 [`insert_into_table_from_query()`](insert_into_table_from_query.md),
-[`retrieve_all_psa_from_idt()`](retrieve_all_psa_from_idt.md)
+[`retrieve_all_psa_from_idt()`](retrieve_all_psa_from_idt.md),
+[`retrieve_psa()`](retrieve_psa.md)
 
 ## Examples
 
@@ -134,15 +135,15 @@ dbWriteTable(conn, "PSA_SAMP_2", psa_sample_2, overwrite = TRUE)
 retrieve_all_psa_from_psa(conn = conn, ben_table_name = "PSA_SAMP_2")
 # Récupération et enregistrement de la table dans Oracle
 retrieve_all_psa_from_psa(
-  conn = conn,
   ben_table_name = "PSA_SAMP_2",
-  output_table_name = "TEST_SAVE_ORACLE"
+  output_table_name = "TEST_SAVE_ORACLE",
+  conn = conn,
 )
 # Récupération de la table sans considérer la table de référentiel archivée
 retrieve_all_psa_from_psa(
-  conn = conn,
   ben_table_name = "PSA_SAMP_2",
-  check_arc_table = FALSE
+  check_arc_table = FALSE,
+  conn = conn,
 )
 } # }
 ```

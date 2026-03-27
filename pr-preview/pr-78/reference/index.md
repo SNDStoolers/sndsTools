@@ -36,7 +36,7 @@ Fonctions utilitaires pour manipuler les données extraites.
   connexion à la base de données.
 
 - [`constants_snds_tools()`](constants_snds_tools.md) : Stocke des
-  constantes pour SndsTools
+  constantes pour sndsTools
 
 - [`create_table_from_query()`](create_table_from_query.md) : Création
   d'une table à partir d'une requête SQL.
@@ -58,3 +58,6 @@ Fonctions utilitaires pour manipuler les données extraites.
 - [`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md) :
 
   Gestion des identifiants patients à l'aide de `BEN_NIR_PSA`
+
+- [`retrieve_psa()`](retrieve_psa.md) : Generic function retrieving
+  patient identifiers
