@@ -116,7 +116,8 @@ print(paste(
 
 La requête sndsTools est plus lente que la requête classique, car elle
 effectue des requêtes pour chaque mois de flux demandé, comme le
-recommande les recommandations du portail de la CNAM.
+recommande [les bonnes pratiques du portail de la
+CNAM](https://documentation-snds.health-data-hub.fr/snds/cnam/bonnes_pratiques_r/guide_de_bonnes_pratiques/magic_loop_sur_r.html).
 
 ## Les résultats
 
