@@ -6,9 +6,11 @@ check:
 	Rscript -e 'devtools::check(error_on="error")'
 
 # Build the package website
-docs-html:
+site:
 	Rscript -e 'pkgload::load_all();devtools::document()'
 	Rscript -e 'pkgdown::clean_site();devtools::install(upgrade="never");pkgdown::build_site()'
+site-lazy:
+	Rscript -e 'pkgdown::build_site(lazy = TRUE)'
 # install the package
 install:
 	Rscript -e 'devtools::install(upgrade="never")'

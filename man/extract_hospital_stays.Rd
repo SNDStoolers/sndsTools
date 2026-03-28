@@ -148,6 +148,7 @@ extract_hospital_stays(
 Other extract: 
 \code{\link{extract_consultations_erprsf}()},
 \code{\link{extract_drug_dispenses}()},
+\code{\link{extract_drug_erucdf}()},
 \code{\link{extract_hospital_consultations}()},
 \code{\link{extract_long_term_disease}()}
 }

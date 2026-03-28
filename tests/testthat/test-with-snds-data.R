@@ -44,7 +44,6 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_drug_erucdf))
   expect_true(nrow(result_drug_erucdf) >= 0)
 
-
   # Test : extract_consultations_erprsf with dis_dtd_lag_months = 0
   result_consultations_erprsf <- extract_consultations_erprsf(
     start_date = start_date,
