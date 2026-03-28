@@ -162,6 +162,7 @@ ggplot(
     )
 ) +
   geom_line()+
+  scale_color_manual(values = c("R classique" = "black", "sndsTools" = "#F8766D")) +
   theme_minimal(base_size = 20) +
   labs(
     title = "Nombre de dispensations de quétiapine par jour",
