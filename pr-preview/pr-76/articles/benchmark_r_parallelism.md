@@ -172,11 +172,12 @@ results |>
     size = 7
   ) +
   scale_x_continuous(breaks = x_breaks) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
   scale_fill_discrete() +
   labs(
     x = "Période sur laquelle\n porte l'extraction (mois)",
-    y = "Temps (secondes)",
-    fill = "Nombre de session R"
+    y = "Temps d'extraction\n(secondes)",
+    fill = "Nombre de sessions R"
   ) +
   theme_minimal() +
   theme(
