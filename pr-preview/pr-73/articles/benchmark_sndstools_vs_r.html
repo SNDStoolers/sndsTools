@@ -80,8 +80,7 @@ Baudet</h4>
 <h2 id="paramètres-de-la-comparaison">Paramètres de la comparaison<a class="anchor" aria-label="anchor" href="#param%C3%A8tres-de-la-comparaison"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">atc_quetiapine</span> <span class="op">=</span> <span class="st">"N05AH04"</span></span>
@@ -105,7 +104,7 @@ Baudet</h4>
 indiquant la date de début de la période d’intérêt, la date de fin, et
 l’ATC qui nous intéresse.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"sndsTools.R"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect_oracle.html">connect_oracle</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">t0</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -118,7 +117,9 @@ l’ATC qui nous intéresse.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">timed_sndsTool</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">t0</span>, units <span class="op">=</span> <span class="st">"secs"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Temps de calcul - sndsTool : "</span>, <span class="va">timed_sndsTool</span>, <span class="st">"secondes"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Temps de calcul - sndsTools : "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">timed_sndsTool</span><span class="op">)</span>, <span class="st">"secondes"</span> <span class="co"># 162s</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="tab-pane" id="r-classique" role="tabpanel" aria-labelledby="r-classique-tab">
 
@@ -126,74 +127,76 @@ l’ATC qui nous intéresse.</p>
 filtres habituels, puis on fait une jointure avec <code>ER_PHA_F</code>
 filtrée sur les CIP de quétiapine récupérés dans
 <code>IR_PHA_R</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(ROracle)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>drv <span class="ot">&lt;-</span> <span class="fu">dbDriver</span>(<span class="st">"Oracle"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>conn <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(drv, <span class="at">dbname =</span> <span class="st">"IPIAMPR2.WORLD"</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">TZ =</span> <span class="st">"Europe/Paris"</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">ORA_SDTZ =</span> <span class="st">"Europe/Paris"</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co"># Pour requêter les liquidations arrivant après la date de soin.</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>date_fin_6m <span class="ot">&lt;-</span> <span class="st">"2023-08-01"</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>dcir_join_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="st">"DCT_ORD_NUM"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="st">"FLX_DIS_DTD"</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>  <span class="st">"FLX_EMT_ORD"</span>,</span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  <span class="st">"FLX_EMT_NUM"</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  <span class="st">"FLX_EMT_TYP"</span>,</span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  <span class="st">"FLX_TRT_DTD"</span>,</span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  <span class="st">"ORG_CLE_NUM"</span>,</span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>  <span class="st">"PRS_ORD_NUM"</span>,</span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>  <span class="st">"REM_TYP_AFF"</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>)</span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a></span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>erprsf <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"ER_PRS_F"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>    FLX_DIS_DTD <span class="sc">&gt;=</span> <span class="fu">to_date</span>(date_deb, <span class="st">"YYYY-MM-DD"</span>) <span class="sc">&amp;</span></span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>      FLX_DIS_DTD <span class="sc">&lt;</span> <span class="fu">to_date</span>(date_fin_6m, <span class="st">"YYYY-MM-DD"</span>) <span class="sc">&amp;</span></span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>      EXE_SOI_DTD <span class="sc">&gt;=</span> <span class="fu">to_date</span>(date_deb, <span class="st">"YYYY-MM-DD"</span>) <span class="sc">&amp;</span></span>
-<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>      EXE_SOI_DTD <span class="sc">&lt;=</span> <span class="fu">to_date</span>(date_fin, <span class="st">"YYYY-MM-DD"</span>) <span class="sc">&amp;</span></span>
-<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>      DPN_QLF <span class="sc">!=</span> <span class="dv">71</span> <span class="sc">&amp;</span></span>
-<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>      CPL_MAJ_TOP <span class="sc">&lt;</span> <span class="dv">2</span></span>
-<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(dcir_join_keys, <span class="st">"EXE_SOI_DTD"</span>, <span class="st">"BEN_NIR_PSA"</span>, <span class="st">"PSP_SPE_COD"</span>))</span>
-<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a></span>
-<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>irphar_quetiapine <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"IR_PHA_R"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>  <span class="fu">filter</span>(PHA_ATC_CLA <span class="sc">==</span> atc_quetiapine) <span class="sc">|&gt;</span></span>
-<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>  <span class="fu">select</span>(PHA_ATC_CLA, PHA_CIP_C13) <span class="sc">|&gt;</span></span>
-<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>  distinct</span>
-<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a></span>
-<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>erphaf <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"ER_PHA_F"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(dcir_join_keys, <span class="st">"PHA_PRS_C13"</span>, <span class="st">"PHA_ACT_QSN"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>  <span class="fu">inner_join</span>(irphar_quetiapine, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"PHA_PRS_C13"</span> <span class="ot">=</span> <span class="st">"PHA_CIP_C13"</span>))</span>
-<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a></span>
-<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>er_ete_f <span class="ot">&lt;-</span> <span class="fu">tbl</span>(conn, <span class="st">"ER_ETE_F"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(dcir_join_keys, <span class="st">"ETE_IND_TAA"</span>))</span>
-<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a></span>
-<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>output_quetiapine_classique <span class="ot">&lt;-</span> erprsf <span class="sc">|&gt;</span></span>
-<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a>  <span class="fu">inner_join</span>(erphaf) <span class="sc">|&gt;</span></span>
-<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>  <span class="fu">left_join</span>(er_ete_f) <span class="sc">|&gt;</span></span>
-<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>  <span class="fu">filter</span>(ETE_IND_TAA <span class="sc">!=</span> <span class="dv">1</span> <span class="sc">|</span> <span class="fu">is.na</span>(ETE_IND_TAA))</span>
-<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a></span>
-<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>t0 <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
-<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>output_quetiapine_classique <span class="ot">&lt;-</span> output_quetiapine_classique <span class="sc">|&gt;</span></span>
-<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>  collect <span class="sc">|&gt;</span></span>
-<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>    BEN_NIR_PSA,</span>
-<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>    EXE_SOI_DTD,</span>
-<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a>    PHA_ACT_QSN,</span>
-<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a>    PHA_ATC_CLA,</span>
-<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>    PHA_PRS_C13,</span>
-<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a>    PSP_SPE_COD</span>
-<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a>  distinct</span>
-<span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a></span>
-<span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a>timed_classique <span class="ot">&lt;-</span> <span class="fu">difftime</span>(<span class="fu">Sys.time</span>(), t0, <span class="at">units =</span> <span class="st">"secs"</span>)</span>
-<span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(</span>
-<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>  <span class="st">"Temps de calcul - méthode classique : "</span>,</span>
-<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>  timed_classique,</span>
-<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>  <span class="st">"secondes"</span></span>
-<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.oracle.com" class="external-link">ROracle</a></span><span class="op">)</span></span>
+<span><span class="va">drv</span> <span class="op">&lt;-</span> <span class="fu">dbDriver</span><span class="op">(</span><span class="st">"Oracle"</span><span class="op">)</span></span>
+<span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu">dbConnect</span><span class="op">(</span><span class="va">drv</span>, dbname <span class="op">=</span> <span class="st">"IPIAMPR2.WORLD"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>TZ <span class="op">=</span> <span class="st">"Europe/Paris"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>ORA_SDTZ <span class="op">=</span> <span class="st">"Europe/Paris"</span><span class="op">)</span></span>
+<span><span class="co"># Pour requêter les liquidations arrivant après la date de soin.</span></span>
+<span><span class="va">date_fin_6m</span> <span class="op">&lt;-</span> <span class="st">"2023-08-01"</span></span>
+<span></span>
+<span><span class="va">dcir_join_keys</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"DCT_ORD_NUM"</span>,</span>
+<span>  <span class="st">"FLX_DIS_DTD"</span>,</span>
+<span>  <span class="st">"FLX_EMT_ORD"</span>,</span>
+<span>  <span class="st">"FLX_EMT_NUM"</span>,</span>
+<span>  <span class="st">"FLX_EMT_TYP"</span>,</span>
+<span>  <span class="st">"FLX_TRT_DTD"</span>,</span>
+<span>  <span class="st">"ORG_CLE_NUM"</span>,</span>
+<span>  <span class="st">"PRS_ORD_NUM"</span>,</span>
+<span>  <span class="st">"REM_TYP_AFF"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">erprsf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"ER_PRS_F"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
+<span>    <span class="va">FLX_DIS_DTD</span> <span class="op">&gt;=</span> <span class="fu">to_date</span><span class="op">(</span><span class="va">date_deb</span>, <span class="st">"YYYY-MM-DD"</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>      <span class="va">FLX_DIS_DTD</span> <span class="op">&lt;</span> <span class="fu">to_date</span><span class="op">(</span><span class="va">date_fin_6m</span>, <span class="st">"YYYY-MM-DD"</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>      <span class="va">EXE_SOI_DTD</span> <span class="op">&gt;=</span> <span class="fu">to_date</span><span class="op">(</span><span class="va">date_deb</span>, <span class="st">"YYYY-MM-DD"</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>      <span class="va">EXE_SOI_DTD</span> <span class="op">&lt;=</span> <span class="fu">to_date</span><span class="op">(</span><span class="va">date_fin</span>, <span class="st">"YYYY-MM-DD"</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>      <span class="va">DPN_QLF</span> <span class="op">!=</span> <span class="fl">71</span> <span class="op">&amp;</span></span>
+<span>      <span class="va">CPL_MAJ_TOP</span> <span class="op">&lt;</span> <span class="fl">2</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dcir_join_keys</span>, <span class="st">"EXE_SOI_DTD"</span>, <span class="st">"BEN_NIR_PSA"</span>, <span class="st">"PSP_SPE_COD"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">irphar_quetiapine</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"IR_PHA_R"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">PHA_ATC_CLA</span> <span class="op">==</span> <span class="va">atc_quetiapine</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">PHA_ATC_CLA</span>, <span class="va">PHA_CIP_C13</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">erphaf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"ER_PHA_F"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dcir_join_keys</span>, <span class="st">"PHA_PRS_C13"</span>, <span class="st">"PHA_ACT_QSN"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">irphar_quetiapine</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PHA_PRS_C13"</span> <span class="op">=</span> <span class="st">"PHA_CIP_C13"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">er_ete_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"ER_ETE_F"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dcir_join_keys</span>, <span class="st">"ETE_IND_TAA"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">output_quetiapine_classique</span> <span class="op">&lt;-</span> <span class="va">erprsf</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span><span class="va">erphaf</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">er_ete_f</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">ETE_IND_TAA</span> <span class="op">!=</span> <span class="fl">1</span> <span class="op">|</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">ETE_IND_TAA</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">t0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">output_quetiapine_classique</span> <span class="op">&lt;-</span> <span class="va">output_quetiapine_classique</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>    <span class="va">BEN_NIR_PSA</span>,</span>
+<span>    <span class="va">EXE_SOI_DTD</span>,</span>
+<span>    <span class="va">PHA_ACT_QSN</span>,</span>
+<span>    <span class="va">PHA_ATC_CLA</span>,</span>
+<span>    <span class="va">PHA_PRS_C13</span>,</span>
+<span>    <span class="va">PSP_SPE_COD</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">timed_classique</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">t0</span>, units <span class="op">=</span> <span class="st">"secs"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Temps de calcul - méthode classique : "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">timed_classique</span><span class="op">)</span>, <span class="st">"secondes"</span> <span class="co"># 39s</span></span>
+<span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>La requête sndsTools est plus lente que la requête classique, car
+elle effectue des requêtes pour chaque mois de flux demandé, comme le
+recommande les recommandations du portail de la CNAM.</p>
 </div>
 </div>
 </div>
@@ -203,72 +206,50 @@ filtrée sur les CIP de quétiapine récupérés dans
 <p>En modifiant la colonne <code>EXE_SOI_DTD</code> pour ne récupérer
 que le jour de l’événement, on vérifie que chaque ligne de la sortie
 classique est dans la sortie de sndsTools et vice versa.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Comparaison ligne à ligne</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>line_by_line_comparison <span class="ot">&lt;-</span> output_quetiapine_classique <span class="sc">|&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EXE_SOI_DTD =</span> <span class="fu">as_date</span>(EXE_SOI_DTD)) <span class="sc">|&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="fu">full_join</span>(</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>    output_quetiapine_sndstools <span class="sc">|&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">EXE_SOI_DTD =</span> <span class="fu">as_date</span>(EXE_SOI_DTD)) <span class="sc">|&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">sndstool =</span> <span class="dv">1</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="fu">group_by</span>(sndstool) <span class="sc">|&gt;</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  tally</span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    output_quetiapine_sndstools <span class="sc">|&gt;</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>    <span class="fu">group_by</span>(EXE_SOI_DTD) <span class="sc">|&gt;</span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>    tally <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">requete=</span><span class="st">"sndsTools"</span>),</span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>    output_quetiapine_classique <span class="sc">|&gt;</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>    <span class="fu">group_by</span>(EXE_SOI_DTD) <span class="sc">|&gt;</span></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>    tally <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">requete=</span><span class="st">"R classique"</span>)</span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>)</span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="fu">write.csv</span>(</span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>  plot_data, here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"inst/extdata/benchmark_sndstools_vs_r.csv"</span>),</span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="at">row.names =</span> <span class="cn">FALSE</span></span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>)</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="va">output_quetiapine_classique</span>,</span>
-<span>  caption <span class="op">=</span> <span class="st">"Toutes les lignes sont identiques"</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Comparaison ligne à ligne</span></span>
+<span><span class="va">line_by_line_differences</span> <span class="op">&lt;-</span> <span class="va">output_quetiapine_classique</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>EXE_SOI_DTD <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_date</a></span><span class="op">(</span><span class="va">EXE_SOI_DTD</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter-joins.html" class="external-link">anti_join</a></span><span class="op">(</span></span>
+<span>    <span class="va">output_quetiapine_sndstools</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>EXE_SOI_DTD <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_date</a></span><span class="op">(</span><span class="va">EXE_SOI_DTD</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Si les deux méthodes sont identiques, ce résultat devrait être 0</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Nombre de lignes différentes entre les deux méthodes : "</span>, <span class="va">line_by_line_differences</span><span class="op">)</span><span class="op">)</span> <span class="co"># 0</span></span>
+<span></span>
+<span><span class="va">plot_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>    <span class="va">output_quetiapine_sndstools</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">EXE_SOI_DTD</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>requete<span class="op">=</span><span class="st">"sndsTools"</span><span class="op">)</span>,</span>
+<span>    <span class="va">output_quetiapine_classique</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">EXE_SOI_DTD</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>requete<span class="op">=</span><span class="st">"R classique"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">plot_data</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="fu">::</span><span class="fu">here</span><span class="op">(</span><span class="st">"inst/extdata/benchmark_sndstools_vs_r.csv"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span></span>
+<span>  <span class="va">plot_data</span>, <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"inst/extdata/benchmark_sndstools_vs_r.csv"</span><span class="op">)</span>,</span>
+<span>row.names <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="va">plot_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"inst/extdata/benchmark_sndstools_vs_r.csv"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Graphique</span></span>
-<span><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">plot_data</span>,</span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">EXE_SOI_DTD</span>, y <span class="op">=</span> <span class="va">n</span>, color <span class="op">=</span> <span class="va">requete</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/as_date.html" class="external-link">as_date</a></span><span class="op">(</span><span class="va">EXE_SOI_DTD</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">n</span>,</span>
+<span>    color <span class="op">=</span> <span class="va">requete</span>, linetype <span class="op">=</span> <span class="va">requete</span></span>
+<span>    <span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="nb">NB<a class="anchor" aria-label="anchor" href="#nb"></a>
-</h2>
-<p>TODO : Creuser pourquoi il y a des différences sur le format
-d’EXE_SOI_DTD.</p>
-<p>Les heures dans l’output sndstool ne sont pas les mêmes ? elles sont
-à 00:00:00, donc la fonction as.Date retourne la veille (!)</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>output_quetiapine <span class="sc">|&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">select</span>(EXE_SOI_DTD) <span class="sc">|&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dte1 =</span> <span class="fu">as.Date</span>(EXE_SOI_DTD), <span class="at">dte2 =</span> <span class="fu">as_date</span>(EXE_SOI_DTD)) <span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  head <span class="co"># sont à minuit =&gt; as.Date fait -1 jour!</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>output_classique_quetiapine <span class="sc">|&gt;</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="fu">select</span>(EXE_SOI_DTD) <span class="sc">|&gt;</span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dte1 =</span> <span class="fu">as.Date</span>(EXE_SOI_DTD), <span class="at">dte2 =</span> <span class="fu">as_date</span>(EXE_SOI_DTD)) <span class="sc">|&gt;</span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  head <span class="co"># ne sont pas à minuit</span></span></code></pre></div>
-<p>requête sndsTools via une table oracle</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">extract_drug_dispenses</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="at">start_date =</span> <span class="fu">as.Date</span>(date_deb),</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">end_date =</span> <span class="fu">as.Date</span>(date_fin),</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">atc_cod_starts_with_filter =</span> atc_quetiapine,</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">dis_dtd_lag_months =</span> <span class="dv">6</span>, <span class="co"># pour requêter les liquidations arrivant après la date de soin.</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="at">output_table_name =</span> <span class="st">"OUTPUT_QUETIAPINE_SNDS_ORACLE"</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="at">conn =</span> conn</span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>)</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>output_quetiapine_sndstools_oracle <span class="ot">=</span> <span class="fu">tbl</span>(</span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  conn,</span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="st">"OUTPUT_QUETIAPINE_SNDS_ORACLE"</span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>  collect</span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    title <span class="op">=</span> <span class="st">"Nombre de dispensations de quétiapine par jour"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"Date de soin (EXE_SOI_DTD)"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Nombre de dispensations"</span>,</span>
+<span>    color <span class="op">=</span> <span class="st">"Méthode de requête"</span>,</span>
+<span>    linetype <span class="op">=</span> <span class="st">"Méthode de requête"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p><img src="benchmark_sndstools_vs_r_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="1536"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -3,7 +3,6 @@
 ## Paramètres de la comparaison
 
 ``` r
-library(ggplot2)
 library(dplyr)
 library(lubridate)
 
@@ -24,7 +23,7 @@ indiquant la date de début de la période d’intérêt, la date de fin, et
 l’ATC qui nous intéresse.
 
 ``` r
-library(sndsTools)
+source(here::here("sndsTools.R"))
 conn <- connect_oracle()
 
 t0 = Sys.time()
@@ -37,7 +36,9 @@ output_quetiapine_sndstools <- extract_drug_dispenses(
 )
 
 timed_sndsTool = difftime(Sys.time(), t0, units = "secs")
-print(paste("Temps de calcul - sndsTool : ", timed_sndsTool, "secondes"))
+print(paste(
+  "Temps de calcul - sndsTools : ", round(timed_sndsTool), "secondes" # 162s
+))
 ```
 
 On filtre `ER_PRS_F` sur les dates choisies ainsi que les filtres
@@ -79,7 +80,7 @@ erprsf <- tbl(conn, "ER_PRS_F") |>
 irphar_quetiapine <- tbl(conn, "IR_PHA_R") |>
   filter(PHA_ATC_CLA == atc_quetiapine) |>
   select(PHA_ATC_CLA, PHA_CIP_C13) |>
-  distinct
+  distinct()
 
 erphaf <- tbl(conn, "ER_PHA_F") |>
   select(c(dcir_join_keys, "PHA_PRS_C13", "PHA_ACT_QSN")) |>
@@ -96,7 +97,7 @@ output_quetiapine_classique <- erprsf |>
 
 t0 <- Sys.time()
 output_quetiapine_classique <- output_quetiapine_classique |>
-  collect |>
+  collect() |>
   select(
     BEN_NIR_PSA,
     EXE_SOI_DTD,
@@ -105,15 +106,17 @@ output_quetiapine_classique <- output_quetiapine_classique |>
     PHA_PRS_C13,
     PSP_SPE_COD
   ) |>
-  distinct
+  distinct()
 
 timed_classique <- difftime(Sys.time(), t0, units = "secs")
 print(paste(
-  "Temps de calcul - méthode classique : ",
-  timed_classique,
-  "secondes"
+  "Temps de calcul - méthode classique : ", round(timed_classique), "secondes" # 39s
 ))
 ```
+
+La requête sndsTools est plus lente que la requête classique, car elle
+effectue des requêtes pour chaque mois de flux demandé, comme le
+recommande les recommandations du portail de la CNAM.
 
 ## Les résultats
 
@@ -123,23 +126,22 @@ la sortie de sndsTools et vice versa.
 
 ``` r
 # Comparaison ligne à ligne
-line_by_line_comparison <- output_quetiapine_classique |>
+line_by_line_differences <- output_quetiapine_classique |>
   mutate(EXE_SOI_DTD = as_date(EXE_SOI_DTD)) |>
-  full_join(
+  anti_join(
     output_quetiapine_sndstools |>
-      mutate(EXE_SOI_DTD = as_date(EXE_SOI_DTD)) |>
-      mutate(sndstool = 1)
+      mutate(EXE_SOI_DTD = as_date(EXE_SOI_DTD))
   ) |>
-  group_by(sndstool) |>
-  tally
+  tally() # Si les deux méthodes sont identiques, ce résultat devrait être 0
+print(paste("Nombre de lignes différentes entre les deux méthodes : ", line_by_line_differences)) # 0
 
 plot_data <- rbind(
     output_quetiapine_sndstools |>
     group_by(EXE_SOI_DTD) |>
-    tally |> mutate(requete="sndsTools"),
+    tally() |> mutate(requete="sndsTools"),
     output_quetiapine_classique |>
     group_by(EXE_SOI_DTD) |>
-    tally |> mutate(requete="R classique")
+    tally() |> mutate(requete="R classique")
 )
 write.csv(
   plot_data, here::here("inst/extdata/benchmark_sndstools_vs_r.csv"),
@@ -148,53 +150,25 @@ row.names = FALSE
 ```
 
 ``` r
-knitr::kable(
-  output_quetiapine_classique,
-  caption = "Toutes les lignes sont identiques"
-)
-plot_data <- here::here("inst/extdata/benchmark_sndstools_vs_r.csv")
+library(ggplot2)
+plot_data <- read.csv(here::here("inst/extdata/benchmark_sndstools_vs_r.csv"))
 # Graphique
-ggplot2::ggplot(
+ggplot(
   data = plot_data,
-  aes(x = EXE_SOI_DTD, y = n, color = requete)
+  aes(
+    x = lubridate::as_date(EXE_SOI_DTD), y = n,
+    color = requete, linetype = requete
+    )
 ) +
-  ggplot2::geom_line()
+  geom_line()+
+  theme_minimal(base_size = 20) +
+  labs(
+    title = "Nombre de dispensations de quétiapine par jour",
+    x = "Date de soin (EXE_SOI_DTD)",
+    y = "Nombre de dispensations",
+    color = "Méthode de requête",
+    linetype = "Méthode de requête"
+  )
 ```
 
-## NB
-
-TODO : Creuser pourquoi il y a des différences sur le format
-d’EXE_SOI_DTD.
-
-Les heures dans l’output sndstool ne sont pas les mêmes ? elles sont à
-00:00:00, donc la fonction as.Date retourne la veille (!)
-
-``` r
-output_quetiapine |>
-  select(EXE_SOI_DTD) |>
-  mutate(dte1 = as.Date(EXE_SOI_DTD), dte2 = as_date(EXE_SOI_DTD)) |>
-  head # sont à minuit => as.Date fait -1 jour!
-
-output_classique_quetiapine |>
-  select(EXE_SOI_DTD) |>
-  mutate(dte1 = as.Date(EXE_SOI_DTD), dte2 = as_date(EXE_SOI_DTD)) |>
-  head # ne sont pas à minuit
-```
-
-requête sndsTools via une table oracle
-
-``` r
-extract_drug_dispenses(
-  start_date = as.Date(date_deb),
-  end_date = as.Date(date_fin),
-  atc_cod_starts_with_filter = atc_quetiapine,
-  dis_dtd_lag_months = 6, # pour requêter les liquidations arrivant après la date de soin.
-  output_table_name = "OUTPUT_QUETIAPINE_SNDS_ORACLE",
-  conn = conn
-)
-output_quetiapine_sndstools_oracle = tbl(
-  conn,
-  "OUTPUT_QUETIAPINE_SNDS_ORACLE"
-) |>
-  collect
-```
+![](benchmark_sndstools_vs_r_files/figure-html/unnamed-chunk-5-1.png)
