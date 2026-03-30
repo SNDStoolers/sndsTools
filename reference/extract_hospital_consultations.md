@@ -118,6 +118,7 @@ sont extraites.
 Other extract:
 [`extract_consultations_erprsf()`](extract_consultations_erprsf.md),
 [`extract_drug_dispenses()`](extract_drug_dispenses.md),
+[`extract_drug_erucdf()`](extract_drug_erucdf.md),
 [`extract_hospital_stays()`](extract_hospital_stays.md),
 [`extract_long_term_disease()`](extract_long_term_disease.md)
 

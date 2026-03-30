@@ -123,6 +123,7 @@ libéraux](https://documentation-snds.health-data-hub.fr/snds/fiches/activite_me
 ## See also
 
 Other extract: [`extract_drug_dispenses()`](extract_drug_dispenses.md),
+[`extract_drug_erucdf()`](extract_drug_erucdf.md),
 [`extract_hospital_consultations()`](extract_hospital_consultations.md),
 [`extract_hospital_stays()`](extract_hospital_stays.md),
 [`extract_long_term_disease()`](extract_long_term_disease.md)

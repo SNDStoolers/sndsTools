@@ -9,6 +9,8 @@ SNDS.
   Extraction des consultations dans le DCIR.
 - [`extract_drug_dispenses()`](extract_drug_dispenses.md) : Extraction
   des délivrances de médicaments.
+- [`extract_drug_erucdf()`](extract_drug_erucdf.md) : Extrait les
+  dispensations de médicaments en accès précoces depuis le DCIR.
 - [`extract_hospital_consultations()`](extract_hospital_consultations.md)
   : Extraction des consultations externes à l'hôpital (MCO).
 - [`extract_hospital_stays()`](extract_hospital_stays.md) : Extraction
