@@ -1,3 +1,29 @@
+#' onLoad function
+#' @description
+#' Cette fonction est appelée lors du chargement du package ou d'une de ses
+#' fonctions (via `::`). Elle configure le fuseau horaire par défaut à
+#' "Europe/Paris" pour :
+#' - `TZ`: la session R
+#' - `ORA_SDTZ`: les connexions Oracle, pour s'assurer que les datetimes sont
+#'   traitées dans le bon fuseau horaire.
+#' Cette configuration est essentielle pour garantir la cohérence entre les
+#' objets datetime manipulés dans R et ceux stockés ou récupérés depuis la base
+#' de données Oracle : [cf détails et exemples](https://soeiro.gitlab.io/pepidoc/r.html#dates-heures-et-fuseaux-horaires). # nolint
+.onLoad <- function(libname, pkgname) {
+  Sys.setenv(
+    TZ = "Europe/Paris",
+    ORA_SDTZ = "Europe/Paris"
+  )
+  logger::log_info(
+    "Charge le package sndsTools.
+    Variables d'environment TZ et ORA_SDTZ fixées à 'Europe/Paris.'"
+  )
+}
+# run if the code is run on the portal
+if (dir.exists("~/sasdata1")) {
+  .onLoad()
+}
+
 #' Initialisation de la connexion à la base de données.
 #'
 #' @return dbConnection Connexion à la base de données oracle
@@ -6,8 +32,6 @@
 #' @family utils
 connect_oracle <- function() {
   require(ROracle)
-  Sys.setenv(TZ = "Europe/Paris")
-  Sys.setenv(ORA_SDTZ = "Europe/Paris")
   drv <- DBI::dbDriver("Oracle")
   conn <- DBI::dbConnect(drv, dbname = "IPIAMPR2.WORLD")
   conn
