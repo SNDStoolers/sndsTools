@@ -46,6 +46,6 @@ Puis pour charger le paquet :
 
 ``` r
 library(sndsTools)
-#> INFO [2026-04-02 10:01:01] Charge le package sndsTools.
+#> INFO [2026-04-02 11:33:27] Charge le package sndsTools.
 #> Variables d'environment TZ et ORA_SDTZ fixées à 'Europe/Paris.'
 ```
