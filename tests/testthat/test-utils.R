@@ -8,6 +8,13 @@ test_that("get_first_non_archived_year_works", {
   expect_equal(first_non_archived_year, 2011)
 })
 
+test_that("onLoad works", {
+  timezone <- Sys.getenv("TZ")
+  oracle_timezone <- Sys.getenv("ORA_SDTZ")
+  expect_equal(timezone, "Europe/Paris")
+  expect_equal(oracle_timezone, "Europe/Paris")
+})
+
 test_that("check_output_table_name accepte un nom valide en majuscules", {
   conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
@@ -44,7 +51,10 @@ test_that("check_output_table_name échoue si la table existe déjà", {
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   DBI::dbWriteTable(
-    conn, "TABLE_EXISTANTE", data.frame(x = 1), overwrite = TRUE
+    conn,
+    "TABLE_EXISTANTE",
+    data.frame(x = 1),
+    overwrite = TRUE
   )
   on.exit(
     try(DBI::dbRemoveTable(conn, "TABLE_EXISTANTE"), silent = TRUE),
