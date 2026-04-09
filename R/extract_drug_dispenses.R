@@ -290,7 +290,7 @@ extract_drug_dispenses <- function(
       if (year <= first_non_archived_year && month %in% c(1:2)) {
         years_to_query <- c(year - 1L, year)
       } else {
-        years_to_query <- year
+        years_to_query <- c(year)
       }
 
       for (year_q in years_to_query) {
@@ -365,7 +365,7 @@ extract_drug_dispenses <- function(
         }
 
         query <- query |> dbplyr::sql_render()
-        if (!dbExistsTable(conn, output_table_name)) {
+        if (!DBI::dbExistsTable(conn, output_table_name)) {
           DBI::dbExecute(
             conn,
             glue::glue("CREATE TABLE {output_table_name} AS {query}")
