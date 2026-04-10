@@ -89,7 +89,6 @@ le cas contraire, les ALD de tous les patients sont extraites.</p>
 <span>  ald_numbers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  excl_etm_nat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"11"</span>, <span class="st">"12"</span>, <span class="st">"13"</span><span class="op">)</span>,</span>
 <span>  patients_ids <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  conn <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -142,11 +141,6 @@ doivent être "BEN_IDT_ANO" et "BEN_NIR_PSA". Les "BEN_NIR_PSA" doivent
 être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.</p></dd>
 
 
-<dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
-<dd><p>Logical. Indique si la table <code>output_table_name</code>
-doit être écrasée dans le cas où elle existe déjà.</p></dd>
-
-
 <dt id="arg-output-table-name">output_table_name<a class="anchor" aria-label="anchor" href="#arg-output-table-name"></a></dt>
 <dd><p>Character Optionnel. Si fourni, les résultats seront
 sauvegardés dans une table portant ce nom dans la base de données au lieu
@@ -156,6 +150,11 @@ d'être retournés sous forme de data frame.</p></dd>
 <dt id="arg-conn">conn<a class="anchor" aria-label="anchor" href="#arg-conn"></a></dt>
 <dd><p>DBI connection Une connexion à la base de données Oracle.
 Si non fournie, une connexion est établie par défaut.</p></dd>
+
+
+<dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
+<dd><p>Logical. Indique si la table <code>output_table_name</code> doit être
+écrasée dans le cas où elle existe déjà. Défaut à TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">
