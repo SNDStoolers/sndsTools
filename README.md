@@ -62,15 +62,13 @@ TODO (figure à mettre dans man/figures)
 
 - **Dépôt du code source** : [https://github.com/SNDStoolers/sndsTools](https://github.com/SNDStoolers/sndsTools)
 
-- **Description des extractions et des tables de données créées** : TODO [Flux de données](data.html)
+- **Prise en main rapide** : [Prise en main](https://sndstoolers.github.io/sndsTools/articles/paresnds.html)
 
-- **Prise en main rapide** : [Prise en main]([sndsTools.html](https://sndstoolers.github.io/sndsTools/articles/paresnds.html))
+- [Référence](https://sndstoolers.github.io/sndsTools/reference/index.html) des fonctions utilisées
 
-- [Référence]([reference/index.html](https://sndstoolers.github.io/sndsTools/reference/index.html)) des fonctions utilisées
+- [Guide de contribution](https://sndstoolers.github.io/sndsTools/articles/contribuer.html)
 
-- [Guide de contribution]([contributing.html](https://sndstoolers.github.io/sndsTools/articles/contribuer.html))
-
-- [Principes de gouvernance]([gouvernance.html](https://sndstoolers.github.io/sndsTools/articles/gouvernance.html))
+- [Principes de gouvernance](https://sndstoolers.github.io/sndsTools/articles/gouvernance.html)
 
 - [Présentation du package à l'Institut du Cerveau, janvier 2026](https://info.m2dou.fr/_static/files/presentations/2026-01-26_sndsTools_ICM.pdf)
 
