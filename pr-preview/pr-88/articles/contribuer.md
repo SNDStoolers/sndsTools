@@ -1,0 +1,208 @@
+# Contribuer
+
+Ce projet est un effort communautaire. Les nouveaux contributeurs sont
+les bienvenus. Les règles de décision et de gouvernance sont détaillées
+dans le document [Gouvernance](gouvernance.md).
+
+## Différente manière de contribuer
+
+### Répondre à une question sur une issue
+
+De nombreuses questions sont posées sur les
+[issues](https://github.com/SNDStoolers/sndsTools/issues). Vous pouvez y
+répondre en donnant des conseils, ou en proposant une solution.
+
+### Créer une nouvelle issue
+
+Si vous avez trouvé un bug, ou si vous avez une question sur une
+fonctionnalité, vous pouvez [créer une nouvelle
+issue](https://github.com/SNDStoolers/sndsTools/issues/new/choose).
+
+En cas de bug, il est important de donner un exemple reproductible
+[`reprex`](https://www.tidyverse.org/help/#reprex). Celui-ci contient le
+code nécessaire pour reproduire le bug, et le message d’erreur complet.
+Il est très important pour qu’un développeur plus expérimenté puisse
+comprendre le problème et vous aider.
+
+### Contribuer à la documentation
+
+Contribuer à la documentation est aussi important que de contribuer au
+code. Vous pouvez proposer des modifications à la documentation en
+créant une [pull
+request](https://github.com/SNDStoolers/sndsTools/pulls). Les petites
+erreurs et modifications peuvent être corrigée directment dans
+l’interface web GitHub.
+
+**NB:** La documentation est principalement dans le code R, et est
+générée avec le paquet
+[roxygen2](https://cran.r-project.org/package=roxygen2). Pour la
+modifier il faut donc modifier les fichiers `.R` dans le dossier `R/` du
+projet.
+
+### Contribuer au code
+
+Afin de résoudre un bug, ou d’ajouter une nouvelle fonctionnalité, vous
+pouvez créer une [pull
+request](https://github.com/SNDStoolers/sndsTools/pulls).
+
+## Principes généraux de contribution
+
+- Eviter la duplication : Avant de soumettre une nouvelle issue, ou une
+  nouvelle pull request, il est important de s’assurer qu’aucun autre
+  contributeur n’a déjà posé la même question ou contribuer sur le même
+  thème.
+
+- Etre patient : Les contributeurs sont bénévoles, effectuent la plupart
+  du travail sur leur temps libre et peuvent ne pas répondre
+  immédiatement à vos questions.
+
+- Etre respectueux : Les contributeurs viennent de différents horizons,
+  et ont des niveaux de compétences différents. Il est important de
+  respecter les opinions des autres, et de rester bienveillant.
+
+## Processus d’acceptation des pull requests
+
+- Il est recommandé de créer une nouvelle branche git pour chaque
+  nouvelle pull request (PR).
+- Un code nouveau proposant une nouvelle fonctionnalité doit respecter
+  les conventions de style R. Vous pouvez utiliser le paquet
+  [styler](https://cran.r-project.org/package=styler) pour appliquer ces
+  styles, mais s’il vous plait ne restyler pas du code qui n’a rien à
+  faire avec votre PR.
+- Nous utilisons
+  [roxygen2](https://cran.r-project.org/package=roxygen2), avec la
+  syntaxe Markdown pour la documentation.
+- Nous suivons [le guide de style de code R du
+  tidyverse](https://style.tidyverse.org/index.html). La seule
+  différence avec le guide actuel est que nous utilisons le pipe natif
+  `|>` au lieu de `%>%`.
+- Pour **SQL**, nous suivons [le guide de style SQL de
+  Mozilla](https://docs.telemetry.mozilla.org/concepts/sql_style).
+- Nous utilisons [testthat](https://cran.r-project.org/package=testthat)
+  pour les tests. Les contributions avec des tests inclus sont acceptés
+  plus facilement.
+- Une nouvelle PR doit être revue par au moins un core contributeur
+  avant d’être intégrée.
+
+## Comment contribuer concrètement ?
+
+Afin de modifier le code, il est au préalable nécessaire de forker le
+dépôt principal sur GitHub, puis de soumettre une “pull request” (PR).
+
+Dans les premières étapes, nous expliquons comment installer localement
+{sndsTools} et comment configurer votre dépôt git :
+
+1.  [Créez un compte sur GitHub](https://github.com/join) si vous n’en
+    avez pas déjà un.
+
+2.  Forkez le [dépôt du
+    projet](https://github.com/SNDStoolers/sndsTools) : cliquez sur le
+    bouton “Fork” en haut de la page. Cela crée une copie du code sur
+    votre compte GitHub. Pour plus de détails sur la manière de forker
+    un dépôt, consultez [ce
+    guide](https://help.github.com/articles/fork-a-repo/).
+
+3.  Clonez votre fork du dépôt {sndsTools} depuis votre compte GitHub
+    sur votre disque local :
+
+``` bash
+git clone git@github.com:YourLogin/sndsTools.git
+cd sndsTools
+```
+
+4.  Ouvrez le projet dans Rstudio et installez localement le paquet avec
+    les dépendances de développement. Dans la console R, lancez :
+
+``` r
+devtools::install(dependencies = TRUE)
+```
+
+5.  Ajoutez le dépôt `upstream remote`. Cela sauvegarde la référence du
+    dépôt {sndsTools}, que vous pouvez utiliser pour garder votre
+    version synchronisée avec les derniers changements.
+
+``` bash
+git remote add upstream git@github.com:SNDStoolers/sndsTools.git
+```
+
+Vous devriez désormais avoir une installation fonctionnelle de
+{sndsTools}, et votre dépôt git correctement configuré. Vous pouvez
+maintenant commencer à contribuer en modifiant le code et en soumettant
+une PR.
+
+6.  Synchronisez votre branche `main` avec la branche `upstream/main`,
+    plus de détail sur la documentation GitHub:
+
+``` bash
+git checkout main
+git fetch upstream
+git merge upstream/main
+```
+
+7.  Créez une nouvelle branche pour votre contribution :
+
+``` bash
+git checkout -b my-new-feature
+```
+
+Et commencez à faire vos changements. Utilisez toujours une branche
+différente pour chaque nouvelle fonctionnalité ou bug fix. C’est une
+bonne pratique de ne jamais coder sur la branche `main`.
+
+8.  Une fois que vous avez terminé vos modifications, vous pouvez les
+    commiter :
+
+``` bash
+git add modified_files
+git commit -m 'Add some feature'
+```
+
+puis les pousser sur votre fork :
+
+``` bash
+git push origin my-new-feature
+```
+
+9.  Suivez [ces
+    instructions](https://help.github.com/articles/creating-a-pull-request-from-a-fork)
+    pour créer une pull request de votre travail. Cela enverra un mail
+    aux mainteneurs du projet pour qu’ils puissent examiner votre code.
+
+Il est possible qu’à un moment, vous ayez besoin de résoudre des
+conflits, si d’autres contributeurs ont modifié le code pendant que vous
+travailliez sur votre branche. Vous pouvez vous référer à [cette
+documentation pour résoudre les
+conflits](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/).
+
+10. Avant de demander une revue pour votre pull request, vérifier avec
+    les commandes suivantes dans le terminal que le code passent
+    certains test de qualité :
+
+- que votre code ne casse pas de tests : `make test`
+- que votre code respecte les conventions de style : `make style`
+- que votre code respecte les conventions de lint : `make lint`
+  (nécessite l’extension [air
+  formatter](https://tidyverse.org/blog/2025/02/air/) installée)
+- que la documentation se génère correctement : `make doc-html`
+
+## Environnement de développement
+
+L’environnement de développement recommandé est Rstudio ou vscode.
+
+Un environnement de développement conteneurisé avec R et les paquets
+nécessaires au développement peut être mis en place avec vscode et
+l’extension Dev container (nécessite docker installé). Le fichier de
+configuration de l’environnement de développement est dans
+`.devcontainer/devcontainer.json`. Ce tutoriel explique [comment
+utiliser les dev containers avec
+vscode](https://code.visualstudio.com/docs/devcontainers/tutorial).
+
+## Références pour contribuer
+
+La meilleur manière d’apprendre comment contribuer est de se lancer !
+Néamoins, la lecture de certaines ressources peut être utile :
+
+- [Guide de contribution de
+  tidyverse](https://www.tidyverse.org/contribute/)
+- [Apprendre
+  git](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git)
