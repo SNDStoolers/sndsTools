@@ -14,7 +14,8 @@ dbConnection Connexion à la base de données oracle
 
 ## See also
 
-Other utils: [`connect_duckdb()`](connect_duckdb.md),
+Other utils: [`check_output_table_name()`](check_output_table_name.md),
+[`connect_duckdb()`](connect_duckdb.md),
 [`constants_snds_tools()`](constants_snds_tools.md),
 [`create_table_from_query()`](create_table_from_query.md),
 [`gather_table_stats()`](gather_table_stats.md),

@@ -20,7 +20,6 @@ extract_long_term_disease(
   ald_numbers = NULL,
   excl_etm_nat = c("11", "12", "13"),
   patients_ids = NULL,
-  overwrite = FALSE,
   output_table_name = NULL,
   conn = NULL
 )
@@ -69,11 +68,6 @@ extract_long_term_disease(
   doivent être "BEN_IDT_ANO" et "BEN_NIR_PSA". Les "BEN_NIR_PSA" doivent
   être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.
 
-- overwrite:
-
-  Logical. Indique si la table `output_table_name` doit être écrasée
-  dans le cas où elle existe déjà.
-
 - output_table_name:
 
   Character Optionnel. Si fourni, les résultats seront sauvegardés dans
@@ -84,6 +78,11 @@ extract_long_term_disease(
 
   DBI connection Une connexion à la base de données Oracle. Si non
   fournie, une connexion est établie par défaut.
+
+- overwrite:
+
+  Logical. Indique si la table `output_table_name` doit être écrasée
+  dans le cas où elle existe déjà. Défaut à TRUE.
 
 ## Value
 

@@ -130,6 +130,9 @@ SNDS en pur SQL.
 
 Fonctions utilitaires pour manipuler les données extraites.
 
+- [`check_output_table_name()`](check_output_table_name.md) : Vérifie la
+  validité du nom de la table de sortie Oracle.
+
 - [`connect_duckdb()`](connect_duckdb.md) : Initialisation de la
   connexion à la base de données duckdb.
 

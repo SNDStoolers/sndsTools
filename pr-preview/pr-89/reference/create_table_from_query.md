@@ -30,7 +30,7 @@ create_table_from_query(
 - overwrite:
 
   Logical. Indique si la table `output_table_name` doit être écrasée
-  dans le cas où elle existe déjà.
+  dans le cas où elle existe déjà. Défaut à FALSE.
 
 ## Details
 
@@ -40,7 +40,8 @@ table `output_table_name` existe déjà, elle est écrasée si le paramètre
 
 ## See also
 
-Other utils: [`connect_duckdb()`](connect_duckdb.md),
+Other utils: [`check_output_table_name()`](check_output_table_name.md),
+[`connect_duckdb()`](connect_duckdb.md),
 [`connect_oracle()`](connect_oracle.md),
 [`constants_snds_tools()`](constants_snds_tools.md),
 [`gather_table_stats()`](gather_table_stats.md),

@@ -28,7 +28,8 @@ insert_into_table_from_query(
 
 ## See also
 
-Other utils: [`connect_duckdb()`](connect_duckdb.md),
+Other utils: [`check_output_table_name()`](check_output_table_name.md),
+[`connect_duckdb()`](connect_duckdb.md),
 [`connect_oracle()`](connect_oracle.md),
 [`constants_snds_tools()`](constants_snds_tools.md),
 [`create_table_from_query()`](create_table_from_query.md),
