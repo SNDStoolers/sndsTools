@@ -14,6 +14,7 @@ Initialisation de la connexion à la base de données.
 }
 \seealso{
 Other utils: 
+\code{\link{check_output_table_name}()},
 \code{\link{connect_duckdb}()},
 \code{\link{constants_snds_tools}()},
 \code{\link{create_table_from_query}()},

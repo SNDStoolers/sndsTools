@@ -11,7 +11,6 @@ extract_long_term_disease(
   ald_numbers = NULL,
   excl_etm_nat = c("11", "12", "13"),
   patients_ids = NULL,
-  overwrite = FALSE,
   output_table_name = NULL,
   conn = NULL
 )
@@ -48,15 +47,15 @@ médicaments doivent être extraites. Les colonnes de ce data.frame
 doivent être "BEN_IDT_ANO" et "BEN_NIR_PSA". Les "BEN_NIR_PSA" doivent
 être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.}
 
-\item{overwrite}{Logical. Indique si la table \code{output_table_name}
-doit être écrasée dans le cas où elle existe déjà.}
-
 \item{output_table_name}{Character Optionnel. Si fourni, les résultats seront
 sauvegardés dans une table portant ce nom dans la base de données au lieu
 d'être retournés sous forme de data frame.}
 
 \item{conn}{DBI connection Une connexion à la base de données Oracle.
 Si non fournie, une connexion est établie par défaut.}
+
+\item{overwrite}{Logical. Indique si la table \code{output_table_name} doit être
+écrasée dans le cas où elle existe déjà. Défaut à TRUE.}
 }
 \value{
 Si output_table_name est NULL, retourne un data.frame contenant les

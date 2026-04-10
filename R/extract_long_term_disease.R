@@ -40,11 +40,11 @@
 #'   médicaments doivent être extraites. Les colonnes de ce data.frame
 #'   doivent être "BEN_IDT_ANO" et "BEN_NIR_PSA". Les "BEN_NIR_PSA" doivent
 #'   être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.
-#' @param overwrite Logical. Indique si la table `output_table_name`
-#'  doit être écrasée dans le cas où elle existe déjà.
 #' @param output_table_name Character Optionnel. Si fourni, les résultats seront
 #'   sauvegardés dans une table portant ce nom dans la base de données au lieu
 #'   d'être retournés sous forme de data frame.
+#' @param overwrite Logical. Indique si la table `output_table_name` doit être
+#'   écrasée dans le cas où elle existe déjà. Défaut à TRUE.
 #' @param conn DBI connection Une connexion à la base de données Oracle.
 #'   Si non fournie, une connexion est établie par défaut.
 #' @return Si output_table_name est NULL, retourne un data.frame contenant les
@@ -85,7 +85,6 @@ extract_long_term_disease <- function(
   ald_numbers = NULL,
   excl_etm_nat = c("11", "12", "13"),
   patients_ids = NULL,
-  overwrite = FALSE,
   output_table_name = NULL,
   conn = NULL
 ) {
@@ -107,19 +106,7 @@ extract_long_term_disease <- function(
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
   if (!is.null(output_table_name)) {
     output_table_name_is_temp <- FALSE
-    stopifnot(
-      is.character(output_table_name),
-      !DBI::dbExistsTable(conn, output_table_name) ||
-        (DBI::dbExistsTable(conn, output_table_name) && overwrite)
-    )
-    if (DBI::dbExistsTable(conn, output_table_name) && overwrite) {
-      warning(
-        glue::glue(
-          "Table {output_table_name} already exists and will be overwritten."
-        )
-      )
-      DBI::dbRemoveTable(conn, output_table_name)
-    }
+    check_output_table_name(output_table_name, conn)
   } else {
     output_table_name_is_temp <- TRUE
     output_table_name <- glue::glue("TMP_LTD_{timestamp}")

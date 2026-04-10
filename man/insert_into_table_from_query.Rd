@@ -22,6 +22,7 @@ Insertion des résultats d'une requête SQL dans une table existante.
 }
 \seealso{
 Other utils: 
+\code{\link{check_output_table_name}()},
 \code{\link{connect_duckdb}()},
 \code{\link{connect_oracle}()},
 \code{\link{constants_snds_tools}()},

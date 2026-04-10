@@ -14,6 +14,7 @@ Stocke des constantes pour sndsTools
 }
 \seealso{
 Other utils: 
+\code{\link{check_output_table_name}()},
 \code{\link{connect_duckdb}()},
 \code{\link{connect_oracle}()},
 \code{\link{create_table_from_query}()},

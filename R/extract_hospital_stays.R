@@ -249,10 +249,7 @@ extract_hospital_stays <- function(
 
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
   if (!is.null(output_table_name)) {
-    stopifnot(
-      is.character(output_table_name),
-      !DBI::dbExistsTable(conn, output_table_name)
-    )
+    check_output_table_name(output_table_name, conn)
   }
 
   if (!is.null(patients_ids_filter)) {
@@ -534,7 +531,7 @@ extract_hospital_stays <- function(
 
   result <- dplyr::bind_rows(hospital_stays_list)
   if (!is.null(output_table_name)) {
-    DBI::dbWriteTable(conn, output_table_name, result, overwrite = TRUE)
+    DBI::dbWriteTable(conn, output_table_name, result)
     result <- invisible(NULL)
     message(glue::glue("Results saved to table {output_table_name} in Oracle."))
   }

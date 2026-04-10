@@ -44,6 +44,7 @@ sql_extract_drug_dispenses <- function(
     conn <- connect_oracle()
     connection_opened <- TRUE
   }
+  check_output_table_name(output_table_name, conn)
   # Format the dates (used in the glued SQL query)
   formatted_start_date <- format(start_date, "%Y-%m-%d") # nolint
   formatted_end_date <- format(end_date, "%Y-%m-%d") # nolint

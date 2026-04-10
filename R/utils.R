@@ -47,7 +47,7 @@ connect_duckdb <- function() {
 #' @param output_table_name Nom de la table de sortie
 #' @param query Requête SQL
 #' @param overwrite Logical. Indique si la table `output_table_name`
-#' doit être écrasée dans le cas où elle existe déjà.
+#' doit être écrasée dans le cas où elle existe déjà. Défaut à FALSE.
 #' @return NULL
 #'
 #' @export
@@ -95,6 +95,67 @@ insert_into_table_from_query <- function(
   )
 }
 
+
+#' Vérifie la validité du nom de la table de sortie Oracle.
+#'
+#' @description
+#' Cette fonction vérifie que le nom de la table de sortie fourni respecte
+#' les contraintes imposées par Oracle :
+#' - Le nom doit être une chaîne de caractères.
+#' - Le nom doit être entièrement en majuscules, car Oracle stocke et compare
+#'   les noms de tables en majuscules. Un nom en minuscules provoquerait une
+#'   incohérence : le test d'existence de la table ne détecterait pas une table
+#'   déjà existante, puis Oracle échouerait à la création en signalant un
+#'   conflit.
+#' - La table ne doit pas déjà exister dans la base de données (la comparaison
+#'   est effectuée en majuscules pour être robuste).
+#'
+#' @param output_table_name Character. Le nom de la table de sortie à valider.
+#' @param conn DBI connection. La connexion à la base de données Oracle.
+#' @return Retourne `output_table_name` de manière invisible si toutes les
+#'   vérifications sont satisfaites. Sinon, la fonction lève une erreur avec
+#'   un message explicatif.
+#'
+#' @examples
+#' \dontrun{
+#' conn <- connect_duckdb()
+#' check_output_table_name("MA_TABLE", conn)  # OK
+#' check_output_table_name("ma_table", conn)  # Erreur : doit être en majuscules
+#' }
+#' @export
+#' @family utils
+check_output_table_name <- function(output_table_name, conn) {
+  if (!is.character(output_table_name)) {
+    stop(
+      "`output_table_name` doit être une chaîne de charactère (character). ",
+      "Valeur reçue : ",
+      class(output_table_name),
+      "."
+    )
+  }
+  if (output_table_name != toupper(output_table_name)) {
+    stop(
+      "`output_table_name` doit être entièrement en majuscules. ",
+      "Oracle stocke les noms de tables en majuscules : un nom en minuscules ",
+      "empêche la détetion d'une table existante et provoque une erreur ",
+      "lors de la création. Valeur reçue : '",
+      output_table_name,
+      "'. ",
+      "Suggestion : '",
+      toupper(output_table_name),
+      "'."
+    )
+  }
+  if (DBI::dbExistsTable(conn, output_table_name)) {
+    stop(
+      "La table '",
+      output_table_name,
+      "' existe dans la base de données. ",
+      "Veuillez choisir un autre nom ou supprimer la table existante."
+    )
+  }
+  invisible(output_table_name)
+}
 
 #' Récupération de l'année non archivée la plus ancienne de la table ER_PRS_F.
 #' @param conn Connexion à la base de données

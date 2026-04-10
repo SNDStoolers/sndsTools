@@ -134,8 +134,7 @@ retrieve_psa <- function(
     DBI::dbWriteTable(
       conn,
       output_table_name,
-      idt_psa |> dplyr::collect(),
-      overwrite = TRUE
+      idt_psa |> dplyr::collect()
     )
     message(glue::glue("Results saved to table {output_table_name} in Oracle."))
     if (connection_opened) DBI::dbDisconnect(conn)

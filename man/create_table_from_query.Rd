@@ -19,7 +19,7 @@ create_table_from_query(
 \item{query}{Requête SQL}
 
 \item{overwrite}{Logical. Indique si la table \code{output_table_name}
-doit être écrasée dans le cas où elle existe déjà.}
+doit être écrasée dans le cas où elle existe déjà. Défaut à FALSE.}
 }
 \description{
 Création d'une table à partir d'une requête SQL.
@@ -31,6 +31,7 @@ le paramètre \code{overwrite} est TRUE.
 }
 \seealso{
 Other utils: 
+\code{\link{check_output_table_name}()},
 \code{\link{connect_duckdb}()},
 \code{\link{connect_oracle}()},
 \code{\link{constants_snds_tools}()},

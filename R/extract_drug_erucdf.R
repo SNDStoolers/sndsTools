@@ -91,10 +91,7 @@ extract_drug_erucdf <- function(
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
   if (!is.null(output_table_name)) {
     output_table_name_is_temp <- FALSE
-    stopifnot(
-      is.character(output_table_name),
-      !DBI::dbExistsTable(conn, toupper(output_table_name))
-    )
+    check_output_table_name(output_table_name, conn)
   } else {
     output_table_name_is_temp <- TRUE
     output_table_name <- glue::glue("TMP_DISP_{timestamp}")

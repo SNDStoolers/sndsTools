@@ -15,6 +15,7 @@ portail, il faut initier une connexion duckdb pour effectuer les tests.
 }
 \seealso{
 Other utils: 
+\code{\link{check_output_table_name}()},
 \code{\link{connect_oracle}()},
 \code{\link{constants_snds_tools}()},
 \code{\link{create_table_from_query}()},
