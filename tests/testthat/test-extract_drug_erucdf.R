@@ -102,12 +102,12 @@ test_that("extract_drug_erucdf respects UCD filter", {
     start_date = start_date,
     end_date = end_date,
     ucd_codes_filter = c("9231824"),
-    output_table_name = "result_with_filter",
+    output_table_name = "RESULT_WITH_FILTER",
     dis_dtd_lag_months = 1,
     conn = conn
   )
 
-  result_data_with_filter <- dplyr::tbl(conn, "result_with_filter") |>
+  result_data_with_filter <- dplyr::tbl(conn, "RESULT_WITH_FILTER") |>
     dplyr::collect()
 
   # test structure of the result

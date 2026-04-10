@@ -17,6 +17,7 @@ Récupération de l'année non archivée la plus ancienne de la table ER_PRS_F.
 }
 \seealso{
 Other utils: 
+\code{\link{check_output_table_name}()},
 \code{\link{connect_duckdb}()},
 \code{\link{connect_oracle}()},
 \code{\link{constants_snds_tools}()},

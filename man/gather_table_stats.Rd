@@ -19,6 +19,7 @@ https://docs.oracle.com/en/database/oracle/oracle-database/19/arpls/DBMS_STATS.h
 }
 \seealso{
 Other utils: 
+\code{\link{check_output_table_name}()},
 \code{\link{connect_duckdb}()},
 \code{\link{connect_oracle}()},
 \code{\link{constants_snds_tools}()},
