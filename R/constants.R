@@ -8,3 +8,10 @@ constants_snds_tools <- function() {
   constants$is_portail <- dir.exists("~/sasdata1")
   constants
 }
+
+
+SNDS_CACHE_DIR <- "~/.cache/sndsTools"
+FNAME_SYNTHETIC_SNDS <- file.path(
+  SNDS_CACHE_DIR,
+  "synthetic_snds.duckdb"
+)
