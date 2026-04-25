@@ -87,11 +87,11 @@ fake_er_ete_f <- data.frame(
 ) |>
   cbind(fake_dcir_join_keys)
 
-conn <- connect_duckdb()
-on.exit(DBI::dbDisconnect(conn))
-DBI::dbWriteTable(conn, "ER_PRS_F", fake_er_prs_f)
-DBI::dbWriteTable(conn, "ER_UCD_F", fake_er_ucd_f)
-DBI::dbWriteTable(conn, "ER_ETE_F", fake_er_ete_f)
+conn <- connect_duckdb(PATH2TEST_DB)
+on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
+DBI::dbWriteTable(conn, "ER_PRS_F", fake_er_prs_f, overwrite = TRUE)
+DBI::dbWriteTable(conn, "ER_UCD_F", fake_er_ucd_f, overwrite = TRUE)
+DBI::dbWriteTable(conn, "ER_ETE_F", fake_er_ete_f, overwrite = TRUE)
 
 test_that("extract_drug_erucdf respects UCD filter", {
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")

@@ -1,7 +1,8 @@
 require(dplyr)
 
 test_that("extract_long_term_disease works", {
-  conn <- connect_duckdb()
+  conn <- connect_duckdb(PATH2TEST_DB)
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   fake_patients_ids <- data.frame(
     BEN_IDT_ANO = c(1, 2, 3),
@@ -31,7 +32,7 @@ test_that("extract_long_term_disease works", {
     MED_MTF_COD = c("I50", "I65", "I65", "I60", "I60"),
     IMB_ETM_NAT = c("01", "01", "01", "01", "11")
   )
-  DBI::dbWriteTable(conn, "IR_IMB_R", fake_ald)
+  DBI::dbWriteTable(conn, "IR_IMB_R", fake_ald, overwrite = TRUE)
 
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
@@ -43,8 +44,6 @@ test_that("extract_long_term_disease works", {
     patients_ids = fake_patients_ids,
     conn = conn
   )
-
-  DBI::dbDisconnect(conn)
 
   expect_equal(
     ald |> dplyr::arrange(BEN_IDT_ANO, IMB_ALD_DTD),

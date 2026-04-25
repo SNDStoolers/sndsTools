@@ -50,15 +50,15 @@ create_mock_hospital_stays <- function(conn) {
     RSA_NUM = c(1, 1, 2, 3)
   )
 
-  DBI::dbWriteTable(conn, "T_MCO19B", fake_b_table)
-  DBI::dbWriteTable(conn, "T_MCO19C", fake_c_table)
-  DBI::dbWriteTable(conn, "T_MCO19D", fake_d_table)
-  DBI::dbWriteTable(conn, "T_MCO19UM", fake_um_table)
+  DBI::dbWriteTable(conn, "T_MCO19B", fake_b_table, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "T_MCO19C", fake_c_table, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "T_MCO19D", fake_d_table, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "T_MCO19UM", fake_um_table, overwrite = TRUE)
 }
 
 test_that("extract_hospital_stays works", {
-  conn <- connect_duckdb()
-  on.exit(DBI::dbDisconnect(conn))
+  conn <- connect_duckdb(PATH2TEST_DB)
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   create_mock_hospital_stays(conn)
   # parameters
@@ -117,8 +117,8 @@ test_that("extract_hospital_stays works", {
 })
 
 test_that("extract_hospital_stays works without any filters", {
-  conn <- connect_duckdb()
-  on.exit(DBI::dbDisconnect(conn))
+  conn <- connect_duckdb(PATH2TEST_DB)
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   create_mock_hospital_stays(conn)
   patients_ids_filter <- patients_ids_filter <- data.frame(

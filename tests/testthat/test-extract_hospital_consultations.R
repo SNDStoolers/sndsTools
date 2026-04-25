@@ -1,7 +1,8 @@
 require(dplyr)
 
 test_that("extract_hospital_consultations works", {
-  conn <- connect_duckdb()
+  conn <- connect_duckdb(PATH2TEST_DB)
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   patients_ids_filter <- data.frame(
     BEN_IDT_ANO = c(1, 2, 3),
@@ -35,9 +36,9 @@ test_that("extract_hospital_consultations works", {
     CCAM_COD = c("ACQK001", "ACQH003", "ACQK002")
   )
 
-  DBI::dbWriteTable(conn, "T_MCO19CSTC", fake_cstc_table)
-  DBI::dbWriteTable(conn, "T_MCO19FCSTC", fake_fcstc_table)
-  DBI::dbWriteTable(conn, "T_MCO19FMSTC", fake_fmstc_table)
+  DBI::dbWriteTable(conn, "T_MCO19CSTC", fake_cstc_table, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "T_MCO19FCSTC", fake_fcstc_table, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "T_MCO19FMSTC", fake_fmstc_table, overwrite = TRUE)
 
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
@@ -51,7 +52,6 @@ test_that("extract_hospital_consultations works", {
     conn = conn
   )
 
-  DBI::dbDisconnect(conn)
   expect_equal(
     consultations |> arrange(BEN_IDT_ANO, EXE_SOI_DTD),
     structure(
@@ -82,7 +82,8 @@ test_that("extract_hospital_consultations works", {
 })
 
 test_that("extract_hospital_consultations works with multiple filters", {
-  conn <- connect_duckdb()
+  conn <- connect_duckdb(PATH2TEST_DB)
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   patients_ids_filter <- data.frame(
     BEN_IDT_ANO = c(1, 2, 3, 4),
@@ -117,9 +118,9 @@ test_that("extract_hospital_consultations works with multiple filters", {
     CCAM_COD = c("ACQK001", "ACQH003", "ACQK002")
   )
 
-  DBI::dbWriteTable(conn, "T_MCO19CSTC", fake_cstc_table)
-  DBI::dbWriteTable(conn, "T_MCO19FCSTC", fake_fcstc_table)
-  DBI::dbWriteTable(conn, "T_MCO19FMSTC", fake_fmstc_table)
+  DBI::dbWriteTable(conn, "T_MCO19CSTC", fake_cstc_table, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "T_MCO19FCSTC", fake_fcstc_table, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "T_MCO19FMSTC", fake_fmstc_table, overwrite = TRUE)
 
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
@@ -138,7 +139,6 @@ test_that("extract_hospital_consultations works with multiple filters", {
     conn = conn
   )
 
-  DBI::dbDisconnect(conn)
   expect_equal(
     consultations |> arrange(BEN_IDT_ANO, EXE_SOI_DTD),
     structure(

@@ -12,7 +12,11 @@ Imports:
     lubridate,
     progress,
     logger,
-    here
+    here,
+    duckdb (>= 1.0.0.2),
+    openxlsx,
+    knitr,
+    readr
 Authors@R: c(
     person(
         "Antoine", "Belloir", ,
@@ -41,10 +45,8 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Suggests:
-    knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    duckdb (>= 1.0.0.2),
     styler,
     lintr,
     ggplot2
