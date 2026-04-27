@@ -47,3 +47,77 @@ Puis pour charger le paquet :
 ``` r
 library(sndsTools)
 ```
+
+### Utilisation
+
+Pour les besoins de formation, développement et test, le paquet
+`sndsTools` inclut une fonction `connect_synthetic_snds()` qui
+télécharge des données synthétiques du SNDS, les charge dans une base de
+données DuckDB et retourne une connexion à cette base. Ces données
+synthétiques sont basées sur le schéma SNDS 2019 et contiennent des
+informations pour 50 patients fictifs.
+
+NB: le premier appel de `connect_synthetic_snds()` peut prendre
+plusieurs secondes, car il télécharge et traite les données. Les appels
+suivants seront plus rapides, car les données seront mises en cache
+localement.
+
+``` r
+library(sndsTools)
+# Télécharger les données synthétiques du SNDS et les charger dans une base DuckDB. On se limite à la table ER_PRS_F pour gagner du temps.
+conn <- connect_synthetic_snds(
+  subset_tables = c(
+    "ER_PRS_F"
+  ),
+  force_insert = TRUE
+)
+#> INFO [2026-04-27 11:39:51] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
+#> INFO [2026-04-27 11:40:05] All files downloaded and extracted to: /home/runner/.cache/sndsTools
+#> Warning: The following named parsers don't match the column names: AMC_ECL_TOP,
+#> BEN_C2S_TYP, PCB_FOR_AMC, PEN_TYP_COD, PRE_JOU_NBR, PRS_DRA_DTD, PRS_FAC_TOP,
+#> PRS_TYP_MIN, PRS_ZON_FIL, PSE_PPS_CLE, PSE_PPS_NUM
+#> Warning: One or more parsing issues, call `problems()` on your data frame for details,
+#> e.g.:
+#>   dat <- vroom(...)
+#>   problems(dat)
+#> INFO [2026-04-27 11:40:06] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
+# Afficher les tables disponibles dans la base DuckDB
+DBI::dbListTables(conn)
+#> [1] "ER_PRS_F"      "user_synonyms"
+```
+
+#### Exemple basique d’extraction de données
+
+Extraction des consultations de chirurgie vasculaire :
+
+``` r
+library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
+
+consultations_df <- extract_consultations_erprsf(
+  conn = conn,
+  start_date = as.Date("2011-01-01"),
+  end_date = as.Date("2019-12-31"),
+  pse_spe_filter = c(48)
+)
+#> Extracting consultations
+#> from all specialties among
+#> 48...
+consultations_df |> knitr::kable()
+```
+
+| BEN_NIR_PSA       | EXE_SOI_DTD | PSE_SPE_COD | PFS_EXE_NUM | PRS_NAT_REF | PRS_ACT_QTE | BEN_RNG_GEM |
+|:------------------|:------------|------------:|:------------|------------:|------------:|------------:|
+| PEyUrNJzINkmgxwUz | 2019-12-23  |          48 | HKcvLcRye   |        2132 |           1 |           3 |
+
+``` r
+
+conn |> DBI::dbDisconnect() # Ne pas oublier de fermer la connexion à la base de données une fois que vous avez fini de l'utiliser
+```

@@ -66,3 +66,7 @@ Fonctions utilitaires pour manipuler les données extraites.
 
 - [`retrieve_psa()`](retrieve_psa.md) : Generic function retrieving
   patient identifiers
+
+## Fonctions de développement
+
+Fonctions utilisées pour le développement du package.
