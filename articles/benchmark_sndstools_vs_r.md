@@ -17,10 +17,9 @@ date_fin = "2023-01-14"
 - `sndsTools`
 - R classique
 
-On appelle la fonction
-[`extract_drug_dispenses()`](../reference/extract_drug_dispenses.md) en
-indiquant la date de début de la période d’intérêt, la date de fin, et
-l’ATC qui nous intéresse.
+On appelle la fonction `extract_drug_dispenses()` en indiquant la date
+de début de la période d’intérêt, la date de fin, et l’ATC qui nous
+intéresse.
 
 ``` r
 source(here::here("sndsTools.R"))

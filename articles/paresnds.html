@@ -153,8 +153,8 @@ cache localement.</p>
 <span>  <span class="op">)</span>,</span>
 <span>  force_insert <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO [2026-04-27 12:24:10] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb</span></span>
-<span><span class="co">#&gt; INFO [2026-04-27 12:24:24] All files downloaded and extracted to: /home/runner/.cache/sndsTools</span></span>
+<span><span class="co">#&gt; INFO [2026-04-27 15:24:32] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb</span></span>
+<span><span class="co">#&gt; INFO [2026-04-27 15:24:48] All files downloaded and extracted to: /home/runner/.cache/sndsTools</span></span>
 <span><span class="co">#&gt; Warning: The following named parsers don't match the column names: AMC_ECL_TOP,</span></span>
 <span><span class="co">#&gt; BEN_C2S_TYP, PCB_FOR_AMC, PEN_TYP_COD, PRE_JOU_NBR, PRS_DRA_DTD, PRS_FAC_TOP,</span></span>
 <span><span class="co">#&gt; PRS_TYP_MIN, PRS_ZON_FIL, PSE_PPS_CLE, PSE_PPS_NUM</span></span>
@@ -162,7 +162,7 @@ cache localement.</p>
 <span><span class="co">#&gt; e.g.:</span></span>
 <span><span class="co">#&gt;   dat &lt;- vroom(...)</span></span>
 <span><span class="co">#&gt;   problems(dat)</span></span>
-<span><span class="co">#&gt; INFO [2026-04-27 12:24:25] Successfully loaded 2 tables: ER_PRS_F, user_synonyms</span></span>
+<span><span class="co">#&gt; INFO [2026-04-27 15:24:49] Successfully loaded 2 tables: ER_PRS_F, user_synonyms</span></span>
 <span><span class="co"># Afficher les tables disponibles dans la base DuckDB</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ER_PRS_F"      "user_synonyms"</span></span></code></pre></div>
@@ -181,7 +181,7 @@ cache localement.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
 <span></span>
-<span><span class="va">consultations_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_consultations_erprsf.html">extract_consultations_erprsf</a></span><span class="op">(</span></span>
+<span><span class="va">consultations_df</span> <span class="op">&lt;-</span> <span class="fu">extract_consultations_erprsf</span><span class="op">(</span></span>
 <span>  conn <span class="op">=</span> <span class="va">conn</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2011-01-01"</span><span class="op">)</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-12-31"</span><span class="op">)</span>,</span>

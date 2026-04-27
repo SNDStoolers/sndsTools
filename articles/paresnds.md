@@ -71,8 +71,8 @@ conn <- connect_synthetic_snds(
   ),
   force_insert = TRUE
 )
-#> INFO [2026-04-27 12:24:10] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
-#> INFO [2026-04-27 12:24:24] All files downloaded and extracted to: /home/runner/.cache/sndsTools
+#> INFO [2026-04-27 15:24:32] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
+#> INFO [2026-04-27 15:24:48] All files downloaded and extracted to: /home/runner/.cache/sndsTools
 #> Warning: The following named parsers don't match the column names: AMC_ECL_TOP,
 #> BEN_C2S_TYP, PCB_FOR_AMC, PEN_TYP_COD, PRE_JOU_NBR, PRS_DRA_DTD, PRS_FAC_TOP,
 #> PRS_TYP_MIN, PRS_ZON_FIL, PSE_PPS_CLE, PSE_PPS_NUM
@@ -80,7 +80,7 @@ conn <- connect_synthetic_snds(
 #> e.g.:
 #>   dat <- vroom(...)
 #>   problems(dat)
-#> INFO [2026-04-27 12:24:25] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
+#> INFO [2026-04-27 15:24:49] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
 # Afficher les tables disponibles dans la base DuckDB
 DBI::dbListTables(conn)
 #> [1] "ER_PRS_F"      "user_synonyms"
