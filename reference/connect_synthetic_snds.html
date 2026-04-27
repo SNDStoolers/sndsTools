@@ -71,13 +71,26 @@ fichiers CSV et les charge dans une base DuckDB locale.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-force-download">force_download<a class="anchor" aria-label="anchor" href="#arg-force-download"></a></dt>
+<dl><dt id="arg-force-insert">force_insert<a class="anchor" aria-label="anchor" href="#arg-force-insert"></a></dt>
+<dd><p>Logical. Si TRUE, force la réinsertion des données même
+si la base existe déjà (FALSE par défaut). Si FALSE et que la base existe,
+la fonction retourne la connexion à la base existante sans réinsertion.</p></dd>
+
+
+<dt id="arg-force-download">force_download<a class="anchor" aria-label="anchor" href="#arg-force-download"></a></dt>
 <dd><p>Logical. Si TRUE, retélécharge tous les fichiers même
 si la base existe déjà (FALSE par défaut). Si FALSE et que la base existe,
 la fonction retourne le chemin de la base existante sans retéléchargement.</p></dd>
 
 
-<dt id="arg-db-path">db_path<a class="anchor" aria-label="anchor" href="#arg-db-path"></a></dt>
+<dt id="arg-subset-tables">subset_tables<a class="anchor" aria-label="anchor" href="#arg-subset-tables"></a></dt>
+<dd><p>Character vector. Si non NULL, ne charge que les tables
+dont le nom contient une des chaînes de ce vecteur. Par exemple,
+<code>subset_tables = c("T_MCO", "T_RIM")</code>. Par défaut, toutes les tables sont
+chargées.</p></dd>
+
+
+<dt id="arg-path-b">path2b<a class="anchor" aria-label="anchor" href="#arg-path-b"></a></dt>
 <dd><p>Character. Chemin vers le fichier de la base DuckDB à créer.
 La valeur par défaut est <code>./synthetic_snds.duckdb</code> dans le répertoire de
 travail courant.</p></dd>
@@ -91,8 +104,7 @@ travail courant.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Cette fonction télécharge 9 fichiers zip contenant des données
 synthétiques pour 50 patients fictifs basés sur le schéma SNDS 2019. Les
-fichiers sont produits par Health Data Hub et hébergés sur data.gouv.fr.
-#'</p>
+fichiers sont produits par Health Data Hub et hébergés sur data.gouv.fr.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
