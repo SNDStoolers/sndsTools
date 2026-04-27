@@ -32,6 +32,12 @@
 <li class="active nav-item"><a class="nav-link" href="../articles/sndsTools.html">Prise en main</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutoriels" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutoriels</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutoriels">
+<li><a class="dropdown-item" href="../articles/tutoriel_avc.html">Tutoriel AVC</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-comparaisons" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Comparaisons</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-comparaisons">
 <li><a class="dropdown-item" href="../articles/benchmark_dplyr_vs_rsql.html">Comparaison dplyr vs RSQL</a></li>
@@ -126,12 +132,12 @@ paquet.</p>
 </h3>
 <p>Pour les besoins de formation, développement et test, le paquet
 <code>sndsTools</code> inclut une fonction
-<code>connect_synthetic_snds()</code> qui télécharge des données
+<code><a href="../reference/connect_synthetic_snds.html">connect_synthetic_snds()</a></code> qui télécharge des données
 synthétiques du SNDS, les charge dans une base de données DuckDB et
 retourne une connexion à cette base.</p>
 <p>Ces données synthétiques sont basées sur le schéma SNDS 2019 et
 contiennent des informations pour 50 patients fictifs.</p>
-<p>NB: le premier appel de <code>connect_synthetic_snds()</code> peut
+<p>NB: le premier appel de <code><a href="../reference/connect_synthetic_snds.html">connect_synthetic_snds()</a></code> peut
 prendre plusieurs secondes, car il télécharge et traite les données. Les
 appels suivants seront plus rapides, car les données seront mises en
 cache localement.</p>
@@ -139,15 +145,15 @@ cache localement.</p>
 <code class="sourceCode R"><span><span class="co"># Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.</span></span>
 <span><span class="co"># On se limite à la table ER_PRS_F pour gagner du temps.</span></span>
 <span><span class="co"># Pour avoir toute la base synthétique, enlever l'argument subset_tables ou le mettre à NULL.</span></span>
-<span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu">connect_synthetic_snds</span><span class="op">(</span></span>
+<span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect_synthetic_snds.html">connect_synthetic_snds</a></span><span class="op">(</span></span>
 <span>  subset_tables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>    <span class="st">"ER_PRS_F"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  force_insert <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO [2026-04-27 16:20:51] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb</span></span>
-<span><span class="co">#&gt; INFO [2026-04-27 16:21:04] All files downloaded and extracted to: /home/runner/.cache/sndsTools</span></span>
-<span><span class="co">#&gt; INFO [2026-04-27 16:21:06] Successfully loaded 2 tables: ER_PRS_F, user_synonyms</span></span>
+<span><span class="co">#&gt; INFO [2026-04-27 16:49:54] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb</span></span>
+<span><span class="co">#&gt; INFO [2026-04-27 16:50:14] All files downloaded and extracted to: /home/runner/.cache/sndsTools</span></span>
+<span><span class="co">#&gt; INFO [2026-04-27 16:50:16] Successfully loaded 2 tables: ER_PRS_F, user_synonyms</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ER_PRS_F"      "user_synonyms"</span></span></code></pre></div>
 <div class="section level4">
@@ -155,7 +161,7 @@ cache localement.</p>
 vasculaire)<a class="anchor" aria-label="anchor" href="#exemple-basique-dextraction-de-donn%C3%A9es-consultations-de-chirurgie-vasculaire"></a>
 </h4>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">consultations_df</span> <span class="op">&lt;-</span> <span class="fu">extract_consultations_erprsf</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">consultations_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_consultations_erprsf.html">extract_consultations_erprsf</a></span><span class="op">(</span></span>
 <span>  conn <span class="op">=</span> <span class="va">conn</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2011-01-01"</span><span class="op">)</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-12-31"</span><span class="op">)</span>,</span>

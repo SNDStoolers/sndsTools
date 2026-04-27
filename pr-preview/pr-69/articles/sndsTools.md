@@ -53,17 +53,19 @@ library(sndsTools)
 ### Utilisation
 
 Pour les besoins de formation, développement et test, le paquet
-`sndsTools` inclut une fonction `connect_synthetic_snds()` qui
-télécharge des données synthétiques du SNDS, les charge dans une base de
-données DuckDB et retourne une connexion à cette base.
+`sndsTools` inclut une fonction
+[`connect_synthetic_snds()`](https://sndstoolers.github.io/sndsTools/reference/connect_synthetic_snds.md)
+qui télécharge des données synthétiques du SNDS, les charge dans une
+base de données DuckDB et retourne une connexion à cette base.
 
 Ces données synthétiques sont basées sur le schéma SNDS 2019 et
 contiennent des informations pour 50 patients fictifs.
 
-NB: le premier appel de `connect_synthetic_snds()` peut prendre
-plusieurs secondes, car il télécharge et traite les données. Les appels
-suivants seront plus rapides, car les données seront mises en cache
-localement.
+NB: le premier appel de
+[`connect_synthetic_snds()`](https://sndstoolers.github.io/sndsTools/reference/connect_synthetic_snds.md)
+peut prendre plusieurs secondes, car il télécharge et traite les
+données. Les appels suivants seront plus rapides, car les données seront
+mises en cache localement.
 
 ``` r
 # Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.
@@ -75,9 +77,9 @@ conn <- connect_synthetic_snds(
   ),
   force_insert = TRUE
 )
-#> INFO [2026-04-27 16:20:51] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
-#> INFO [2026-04-27 16:21:04] All files downloaded and extracted to: /home/runner/.cache/sndsTools
-#> INFO [2026-04-27 16:21:06] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
+#> INFO [2026-04-27 16:49:54] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
+#> INFO [2026-04-27 16:50:14] All files downloaded and extracted to: /home/runner/.cache/sndsTools
+#> INFO [2026-04-27 16:50:16] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
 DBI::dbListTables(conn)
 #> [1] "ER_PRS_F"      "user_synonyms"
 ```

@@ -21,19 +21,19 @@ Les objectifs de cette étude sont :
 
 1.  Identifier les patients avec une hospitalisation pour AVC en 2024
     (codes CIM-10 : I61, I62, I63, I64) via la fonction
-    `extract_hospital_stays()`
+    [`extract_hospital_stays()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_stays.md)
 
 2.  Récupérer leurs identifiants complets via
-    `retrieve_all_psa_from_psa()`
+    [`retrieve_all_psa_from_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_psa.md)
 
 3.  Extraire leurs consultations médicales en ville via
-    `extract_consultations_erprsf()`
+    [`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md)
 
 4.  Extraire leurs Affections de Longue Durée (ALD) via
-    `extract_long_term_disease()`
+    [`extract_long_term_disease()`](https://sndstoolers.github.io/sndsTools/reference/extract_long_term_disease.md)
 
 5.  Extraire leurs prescriptions médicamenteuses en ville via
-    `extract_drug_dispenses()`
+    [`extract_drug_dispenses()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_dispenses.md)
 
 6.  Nettoyer et fermer la connexion à la base de données
 
@@ -93,7 +93,8 @@ library(knitr)
 ### Étape 1 : Extraction des hospitalisations pour AVC
 
 Nous commençons par extraire les séjours hospitaliers avec un diagnostic
-principal d’AVC en utilisant la fonction `extract_hospital_stays()`.
+principal d’AVC en utilisant la fonction
+[`extract_hospital_stays()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_stays.md).
 
 Les [codes CIM-10 pour les
 AVC](https://fr.wikipedia.org/wiki/CIM-10_Chapitre_09_:_Maladies_de_l%27appareil_circulatoire)
@@ -135,11 +136,11 @@ kable(sejours_avc_head)
 
 | ETA_NUM | RSA_NUM | SEJ_NUM | SEJ_NBJ | NBR_DGN | NBR_RUM | NBR_ACT | ENT_MOD | ENT_PRV | SOR_MOD | SOR_DES | DGN_PAL | DGN_REL | GRG_GHM | BDI_DEP | BDI_COD | COD_SEX | AGE_ANN | AGE_JOU | NIR_ANO_17 | EXE_SOI_DTD | EXE_SOI_DTF | DGN_PAL_UM | DGN_REL_UM | ASS_DGN |
 |--------:|--------:|--------:|--------:|--------:|--------:|--------:|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|--------:|--------:|-----------:|:------------|:------------|:-----------|:-----------|:--------|
-|  190076 |       3 |       3 |      10 |       3 |       2 |       6 | 7       | 6       | 6       | 5       | I62     | NA      | 05K76   | 94      | 81924   | 2       |      45 |      36 |      10050 | 2024-06-22  | 2024-07-02  | I50        | I63        | NA      |
-|  190076 |       3 |       3 |      10 |       3 |       2 |       6 | 7       | 6       | 6       | 5       | I62     | NA      | 05K76   | 94      | 81924   | 2       |      45 |      36 |      10050 | 2024-06-22  | 2024-07-02  | I25        | NA         | NA      |
-|  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I20        | I64        | NA      |
-|  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I10        | I10        | NA      |
-|  468916 |       9 |       9 |       7 |       2 |       1 |      14 | 6       | 8       | 7       | 6       | I62     | I61     | 05K70   | 67      | 77373   | 1       |      83 |     199 |      10042 | 2024-11-26  | 2024-12-03  | I61        | NA         | NA      |
+|  153240 |       7 |       7 |      14 |       2 |       2 |      18 | 7       | 5       | 6       | 5       | I10     | I61     | 05C76   | 50      | 02175   | 2       |      61 |     206 |      10041 | 2024-04-29  | 2024-05-13  | I11        | I70        | NA      |
+|  153240 |       7 |       7 |      14 |       2 |       2 |      18 | 7       | 5       | 6       | 5       | I10     | I61     | 05C76   | 50      | 02175   | 2       |      61 |     206 |      10041 | 2024-04-29  | 2024-05-13  | I20        | NA         | NA      |
+|  807015 |      12 |      12 |       8 |       2 |       1 |       0 | 6       | 1       | 6       | 3       | I62     | NA      | 06C82   | 42      | 30384   | 2       |      33 |     102 |      10089 | 2024-03-27  | 2024-04-04  | I11        | I70        | NA      |
+|  807015 |      12 |      12 |       8 |       2 |       1 |       0 | 6       | 1       | 6       | 3       | I62     | NA      | 06C82   | 42      | 30384   | 2       |      33 |     102 |      10089 | 2024-03-27  | 2024-04-04  | I64        | NA         | NA      |
+|  143041 |      16 |      16 |      15 |       3 |       2 |      10 | 6       | 5       | 6       | 1       | I63     | I48     | 06M50   | 13      | 16315   | 1       |      78 |     138 |      10071 | 2024-06-13  | 2024-06-28  | I10        | I12        | NA      |
 
 ``` r
 
@@ -164,7 +165,7 @@ kable(avc_par_type)
 [récupérant leurs identifiants uniques
 `BEN_NIR_ANO`](https://documentation-snds.health-data-hub.fr/snds/fiches/fiche_beneficiaire.html)
 dans le référentiel des bénéficiaires en utilisant
-`retrieve_all_psa_from_psa()`.
+[`retrieve_all_psa_from_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_psa.md).
 
 ``` r
 # Créer une table temporaire des pseudo-NIR des patients avec AVC
@@ -205,7 +206,8 @@ paste("Nombre de patients uniques avec AVC :", nrow(patients_avc_qualite))
 ### Étape 3 : Extraction des consultations médicales
 
 Nous extrayons toutes les consultations médicales en ville de ces
-patients en utilisant `extract_consultations_erprsf()`.
+patients en utilisant
+[`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md).
 
 ``` r
 # Extraire toutes les consultations des patients avec AVC
@@ -260,7 +262,7 @@ consultations_par_patient <- dplyr::tbl(conn, "TMP_CONSULTATIONS_AVC") |>
 ### Étape 4 : Extraction des Affections de Longue Durée (ALD)
 
 Nous extrayons les ALD des patients avec AVC en utilisant
-`extract_long_term_disease()`.
+[`extract_long_term_disease()`](https://sndstoolers.github.io/sndsTools/reference/extract_long_term_disease.md).
 
 ``` r
 # Extraire les ALD des patients avec AVC
@@ -292,11 +294,11 @@ kable(ald_avc_head)
 
 | BEN_IDT_ANO | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
 |------------:|------------:|:------------|:------------|:------------|:------------|
-|          43 |           8 | 2023-11-02  | 2026-03-27  | 01          | I60         |
-|          95 |           8 | 2023-05-01  | 2026-02-08  | 03          | I13         |
+|          42 |           1 | 2023-06-08  | 2026-01-23  | 01          | I20         |
+|          87 |          12 | 2023-03-05  | 2025-12-14  | 02          | I25         |
+|          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
 |          72 |          12 | 2023-01-25  | 2024-04-24  | 02          | I70         |
 |          87 |           8 | 2023-06-07  | 2025-10-05  | 01          | I21         |
-|          42 |           1 | 2023-06-08  | 2026-01-23  | 01          | I20         |
 
 ``` r
 
@@ -312,9 +314,9 @@ kable(head(ald_resume, 5))
 | MED_MTF_COD |   n | pourcentage |
 |:------------|----:|------------:|
 | I60         |   1 |        14.3 |
+| I25         |   1 |        14.3 |
 | I70         |   1 |        14.3 |
 | I21         |   1 |        14.3 |
-| I25         |   1 |        14.3 |
 | I50         |   1 |        14.3 |
 
 ``` r
@@ -334,7 +336,8 @@ print(paste("Pourcentage de patients AVC avec une ALD :", pourcentage_ald, "%"))
 ### Étape 5 : Extraction des prescriptions médicamenteuses
 
 Nous extrayons les délivrances de médicaments des patients avec AVC en
-utilisant `extract_drug_dispenses()`.
+utilisant
+[`extract_drug_dispenses()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_dispenses.md).
 
 C’est la requête la plus longue sur le portail. Pour les 122 887
 patients hospitalisés pour AVC en 2024, elle tourne en 5 min environ.
@@ -397,9 +400,9 @@ kable(drugs_avc_head)
 | BEN_IDT_ANO | EXE_SOI_DTD | PHA_ACT_QSN | PHA_ATC_CLA | PHA_PRS_C13   | PSP_SPE_COD |
 |------------:|:------------|------------:|:------------|:--------------|:------------|
 |          95 | 2024-02-17  |           1 | C08CA01     | 3400936267343 | 22          |
-|          87 | 2024-07-16  |           1 | C08CA01     | 3400936267343 | 01          |
-|          36 | 2024-04-17  |           1 | C08CA01     | 3400936267343 | 02          |
 |          72 | 2024-03-12  |           1 | C02AC01     | 3400932026555 | 34          |
+|          36 | 2024-04-17  |           1 | C08CA01     | 3400936267343 | 02          |
+|          87 | 2024-07-16  |           1 | C08CA01     | 3400936267343 | 01          |
 |          36 | 2024-06-01  |           1 | C02AC01     | 3400932026555 | 22          |
 
 ``` r
