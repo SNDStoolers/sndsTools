@@ -94,24 +94,15 @@ bonnes pratiques pour utiliser ces données.</p>
 <p>Il est nécessaire de copier/coller le code source du paquet sur le
 portail CNAM. Pour cela, il faut suivre les étapes suivantes :</p>
 <ul>
-<li><ol style="list-style-type: decimal">
-<li>En local (sur votre ordinateur) : Télécharger <a href="https://github.com/SNDStoolers/sndsTools/releases" class="external-link">le fichier
+<li><p>En local (sur votre ordinateur) : Télécharger <a href="https://github.com/SNDStoolers/sndsTools/releases" class="external-link">le fichier
 <code>sndsTool.R</code> de la dernière release du paquet disponible sur
-github</a>. Celui-ci contient toutes les fonctions du paquet.</li>
-</ol></li>
-<li><ol start="2" style="list-style-type: decimal">
-<li>En local, ouvrir le fichier <code>sndsTool.R</code> et copier tout
-son contenu.</li>
-</ol></li>
-<li><ol start="3" style="list-style-type: decimal">
-<li>Sur le portail CNAM, coller le contenu de ce fichier dans un nouveau
-script R <code>sndsTools.R</code>.</li>
-</ol></li>
-<li><ol start="4" style="list-style-type: decimal">
-<li>Sur le portail CNAM, charger toutes les fonctions du paquet:
-<code>source("sndsTools.R")</code>
-</li>
-</ol></li>
+github</a>. Celui-ci contient toutes les fonctions du paquet.</p></li>
+<li><p>En local, ouvrir le fichier <code>sndsTool.R</code> et copier
+tout son contenu.</p></li>
+<li><p>Sur le portail CNAM, coller le contenu de ce fichier dans un
+nouveau script R <code>sndsTools.R</code>.</p></li>
+<li><p>Sur le portail CNAM, charger toutes les fonctions du paquet:
+<code>source("sndsTools.R")</code></p></li>
 </ul>
 <p>NB: La version la plus à jour de <code>sndsTools.R</code> (entre deux
 releases) est disponible comme artifact <a href="https://github.com/SNDStoolers/sndsTools/actions/workflows/concat-r-files.yaml" class="external-link">sur
@@ -137,51 +128,34 @@ paquet.</p>
 <code>sndsTools</code> inclut une fonction
 <code>connect_synthetic_snds()</code> qui télécharge des données
 synthétiques du SNDS, les charge dans une base de données DuckDB et
-retourne une connexion à cette base. Ces données synthétiques sont
-basées sur le schéma SNDS 2019 et contiennent des informations pour 50
-patients fictifs.</p>
+retourne une connexion à cette base.</p>
+<p>Ces données synthétiques sont basées sur le schéma SNDS 2019 et
+contiennent des informations pour 50 patients fictifs.</p>
 <p>NB: le premier appel de <code>connect_synthetic_snds()</code> peut
 prendre plusieurs secondes, car il télécharge et traite les données. Les
 appels suivants seront plus rapides, car les données seront mises en
 cache localement.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
-<span><span class="co"># Télécharger les données synthétiques du SNDS et les charger dans une base DuckDB. On se limite à la table ER_PRS_F pour gagner du temps.</span></span>
+<code class="sourceCode R"><span><span class="co"># Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.</span></span>
+<span><span class="co"># On se limite à la table ER_PRS_F pour gagner du temps.</span></span>
+<span><span class="co"># Pour avoir toute la base synthétique, enlever l'argument subset_tables ou le mettre à NULL.</span></span>
 <span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu">connect_synthetic_snds</span><span class="op">(</span></span>
 <span>  subset_tables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>    <span class="st">"ER_PRS_F"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  force_insert <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO [2026-04-27 15:24:32] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb</span></span>
-<span><span class="co">#&gt; INFO [2026-04-27 15:24:48] All files downloaded and extracted to: /home/runner/.cache/sndsTools</span></span>
-<span><span class="co">#&gt; Warning: The following named parsers don't match the column names: AMC_ECL_TOP,</span></span>
-<span><span class="co">#&gt; BEN_C2S_TYP, PCB_FOR_AMC, PEN_TYP_COD, PRE_JOU_NBR, PRS_DRA_DTD, PRS_FAC_TOP,</span></span>
-<span><span class="co">#&gt; PRS_TYP_MIN, PRS_ZON_FIL, PSE_PPS_CLE, PSE_PPS_NUM</span></span>
-<span><span class="co">#&gt; Warning: One or more parsing issues, call `problems()` on your data frame for details,</span></span>
-<span><span class="co">#&gt; e.g.:</span></span>
-<span><span class="co">#&gt;   dat &lt;- vroom(...)</span></span>
-<span><span class="co">#&gt;   problems(dat)</span></span>
-<span><span class="co">#&gt; INFO [2026-04-27 15:24:49] Successfully loaded 2 tables: ER_PRS_F, user_synonyms</span></span>
-<span><span class="co"># Afficher les tables disponibles dans la base DuckDB</span></span>
+<span><span class="co">#&gt; INFO [2026-04-27 15:37:41] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb</span></span>
+<span><span class="co">#&gt; INFO [2026-04-27 15:38:01] All files downloaded and extracted to: /home/runner/.cache/sndsTools</span></span>
+<span><span class="co">#&gt; INFO [2026-04-27 15:38:03] Successfully loaded 2 tables: ER_PRS_F, user_synonyms</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ER_PRS_F"      "user_synonyms"</span></span></code></pre></div>
 <div class="section level4">
-<h4 id="exemple-basique-dextraction-de-données">Exemple basique d’extraction de données<a class="anchor" aria-label="anchor" href="#exemple-basique-dextraction-de-donn%C3%A9es"></a>
+<h4 id="exemple-basique-dextraction-de-données-consultations-de-chirurgie-vasculaire">Exemple basique d’extraction de données (consultations de chirurgie
+vasculaire)<a class="anchor" aria-label="anchor" href="#exemple-basique-dextraction-de-donn%C3%A9es-consultations-de-chirurgie-vasculaire"></a>
 </h4>
-<p>Extraction des consultations de chirurgie vasculaire :</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter, lag</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
-<span></span>
-<span><span class="va">consultations_df</span> <span class="op">&lt;-</span> <span class="fu">extract_consultations_erprsf</span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">consultations_df</span> <span class="op">&lt;-</span> <span class="fu">extract_consultations_erprsf</span><span class="op">(</span></span>
 <span>  conn <span class="op">=</span> <span class="va">conn</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2011-01-01"</span><span class="op">)</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2019-12-31"</span><span class="op">)</span>,</span>
@@ -222,7 +196,8 @@ cache localement.</p>
 </table>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">conn</span> <span class="op">|&gt;</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Ne pas oublier de fermer la connexion à la base de données une fois que vous avez fini de l'utiliser</span></span></code></pre></div>
+<span><span class="co"># Fermer la connexion à la base de données en fin de programme</span></span>
+<span><span class="va">conn</span> <span class="op">|&gt;</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 </div>

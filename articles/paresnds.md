@@ -17,16 +17,18 @@ bonnes pratiques pour utiliser ces données.
 Il est nécessaire de copier/coller le code source du paquet sur le
 portail CNAM. Pour cela, il faut suivre les étapes suivantes :
 
-- 1.  En local (sur votre ordinateur) : Télécharger [le fichier
-      `sndsTool.R` de la dernière release du paquet disponible sur
-      github](https://github.com/SNDStoolers/sndsTools/releases).
-      Celui-ci contient toutes les fonctions du paquet.
-- 2.  En local, ouvrir le fichier `sndsTool.R` et copier tout son
-      contenu.
-- 3.  Sur le portail CNAM, coller le contenu de ce fichier dans un
-      nouveau script R `sndsTools.R`.
-- 4.  Sur le portail CNAM, charger toutes les fonctions du paquet:
-      `source("sndsTools.R")`
+- En local (sur votre ordinateur) : Télécharger [le fichier `sndsTool.R`
+  de la dernière release du paquet disponible sur
+  github](https://github.com/SNDStoolers/sndsTools/releases). Celui-ci
+  contient toutes les fonctions du paquet.
+
+- En local, ouvrir le fichier `sndsTool.R` et copier tout son contenu.
+
+- Sur le portail CNAM, coller le contenu de ce fichier dans un nouveau
+  script R `sndsTools.R`.
+
+- Sur le portail CNAM, charger toutes les fonctions du paquet:
+  `source("sndsTools.R")`
 
 NB: La version la plus à jour de `sndsTools.R` (entre deux releases) est
 disponible comme artifact [sur le dépôt GitHub sur la page de
@@ -53,9 +55,10 @@ library(sndsTools)
 Pour les besoins de formation, développement et test, le paquet
 `sndsTools` inclut une fonction `connect_synthetic_snds()` qui
 télécharge des données synthétiques du SNDS, les charge dans une base de
-données DuckDB et retourne une connexion à cette base. Ces données
-synthétiques sont basées sur le schéma SNDS 2019 et contiennent des
-informations pour 50 patients fictifs.
+données DuckDB et retourne une connexion à cette base.
+
+Ces données synthétiques sont basées sur le schéma SNDS 2019 et
+contiennent des informations pour 50 patients fictifs.
 
 NB: le premier appel de `connect_synthetic_snds()` peut prendre
 plusieurs secondes, car il télécharge et traite les données. Les appels
@@ -63,44 +66,25 @@ suivants seront plus rapides, car les données seront mises en cache
 localement.
 
 ``` r
-library(sndsTools)
-# Télécharger les données synthétiques du SNDS et les charger dans une base DuckDB. On se limite à la table ER_PRS_F pour gagner du temps.
+# Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.
+# On se limite à la table ER_PRS_F pour gagner du temps.
+# Pour avoir toute la base synthétique, enlever l'argument subset_tables ou le mettre à NULL.
 conn <- connect_synthetic_snds(
   subset_tables = c(
     "ER_PRS_F"
   ),
   force_insert = TRUE
 )
-#> INFO [2026-04-27 15:24:32] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
-#> INFO [2026-04-27 15:24:48] All files downloaded and extracted to: /home/runner/.cache/sndsTools
-#> Warning: The following named parsers don't match the column names: AMC_ECL_TOP,
-#> BEN_C2S_TYP, PCB_FOR_AMC, PEN_TYP_COD, PRE_JOU_NBR, PRS_DRA_DTD, PRS_FAC_TOP,
-#> PRS_TYP_MIN, PRS_ZON_FIL, PSE_PPS_CLE, PSE_PPS_NUM
-#> Warning: One or more parsing issues, call `problems()` on your data frame for details,
-#> e.g.:
-#>   dat <- vroom(...)
-#>   problems(dat)
-#> INFO [2026-04-27 15:24:49] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
-# Afficher les tables disponibles dans la base DuckDB
+#> INFO [2026-04-27 15:37:41] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
+#> INFO [2026-04-27 15:38:01] All files downloaded and extracted to: /home/runner/.cache/sndsTools
+#> INFO [2026-04-27 15:38:03] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
 DBI::dbListTables(conn)
 #> [1] "ER_PRS_F"      "user_synonyms"
 ```
 
-#### Exemple basique d’extraction de données
-
-Extraction des consultations de chirurgie vasculaire :
+#### Exemple basique d’extraction de données (consultations de chirurgie vasculaire)
 
 ``` r
-library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
-
 consultations_df <- extract_consultations_erprsf(
   conn = conn,
   start_date = as.Date("2011-01-01"),
@@ -119,5 +103,6 @@ consultations_df |> knitr::kable()
 
 ``` r
 
-conn |> DBI::dbDisconnect() # Ne pas oublier de fermer la connexion à la base de données une fois que vous avez fini de l'utiliser
+# Fermer la connexion à la base de données en fin de programme
+conn |> DBI::dbDisconnect()
 ```
