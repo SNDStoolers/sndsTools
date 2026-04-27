@@ -231,15 +231,29 @@ extract_drug_dispenses <- function(
     ir_pha_filtered_query <- ir_pha_filtered |>
       dplyr::filter(dbplyr::sql(drug_filter)) |>
       dbplyr::sql_render()
-  }
-  ir_pha_r_filtered_name <- glue::glue("TMP_IR_PHA_R_{timestamp}")
-  DBI::dbExecute(
-    conn,
-    glue::glue(
-      "CREATE TABLE {ir_pha_r_filtered_name} AS {ir_pha_filtered_query}"
+
+    ir_pha_filtered <- ir_pha_r |>
+      dplyr::select(
+        dplyr::all_of(ir_pha_needed_cols)
+      )
+    ir_pha_r_filtered_name <- glue::glue("TMP_IR_PHA_R_{timestamp}")
+    DBI::dbExecute(
+      conn,
+      glue::glue(
+        "CREATE TABLE {ir_pha_r_filtered_name} AS {ir_pha_filtered_query}"
+      )
     )
-  )
-  ir_pha_filtered_table <- dplyr::tbl(conn, ir_pha_r_filtered_name)
+    on.exit({
+      DBI::dbRemoveTable(conn, ir_pha_r_filtered_name)
+    })
+    ir_pha_filtered_table <- dplyr::tbl(conn, ir_pha_r_filtered_name)
+  } else {
+    # wwe still need PHA_ATC_CLA for the final extraction
+    ir_pha_filtered_table <- ir_pha_r |>
+      dplyr::select(
+        dplyr::all_of(ir_pha_needed_cols)
+      )
+  }
 
   pb <- progress::progress_bar$new(
     format = "Extracting :year1 (going from :year2 to :year3) [:bar] :percent in :elapsed (eta: :eta)", # nolint
@@ -270,7 +284,9 @@ extract_drug_dispenses <- function(
       if (month == 12) {
         dis_dtd_end <- glue::glue("DATE '{year + 1}-01-01'")
       } else {
-        dis_dtd_end <- glue::glue("DATE '{year}-{sprintf('%02d', month + 1)}-01'") # nolint
+        dis_dtd_end <- glue::glue(
+          "DATE '{year}-{sprintf('%02d', month + 1)}-01'"
+        ) # nolint
       }
 
       dis_dtd_condition <- glue::glue(
@@ -312,18 +328,20 @@ extract_drug_dispenses <- function(
           "PRS_ORD_NUM",
           "REM_TYP_AFF"
         )
+
         ir_pha_cols_not_in_er_pha <- setdiff(
           colnames(ir_pha_filtered_table),
           colnames(er_pha_f)
         )
-
         query <- er_prs_f |>
           dplyr::inner_join(er_pha_f, by = dcir_join_keys) |>
           dplyr::inner_join(
             ir_pha_filtered_table |>
               dplyr::select(dplyr::all_of(ir_pha_cols_not_in_er_pha)),
             by = c("PHA_PRS_C13" = "PHA_CIP_C13")
-          ) |>
+          )
+
+        query <- query |>
           dplyr::left_join(er_ete_f, by = dcir_join_keys) |>
           dplyr::filter(
             dbplyr::sql(soi_dtd_condition),
@@ -383,8 +401,6 @@ extract_drug_dispenses <- function(
       }
     }
   }
-
-  DBI::dbRemoveTable(conn, ir_pha_r_filtered_name)
 
   if (!is.null(patients_ids_filter)) {
     DBI::dbRemoveTable(conn, patients_ids_table_name)
