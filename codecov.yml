@@ -1,2 +1,2 @@
 ignore:
-   - "R/mock.R"
+   - "R/synthetic_data_avc.R"
