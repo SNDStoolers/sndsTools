@@ -136,11 +136,11 @@ c'est-à-dire pour dis_dtd_lag_months = 6.
 ## See also
 
 Other extract:
-[`extract_consultations_erprsf()`](extract_consultations_erprsf.md),
-[`extract_drug_erucdf()`](extract_drug_erucdf.md),
-[`extract_hospital_consultations()`](extract_hospital_consultations.md),
-[`extract_hospital_stays()`](extract_hospital_stays.md),
-[`extract_long_term_disease()`](extract_long_term_disease.md)
+[`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md),
+[`extract_drug_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_erucdf.md),
+[`extract_hospital_consultations()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_consultations.md),
+[`extract_hospital_stays()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_stays.md),
+[`extract_long_term_disease()`](https://sndstoolers.github.io/sndsTools/reference/extract_long_term_disease.md)
 
 ## Examples
 

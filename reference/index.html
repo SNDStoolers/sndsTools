@@ -15,8 +15,12 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/paresnds.html">Prise en main</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/sndsTools.html">Prise en main</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutoriels" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutoriels</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutoriels"><li><a class="dropdown-item" href="../articles/tutoriel_avc.html">Tutoriel AVC</a></li>
+  </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-comparaisons" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Comparaisons</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-comparaisons"><li><a class="dropdown-item" href="../articles/benchmark_dplyr_vs_rsql.html">Comparaison dplyr vs RSQL</a></li>
@@ -51,7 +55,48 @@
 
 
 
-      <dl></dl></div><div class="section level2">
+      <dl><dt>
+
+          <code><a href="extract_consultations_erprsf.html">extract_consultations_erprsf()</a></code>
+
+        </dt>
+        <dd>Extraction des consultations dans le DCIR.</dd>
+
+        <dt>
+
+          <code><a href="extract_drug_dispenses.html">extract_drug_dispenses()</a></code>
+
+        </dt>
+        <dd>Extraction des délivrances de médicaments.</dd>
+
+        <dt>
+
+          <code><a href="extract_drug_erucdf.html">extract_drug_erucdf()</a></code>
+
+        </dt>
+        <dd>Extrait les dispensations de médicaments en accès précoces depuis le DCIR.</dd>
+
+        <dt>
+
+          <code><a href="extract_hospital_consultations.html">extract_hospital_consultations()</a></code>
+
+        </dt>
+        <dd>Extraction des consultations externes à l'hôpital (MCO).</dd>
+
+        <dt>
+
+          <code><a href="extract_hospital_stays.html">extract_hospital_stays()</a></code>
+
+        </dt>
+        <dd>Extraction des diagnostics des séjours hospitaliers (MCO).</dd>
+
+        <dt>
+
+          <code><a href="extract_long_term_disease.html">extract_long_term_disease()</a></code>
+
+        </dt>
+        <dd>Extraction des Affections Longue Durée (ALD)</dd>
+      </dl></div><div class="section level2">
       <h2 id="extraction-snds-en-sql">Extraction SNDS en SQL<a class="anchor" aria-label="anchor" href="#extraction-snds-en-sql"></a></h2>
 
       <div class="section-desc"><p>Fonctions pour extraire les données de soins individuelles à partir du SNDS en pur SQL.</p></div>
@@ -61,7 +106,13 @@
 
 
 
-      <dl></dl></div><div class="section level2">
+      <dl><dt>
+
+          <code><a href="sql_extract_drug_dispenses.html">sql_extract_drug_dispenses()</a></code>
+
+        </dt>
+        <dd>Extraction des délivrances de médicaments à partir de SQL injecté dans du R (modèle dbExecute de Thomas Soeiro).</dd>
+      </dl></div><div class="section level2">
       <h2 id="utilitaires">Utilitaires<a class="anchor" aria-label="anchor" href="#utilitaires"></a></h2>
 
       <div class="section-desc"><p>Fonctions utilitaires pour manipuler les données extraites.</p></div>
@@ -71,17 +122,162 @@
 
 
 
+      <dl><dt>
+
+          <code><a href="IS_PORTAIL.html">IS_PORTAIL</a></code>
+
+        </dt>
+        <dd>Est-ce que le code tourne sur le portail de la CNAM ?</dd>
+
+        <dt>
+
+          <code><a href="check_output_table_name.html">check_output_table_name()</a></code>
+
+        </dt>
+        <dd>Vérifie la validité du nom de la table de sortie Oracle.</dd>
+
+        <dt>
+
+          <code><a href="connect_duckdb.html">connect_duckdb()</a></code>
+
+        </dt>
+        <dd>Initialisation de la connexion à la base de données duckdb.</dd>
+
+        <dt>
+
+          <code><a href="connect_oracle.html">connect_oracle()</a></code>
+
+        </dt>
+        <dd>Initialisation de la connexion à la base de données.</dd>
+
+        <dt>
+
+          <code><a href="create_table_from_query.html">create_table_from_query()</a></code>
+
+        </dt>
+        <dd>Création d'une table à partir d'une requête SQL.</dd>
+
+        <dt>
+
+          <code><a href="gather_table_stats.html">gather_table_stats()</a></code>
+
+        </dt>
+        <dd>Récupération des statistiques des tables</dd>
+
+        <dt>
+
+          <code><a href="get_first_non_archived_year.html">get_first_non_archived_year()</a></code>
+
+        </dt>
+        <dd>Récupération de l'année non archivée la plus ancienne de la table ER_PRS_F.</dd>
+
+        <dt>
+
+          <code><a href="insert_into_table_from_query.html">insert_into_table_from_query()</a></code>
+
+        </dt>
+        <dd>Insertion des résultats d'une requête SQL dans une table existante.</dd>
+
+        <dt>
+
+          <code><a href="retrieve_all_psa_from_idt.html">retrieve_all_psa_from_idt()</a></code>
+
+        </dt>
+        <dd>Gestion des identifiants patients à l'aide de <code>BEN_IDT_ANO</code></dd>
+
+        <dt>
+
+          <code><a href="retrieve_all_psa_from_psa.html">retrieve_all_psa_from_psa()</a></code>
+
+        </dt>
+        <dd>Gestion des identifiants patients à l'aide de <code>BEN_NIR_PSA</code></dd>
+
+        <dt>
+
+          <code><a href="retrieve_psa.html">retrieve_psa()</a></code>
+
+        </dt>
+        <dd>Generic function retrieving patient identifiers</dd>
+      </dl></div><div class="section level2">
+      <h2 id="donn-es-synth-tiques">Données synthétiques<a class="anchor" aria-label="anchor" href="#donn-es-synth-tiques"></a></h2>
+
+      <div class="section-desc"><p>Fonctions utilisées pour générer des données synthétiques similaires à celles du SNDS.</p></div>
+
       <dl></dl></div><div class="section level2">
-      <h2 id="fonctions-de-d-veloppement">Fonctions de développement<a class="anchor" aria-label="anchor" href="#fonctions-de-d-veloppement"></a></h2>
-
-      <div class="section-desc"><p>Fonctions utilisées pour le développement du package.</p></div>
-
-      <dl></dl></div><div class="section level2">
 
 
 
 
-      <dl></dl></div>
+      <dl><dt>
+
+          <code><a href="connect_synthetic_data_avc.html">connect_synthetic_data_avc()</a></code>
+
+        </dt>
+        <dd>Configurer une base de données DuckDB avec toutes les tables factices</dd>
+
+        <dt>
+
+          <code><a href="connect_synthetic_snds.html">connect_synthetic_snds()</a></code>
+
+        </dt>
+        <dd>Télécharge les données synthétiques SNDS et les charge dans une base DuckDB</dd>
+
+        <dt>
+
+          <code><a href="create_mock_er_ete_f.html">create_mock_er_ete_f()</a></code>
+
+        </dt>
+        <dd>Créer des données factices pour ER_ETE_F (Actes externes)</dd>
+
+        <dt>
+
+          <code><a href="create_mock_er_pha_f.html">create_mock_er_pha_f()</a></code>
+
+        </dt>
+        <dd>Créer des données factices pour les médicaments délivrés (ER_PHA_F)</dd>
+
+        <dt>
+
+          <code><a href="create_mock_er_prs_f.html">create_mock_er_prs_f()</a></code>
+
+        </dt>
+        <dd>Créer des données factices pour les délivrances de médicaments (ER_PRS_F)</dd>
+
+        <dt>
+
+          <code><a href="create_mock_ir_ben_r.html">create_mock_ir_ben_r()</a></code>
+
+        </dt>
+        <dd>Créer des données factices pour IR_BEN_R (référentiel bénéficiaires)</dd>
+
+        <dt>
+
+          <code><a href="create_mock_ir_imb_r.html">create_mock_ir_imb_r()</a></code>
+
+        </dt>
+        <dd>Créer des données factices pour les ALD (IR_IMB_R)</dd>
+
+        <dt>
+
+          <code><a href="create_mock_ir_pha_r.html">create_mock_ir_pha_r()</a></code>
+
+        </dt>
+        <dd>Créer des données factices pour le référentiel médicaments (IR_PHA_R)</dd>
+
+        <dt>
+
+          <code><a href="create_mock_mco_tables.html">create_mock_mco_tables()</a></code>
+
+        </dt>
+        <dd>Créer des données factices pour les séjours MCO (tables B, C, D, UM)</dd>
+
+        <dt>
+
+          <code><a href="create_mock_patients_ids.html">create_mock_patients_ids()</a></code>
+
+        </dt>
+        <dd>Fonctions pour créer des données factices pour le tutoriel sndsTools</dd>
+      </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
