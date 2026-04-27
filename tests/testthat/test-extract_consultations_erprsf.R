@@ -1,7 +1,8 @@
 require(dplyr)
 
 test_that("extract_consultations_erprsf_works ", {
-  conn <- connect_duckdb()
+  conn <- connect_synthetic_snds(PATH2TEST_DB)
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   fake_patients_ids <- data.frame(
     BEN_IDT_ANO = c(1, 2, 3),
@@ -29,7 +30,7 @@ test_that("extract_consultations_erprsf_works ", {
     PSE_STJ_COD = c(51, 51, 51, 51, 51)
   )
 
-  DBI::dbWriteTable(conn, "ER_PRS_F", fake_erprsf)
+  DBI::dbWriteTable(conn, "ER_PRS_F", fake_erprsf, overwrite = TRUE)
 
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
@@ -45,7 +46,6 @@ test_that("extract_consultations_erprsf_works ", {
     conn = conn
   )
 
-  DBI::dbDisconnect(conn)
   expect_equal(
     consultations |> arrange(BEN_IDT_ANO, EXE_SOI_DTD),
     structure(

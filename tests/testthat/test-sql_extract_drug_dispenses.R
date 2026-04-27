@@ -95,11 +95,12 @@ fake_eretef <- data.frame(
   cbind(fake_dcir_join_keys |> head(3))
 
 
-conn <- connect_duckdb()
-DBI::dbWriteTable(conn, "ER_PHA_F", fake_erphaf)
-DBI::dbWriteTable(conn, "IR_PHA_R", fake_irphar)
-DBI::dbWriteTable(conn, "ER_PRS_F", fake_erprsf)
-DBI::dbWriteTable(conn, "ER_ETE_F", fake_eretef)
+conn <- connect_duckdb(PATH2TEST_DB)
+on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
+DBI::dbWriteTable(conn, "ER_PHA_F", fake_erphaf, overwrite = TRUE)
+DBI::dbWriteTable(conn, "IR_PHA_R", fake_irphar, overwrite = TRUE)
+DBI::dbWriteTable(conn, "ER_PRS_F", fake_erprsf, overwrite = TRUE)
+DBI::dbWriteTable(conn, "ER_ETE_F", fake_eretef, overwrite = TRUE)
 
 test_that("sql_extract_drug_dispenses works for ATC", {
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
@@ -178,6 +179,3 @@ test_that("sql_extract_drug_dispenses works for CIP13", {
   )
   DBI::dbRemoveTable(conn, "TMP_DRUG_DISPENSES")
 })
-
-
-DBI::dbDisconnect(conn)

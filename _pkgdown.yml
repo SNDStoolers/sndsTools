@@ -57,6 +57,10 @@ reference:
   desc: Fonctions utilitaires pour manipuler les données extraites.
 - contents:
   - has_concept("utils")
+- title: Fonctions de développement
+  desc: Fonctions utilisées pour le développement du package.
+- contents:
+  - has_concept("dev")
 articles:
 - title: "Vignettes"
   navbar: ~

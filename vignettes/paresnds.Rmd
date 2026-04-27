@@ -49,3 +49,42 @@ Puis pour charger le paquet :
 ```{r}
 library(sndsTools)
 ```
+
+
+## Utilisation
+
+
+Pour les besoins de formation, développement et test, le paquet `sndsTools` inclut une fonction `connect_synthetic_snds()` qui télécharge des données synthétiques du SNDS, les charge dans une base de données DuckDB et retourne une connexion à cette base. Ces données synthétiques sont basées sur le schéma SNDS 2019 et contiennent des informations pour 50 patients fictifs.
+
+NB: le premier appel de `connect_synthetic_snds()` peut prendre plusieurs secondes, car il télécharge et traite les données. Les appels suivants seront plus rapides, car les données seront mises en cache localement.
+
+```{r}
+library(sndsTools)
+# Télécharger les données synthétiques du SNDS et les charger dans une base DuckDB. On se limite à la table ER_PRS_F pour gagner du temps.
+conn <- connect_synthetic_snds(
+  subset_tables = c(
+    "ER_PRS_F"
+  ),
+  force_insert = TRUE
+)
+# Afficher les tables disponibles dans la base DuckDB
+DBI::dbListTables(conn)
+```
+
+### Exemple basique d'extraction de données
+
+Extraction des consultations de chirurgie vasculaire :
+
+```{r}
+library(dplyr)
+
+consultations_df <- extract_consultations_erprsf(
+  conn = conn,
+  start_date = as.Date("2011-01-01"),
+  end_date = as.Date("2019-12-31"),
+  pse_spe_filter = c(48)
+)
+consultations_df |> knitr::kable()
+
+conn |> DBI::dbDisconnect() # Ne pas oublier de fermer la connexion à la base de données une fois que vous avez fini de l'utiliser
+```

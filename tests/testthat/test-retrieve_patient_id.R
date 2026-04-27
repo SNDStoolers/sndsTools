@@ -41,12 +41,13 @@ fake_psa_input_no_rng <- data.frame(
 )
 
 test_that("retrieve_all_psa_from_idt works", {
-  conn <- connect_duckdb()
+  conn <- connect_duckdb(PATH2TEST_DB)
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   # Set up test data
-  DBI::dbWriteTable(conn, "IR_BEN_R", fake_ir_ben_r)
-  DBI::dbWriteTable(conn, "IR_BEN_R_ARC", fake_ir_ben_r_arc)
-  DBI::dbWriteTable(conn, "TEST_IDT_INPUT", fake_idt_input)
+  DBI::dbWriteTable(conn, "IR_BEN_R", fake_ir_ben_r, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "IR_BEN_R_ARC", fake_ir_ben_r_arc, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "TEST_IDT_INPUT", fake_idt_input, overwrite = TRUE)
 
   # Test the function
   result <- retrieve_all_psa_from_idt(
@@ -54,8 +55,6 @@ test_that("retrieve_all_psa_from_idt works", {
     conn = conn,
     check_arc_table = TRUE
   )
-
-  DBI::dbDisconnect(conn)
 
   # Check that we got results
   expect_true(nrow(result) > 0)
@@ -69,12 +68,13 @@ test_that("retrieve_all_psa_from_idt works", {
 })
 
 test_that("retrieve_all_psa_from_psa works", {
-  conn <- connect_duckdb()
+  conn <- connect_duckdb(PATH2TEST_DB)
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   # Set up test data
-  DBI::dbWriteTable(conn, "IR_BEN_R", fake_ir_ben_r)
-  DBI::dbWriteTable(conn, "IR_BEN_R_ARC", fake_ir_ben_r_arc)
-  DBI::dbWriteTable(conn, "TEST_PSA_INPUT", fake_psa_input)
+  DBI::dbWriteTable(conn, "IR_BEN_R", fake_ir_ben_r, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "IR_BEN_R_ARC", fake_ir_ben_r_arc, overwrite = TRUE)
+  DBI::dbWriteTable(conn, "TEST_PSA_INPUT", fake_psa_input, overwrite = TRUE)
 
   # Test the function
   result <- retrieve_all_psa_from_psa(
@@ -82,8 +82,6 @@ test_that("retrieve_all_psa_from_psa works", {
     conn = conn,
     check_arc_table = TRUE
   )
-
-  DBI::dbDisconnect(conn)
 
   # Check that we got results
   expect_true(nrow(result) > 0)
