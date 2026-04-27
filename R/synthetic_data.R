@@ -4,18 +4,25 @@
 #' Health Data Hub sur data.gouv.fr, décompresse les archives ZIP, lit les
 #' fichiers CSV et les charge dans une base DuckDB locale.
 #'
-#' @param db_path Character. Chemin vers le fichier de la base DuckDB à créer.
+#' @param path2b Character. Chemin vers le fichier de la base DuckDB à créer.
 #'   La valeur par défaut est `./synthetic_snds.duckdb` dans le répertoire de
 #'   travail courant.
+#' @param force_insert Logical. Si TRUE, force la réinsertion des données même
+#'   si la base existe déjà (FALSE par défaut). Si FALSE et que la base existe,
+#' la fonction retourne la connexion à la base existante sans réinsertion.
 #' @param force_download Logical. Si TRUE, retélécharge tous les fichiers même
 #'   si la base existe déjà (FALSE par défaut). Si FALSE et que la base existe,
 #'   la fonction retourne le chemin de la base existante sans retéléchargement.
+#' @param subset_tables Character vector. Si non NULL, ne charge que les tables
+#' dont le nom contient une des chaînes de ce vecteur. Par exemple,
+#' `subset_tables = c("T_MCO", "T_RIM")`. Par défaut, toutes les tables sont
+#' chargées.
 #' @return Connexion DuckDB. Une connexion duckdb vers la base DuckDB créée.
 #'
 #' @details Cette fonction télécharge 9 fichiers zip contenant des données
 #' synthétiques pour 50 patients fictifs basés sur le schéma SNDS 2019. Les
 #' fichiers sont produits par Health Data Hub et hébergés sur data.gouv.fr.
-#'#'
+#'
 #' @export
 #' @family synthetic
 connect_synthetic_snds <- function(
