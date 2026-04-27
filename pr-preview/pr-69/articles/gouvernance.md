@@ -33,8 +33,8 @@ Tout utilisateur peut être contributeur en faisant [une nouvelle
 issue](https://github.com/SNDStoolers/sndsTools/issues), [une pull
 request](https://github.com/SNDStoolers/sndsTools/pulls), ou en
 effectuant une revue sur une pull request existante. Le [guide de
-contribution](contribuer.md) détaille les différentes manières de
-contribuer.
+contribution](https://sndstoolers.github.io/sndsTools/articles/contribuer.md)
+détaille les différentes manières de contribuer.
 
 ### Devenir un core contributeur
 

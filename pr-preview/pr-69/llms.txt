@@ -1,4 +1,4 @@
-# `SndsTools` : Extraction de recours aux soins dans le SNDS avec R
+# `sndsTools` : Extraction de recours aux soins dans le SNDS avec R
 
 ## Description
 
@@ -37,6 +37,22 @@ développement actif.
 C’est un projet communautaire, évolutif par nature, qui vise à
 rassembler les différents utilisateurs du SNDS.
 
+## Installation sur le portail de l’assurance maladie (CNAM)
+
+Il est nécessaire de copier/coller le code source du paquet sur le
+portail CNAM. Pour cela, il faut suivre les étapes suivantes :
+
+- 1.  En local (sur votre ordinateur) : Télécharger [le fichier
+      `sndsTool.R` de la dernière release du paquet disponible sur
+      github](https://github.com/SNDStoolers/sndsTools/releases).
+      Celui-ci contient toutes les fonctions du paquet.
+- 2.  En local, ouvrir le fichier `sndsTool.R` et copier tout son
+      contenu.
+- 3.  Sur le portail CNAM, coller le contenu de ce fichier dans un
+      nouveau script R `sndsTools.R`.
+- 4.  Sur le portail CNAM, charger toutes les fonctions du paquet:
+      `source("sndsTools.R")`
+
 ## Contexte technique
 
 ### Données
@@ -63,16 +79,28 @@ TODO (figure à mettre dans man/figures)
 
 - **Dépôt du code source** : <https://github.com/SNDStoolers/sndsTools>
 
-- **Description des extractions et des tables de données créées** : TODO
-  [Flux de données](data.md)
+- **Prise en main rapide** : [Prise en
+  main](https://sndstoolers.github.io/sndsTools/articles/paresnds.html)
 
-- **Prise en main rapide** : [Prise en main](sndsTools.md)
+- [Référence](https://sndstoolers.github.io/sndsTools/reference/index.html)
+  des fonctions utilisées
 
-- [Référence](reference/index.md) des fonctions utilisées
+- [Guide de
+  contribution](https://sndstoolers.github.io/sndsTools/articles/contribuer.html)
 
-- [Guide de contribution](contributing.md)
+- [Principes de
+  gouvernance](https://sndstoolers.github.io/sndsTools/articles/gouvernance.html)
 
-- [Principes de gouvernance](gouvernance.md)
+- [Présentation du package à l’Institut du Cerveau, janvier
+  2026](https://info.m2dou.fr/_static/files/presentations/2026-01-26_sndsTools_ICM.pdf)
+
+- [Canal de discussion
+  Tchap](https://tchap.gouv.fr/#/room/!VvGizERQTCBTXKScgj:agent.social.tchap.gouv.fr?via=agent.social.tchap.gouv.fr&via=agent.tchap.gouv.fr&via=agent.finances.tchap.gouv.fr)
+
+- Mailing list de diffusion : Pour vous abonner, envoyez un message à
+  <sympa_inria@inria.fr> avec en objet `subscribe sndstools Prénom Nom`
+  (en remplaçant Prénom Nom par les vôtres),puis laissez le corps du
+  message vide.
 
 # Package index
 
@@ -81,87 +109,31 @@ TODO (figure à mettre dans man/figures)
 Fonctions pour extraire les données de soins individuelles à partir du
 SNDS.
 
-- [`extract_consultations_erprsf()`](extract_consultations_erprsf.md) :
-  Extraction des consultations dans le DCIR.
-- [`extract_drug_dispenses()`](extract_drug_dispenses.md) : Extraction
-  des délivrances de médicaments.
-- [`extract_hospital_consultations()`](extract_hospital_consultations.md)
-  : Extraction des consultations externes à l'hôpital (MCO).
-- [`extract_hospital_stays()`](extract_hospital_stays.md) : Extraction
-  des diagnostics des séjours hospitaliers (MCO).
-- [`extract_long_term_disease()`](extract_long_term_disease.md) :
-  Extraction des Affections Longue Durée (ALD)
-
 ## Extraction SNDS en SQL
 
 Fonctions pour extraire les données de soins individuelles à partir du
 SNDS en pur SQL.
 
-- [`sql_extract_drug_dispenses()`](sql_extract_drug_dispenses.md) :
-  Extraction des délivrances de médicaments à partir de SQL injecté dans
-  du R (modèle dbExecute de Thomas Soeiro).
-
 ## Utilitaires
 
 Fonctions utilitaires pour manipuler les données extraites.
 
-- [`insert_into_table_from_query()`](insert_into_table_from_query.md) :
-  Insertion des résultats d'une requête SQL dans une table existante.
+## Données synthétiques
 
-- [`get_first_non_archived_year()`](get_first_non_archived_year.md) :
-  Récupération de l'année non archivée la plus ancienne de la table
-  ER_PRS_F.
-
-- [`create_table_from_query()`](create_table_from_query.md) : Création
-  d'une table à partir d'une requête SQL.
-
-- [`connect_duckdb()`](connect_duckdb.md) : Initialisation de la
-  connexion à la base de données duckdb.
-
-- [`connect_oracle()`](connect_oracle.md) : Initialisation de la
-  connexion à la base de données.
-
-- [`gather_table_stats()`](gather_table_stats.md) : Récupération des
-  statistiques des tables
-
-- [`retrieve_all_psa_from_idt()`](retrieve_all_psa_from_idt.md) :
-
-  Gestion des identifiants patients à l'aide de `BEN_IDT_ANO`
-
-- [`retrieve_all_psa_from_psa()`](retrieve_all_psa_from_psa.md) :
-
-  Gestion des identifiants patients à l'aide de `BEN_NIR_PSA`
-
-## Données factices
-
-Fonctions pour générer des données factices similaires à celles du SNDS.
-
-- [`create_mock_database()`](create_mock_database.md) : Configurer une
-  base de données DuckDB avec toutes les tables factices
-- [`create_mock_er_ete_f()`](create_mock_er_ete_f.md) : Créer des
-  données factices pour ER_ETE_F (Actes externes)
-- [`create_mock_er_pha_f()`](create_mock_er_pha_f.md) : Créer des
-  données factices pour les médicaments délivrés (ER_PHA_F)
-- [`create_mock_er_prs_f()`](create_mock_er_prs_f.md) : Créer des
-  données factices pour les délivrances de médicaments (ER_PRS_F)
-- [`create_mock_ir_ben_r()`](create_mock_ir_ben_r.md) : Créer des
-  données factices pour IR_BEN_R (référentiel bénéficiaires)
-- [`create_mock_ir_imb_r()`](create_mock_ir_imb_r.md) : Créer des
-  données factices pour les ALD (IR_IMB_R)
-- [`create_mock_ir_pha_r()`](create_mock_ir_pha_r.md) : Créer des
-  données factices pour le référentiel médicaments (IR_PHA_R)
-- [`create_mock_mco_tables()`](create_mock_mco_tables.md) : Créer des
-  données factices pour les séjours hospitaliers MCO (tables B, C, D,
-  UM)
-- [`create_mock_patients_ids()`](create_mock_patients_ids.md) :
-  Fonctions pour créer des données factices pour le tutoriel sndsTools
+Fonctions utilisées pour générer des données synthétiques similaires à
+celles du SNDS.
 
 # Articles
 
-### All vignettes
+### Vignettes
 
-- [Benchmarking dplyr vs RSQL](benchmark_dplyr_vs_rsql.md):
-- [Contribuer](contribuer.md):
-- [Gouvernance](gouvernance.md):
-- [Prise en main](sndsTools.md):
-- [Exemple d'étude possible avec sndsTools](tutoriel_avc.md):
+- [Benchmarking dplyr vs
+  RSQL](https://sndstoolers.github.io/sndsTools/articles/benchmark_dplyr_vs_rsql.md):
+- [Comparaison sndsTools vs R
+  classique](https://sndstoolers.github.io/sndsTools/articles/benchmark_sndstools_vs_r.md):
+- [Contribuer](https://sndstoolers.github.io/sndsTools/articles/contribuer.md):
+- [Gouvernance](https://sndstoolers.github.io/sndsTools/articles/gouvernance.md):
+- [Prise en
+  main](https://sndstoolers.github.io/sndsTools/articles/sndsTools.md):
+- [Exemple d'étude possible avec
+  sndsTools](https://sndstoolers.github.io/sndsTools/articles/tutoriel_avc.md):

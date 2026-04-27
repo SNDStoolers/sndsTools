@@ -1,4 +1,4 @@
-# `SndsTools` : Extraction de recours aux soins dans le SNDS avec R
+# `sndsTools` : Extraction de recours aux soins dans le SNDS avec R
 
 ## Description
 
@@ -37,6 +37,22 @@ développement actif.
 C’est un projet communautaire, évolutif par nature, qui vise à
 rassembler les différents utilisateurs du SNDS.
 
+## Installation sur le portail de l’assurance maladie (CNAM)
+
+Il est nécessaire de copier/coller le code source du paquet sur le
+portail CNAM. Pour cela, il faut suivre les étapes suivantes :
+
+- 1.  En local (sur votre ordinateur) : Télécharger [le fichier
+      `sndsTool.R` de la dernière release du paquet disponible sur
+      github](https://github.com/SNDStoolers/sndsTools/releases).
+      Celui-ci contient toutes les fonctions du paquet.
+- 2.  En local, ouvrir le fichier `sndsTool.R` et copier tout son
+      contenu.
+- 3.  Sur le portail CNAM, coller le contenu de ce fichier dans un
+      nouveau script R `sndsTools.R`.
+- 4.  Sur le portail CNAM, charger toutes les fonctions du paquet:
+      `source("sndsTools.R")`
+
 ## Contexte technique
 
 ### Données
@@ -63,13 +79,25 @@ TODO (figure à mettre dans man/figures)
 
 - **Dépôt du code source** : <https://github.com/SNDStoolers/sndsTools>
 
-- **Description des extractions et des tables de données créées** : TODO
-  [Flux de données](data.md)
+- **Prise en main rapide** : [Prise en
+  main](https://sndstoolers.github.io/sndsTools/articles/paresnds.html)
 
-- **Prise en main rapide** : [Prise en main](sndsTools.md)
+- [Référence](https://sndstoolers.github.io/sndsTools/reference/index.html)
+  des fonctions utilisées
 
-- [Référence](reference/index.md) des fonctions utilisées
+- [Guide de
+  contribution](https://sndstoolers.github.io/sndsTools/articles/contribuer.html)
 
-- [Guide de contribution](contributing.md)
+- [Principes de
+  gouvernance](https://sndstoolers.github.io/sndsTools/articles/gouvernance.html)
 
-- [Principes de gouvernance](gouvernance.md)
+- [Présentation du package à l’Institut du Cerveau, janvier
+  2026](https://info.m2dou.fr/_static/files/presentations/2026-01-26_sndsTools_ICM.pdf)
+
+- [Canal de discussion
+  Tchap](https://tchap.gouv.fr/#/room/!VvGizERQTCBTXKScgj:agent.social.tchap.gouv.fr?via=agent.social.tchap.gouv.fr&via=agent.tchap.gouv.fr&via=agent.finances.tchap.gouv.fr)
+
+- Mailing list de diffusion : Pour vous abonner, envoyez un message à
+  <sympa_inria@inria.fr> avec en objet `subscribe sndstools Prénom Nom`
+  (en remplaçant Prénom Nom par les vôtres),puis laissez le corps du
+  message vide.

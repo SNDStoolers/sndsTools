@@ -2,7 +2,8 @@
 
 Ce projet est un effort communautaire. Les nouveaux contributeurs sont
 les bienvenus. Les règles de décision et de gouvernance sont détaillées
-dans le document [Gouvernance](gouvernance.md).
+dans le document
+[Gouvernance](https://sndstoolers.github.io/sndsTools/articles/gouvernance.md).
 
 ## Différente manière de contribuer
 

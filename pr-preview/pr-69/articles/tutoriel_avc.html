@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sndsTools</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,15 +29,20 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../articles/sndsTools.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/sndsTools.html">Prise en main</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/benchmark_dplyr_vs_rsql.html">Benchmarking dplyr vs RSQL</a></li>
-    <li><a class="dropdown-item" href="../articles/contribuer.html">Contribuer</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-comparaisons" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Comparaisons</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-comparaisons">
+<li><a class="dropdown-item" href="../articles/benchmark_dplyr_vs_rsql.html">Comparaison dplyr vs RSQL</a></li>
+    <li><a class="dropdown-item" href="../articles/benchmark_sndstools_vs_r.html">Comparaison sndsTools vs R classique</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-contribuer" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Contribuer</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-contribuer">
+<li><a class="dropdown-item" href="../articles/contribuer.html">Contribuer</a></li>
     <li><a class="dropdown-item" href="../articles/gouvernance.html">Gouvernance</a></li>
-    <li><a class="dropdown-item" href="../articles/tutoriel_avc.html">Exemple d'étude possible avec sndsTools</a></li>
   </ul>
 </li>
       </ul>
@@ -60,7 +65,8 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Exemple d'étude possible avec sndsTools</h1>
-                        <h4 data-toc-skip class="author">sndsTools</h4>
+                        <h4 data-toc-skip class="author">Matthieu
+Doutreligne</h4>
             
             <h4 data-toc-skip class="date">2026-01-11</h4>
       
@@ -91,15 +97,15 @@ AVC.</p>
 <ol style="list-style-type: decimal">
 <li><p>Identifier les patients avec une hospitalisation pour AVC en 2024
 (codes CIM-10 : I61, I62, I63, I64) via la fonction
-<code><a href="../reference/extract_hospital_stays.html">extract_hospital_stays()</a></code></p></li>
+<code>extract_hospital_stays()</code></p></li>
 <li><p>Récupérer leurs identifiants complets via
-<code><a href="../reference/retrieve_all_psa_from_psa.html">retrieve_all_psa_from_psa()</a></code></p></li>
+<code>retrieve_all_psa_from_psa()</code></p></li>
 <li><p>Extraire leurs consultations médicales en ville via
-<code><a href="../reference/extract_consultations_erprsf.html">extract_consultations_erprsf()</a></code></p></li>
+<code>extract_consultations_erprsf()</code></p></li>
 <li><p>Extraire leurs Affections de Longue Durée (ALD) via
-<code><a href="../reference/extract_long_term_disease.html">extract_long_term_disease()</a></code></p></li>
+<code>extract_long_term_disease()</code></p></li>
 <li><p>Extraire leurs prescriptions médicamenteuses en ville via
-<code><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses()</a></code></p></li>
+<code>extract_drug_dispenses()</code></p></li>
 <li><p>Nettoyer et fermer la connexion à la base de données</p></li>
 </ol>
 <div class="section level3">
@@ -109,7 +115,7 @@ AVC.</p>
 <ul>
 <li><p>Une connexion à la base de données Oracle du SNDS sur le portail
 de la CNAM</p></li>
-<li><p>Le code du package <code>sndsTools</code> <a href="https://sndstoolers.github.io/sndsTools/articles/sndsTools.html#sur-le-portail-cnam" class="external-link">copié
+<li><p>Le code du package <code>sndsTools</code> <a href="https://sndstoolers.github.io/sndsTools/articles/sndsTools.html#sur-le-portail-cnam">copié
 sur le portail</a></p></li>
 </ul>
 <div class="alert alert-info">
@@ -120,22 +126,21 @@ l’étude.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Charger les packages nécessaires</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.exists</a></span><span class="op">(</span><span class="st">"~/sasdata1"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co"># sur le portail CNAM</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"../sndsTools_all.R"</span><span class="op">)</span></span>
-<span>    <span class="co"># Établir la connexion à la base de données</span></span>
-<span>    <span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect_oracle.html">connect_oracle</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="co"># sur le portail CNAM</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"../sndsTools_all.R"</span><span class="op">)</span></span>
+<span>  <span class="co"># Établir la connexion à la base de données</span></span>
+<span>  <span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu">connect_oracle</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>    <span class="co"># hors portail CNAM (ex. pour construire cette vignette)</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/" class="external-link">sndsTools</a></span><span class="op">)</span></span>
-<span>    <span class="co"># Charge des données fictives</span></span>
-<span>    <span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_mock_database.html">create_mock_database</a></span><span class="op">(</span></span>
-<span>      n_patients <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>      year <span class="op">=</span> <span class="fl">2024</span>,</span>
-<span>      start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-01-01"</span><span class="op">)</span>,</span>
-<span>      end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-12-31"</span><span class="op">)</span></span>
-<span>    <span class="op">)</span></span>
+<span>  <span class="co"># hors portail CNAM (ex. pour construire cette vignette)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sndstoolers.github.io/sndsTools/index.html/">sndsTools</a></span><span class="op">)</span></span>
+<span>  <span class="co"># Charge des données fictives</span></span>
+<span>  <span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu">connect_synthetic_data_avc</span><span class="op">(</span></span>
+<span>    n_patients <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>    year <span class="op">=</span> <span class="fl">2024</span>,</span>
+<span>    start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-01-01"</span><span class="op">)</span>,</span>
+<span>    end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-12-31"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt; [1] "Le code ne s'exécute pas sur le portail CNAM.\n    Initialisation d'une connexion duckdb en mémoire."</span></span>
 <span><span class="co">#&gt; Base de données factice créée avec 100 patients</span></span>
 <span><span class="co">#&gt; Période : 2024-01-01 à 2024-12-31</span></span>
 <span><span class="co">#&gt; Tables fictives MCO, ER_PRS_F, ER_PHA_F et ER_ETE_F pour l'année 2024</span></span>
@@ -162,7 +167,7 @@ l’étude.</p>
 </h3>
 <p>Nous commençons par extraire les séjours hospitaliers avec un
 diagnostic principal d’AVC en utilisant la fonction
-<code><a href="../reference/extract_hospital_stays.html">extract_hospital_stays()</a></code>.</p>
+<code>extract_hospital_stays()</code>.</p>
 <p>Les <a href="https://fr.wikipedia.org/wiki/CIM-10_Chapitre_09_:_Maladies_de_l%27appareil_circulatoire" class="external-link">codes
 CIM-10 pour les AVC</a> sont I61 (hémorragie intracérébrale), I62
 (autres hémorragies intracrâniennes non traumatiques), I63 (infarctus
@@ -176,16 +181,16 @@ cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <span><span class="va">codes_avc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"I61"</span>, <span class="st">"I62"</span>, <span class="st">"I63"</span>, <span class="st">"I64"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extraire les séjours avec diagnostics d'AVC</span></span>
-<span><span class="fu"><a href="../reference/extract_hospital_stays.html">extract_hospital_stays</a></span><span class="op">(</span></span>
+<span><span class="fu">extract_hospital_stays</span><span class="op">(</span></span>
 <span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
 <span>  dp_cim10_codes_filter <span class="op">=</span> <span class="va">codes_avc</span>,</span>
-<span>  or_dr_with_same_codes_filter <span class="op">=</span> <span class="cn">TRUE</span>,  <span class="co"># Inclure les diagnostics reliés</span></span>
-<span>  or_da_with_same_codes_filter <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># Exclure diagnostics associés similaires</span></span>
-<span>  and_da_with_other_codes_filter <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># Exclure diagnostics associés différents</span></span>
-<span>  da_cim10_codes_filter <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Pas de filtre sur diagnostics associés</span></span>
-<span>  patients_ids_filter <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Extraire tous les patients</span></span>
-<span>  output_table_name <span class="op">=</span> <span class="st">"TMP_SEJOURS_AVC"</span>,  <span class="co"># Stocker en table Oracle</span></span>
+<span>  or_dr_with_same_codes_filter <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># Inclure les diagnostics reliés</span></span>
+<span>  or_da_with_same_codes_filter <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># Exclure diagnostics associés similaires</span></span>
+<span>  and_da_with_other_codes_filter <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># Exclure diagnostics associés différents</span></span>
+<span>  da_cim10_codes_filter <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Pas de filtre sur diagnostics associés</span></span>
+<span>  patients_ids_filter <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Extraire tous les patients</span></span>
+<span>  output_table_name <span class="op">=</span> <span class="st">"TMP_SEJOURS_AVC"</span>, <span class="co"># Stocker en table Oracle</span></span>
 <span>  conn <span class="op">=</span> <span class="va">conn</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Results saved to table TMP_SEJOURS_AVC in Oracle.</span></span>
@@ -362,29 +367,29 @@ cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="right">490232</td>
-<td align="right">20</td>
-<td align="right">20</td>
-<td align="right">18</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<td align="right">468916</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">7</td>
 <td align="right">2</td>
+<td align="right">1</td>
+<td align="right">14</td>
 <td align="left">6</td>
-<td align="left">2</td>
+<td align="left">8</td>
+<td align="left">7</td>
 <td align="left">6</td>
-<td align="left">2</td>
 <td align="left">I62</td>
-<td align="left">I12</td>
-<td align="left">05M42</td>
-<td align="left">84</td>
-<td align="left">33760</td>
+<td align="left">I61</td>
+<td align="left">05K70</td>
+<td align="left">67</td>
+<td align="left">77373</td>
 <td align="left">1</td>
-<td align="right">73</td>
-<td align="right">310</td>
-<td align="right">10094</td>
-<td align="left">2024-08-31</td>
-<td align="left">2024-09-18</td>
-<td align="left">I10</td>
+<td align="right">83</td>
+<td align="right">199</td>
+<td align="right">10042</td>
+<td align="left">2024-11-26</td>
+<td align="left">2024-12-03</td>
+<td align="left">I61</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
@@ -434,7 +439,7 @@ cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <p>À partir des séjours, nous identifions les patients uniques en <a href="https://documentation-snds.health-data-hub.fr/snds/fiches/fiche_beneficiaire.html" class="external-link">récupérant
 leurs identifiants uniques <code>BEN_NIR_ANO</code></a> dans le
 référentiel des bénéficiaires en utilisant
-<code><a href="../reference/retrieve_all_psa_from_psa.html">retrieve_all_psa_from_psa()</a></code>.</p>
+<code>retrieve_all_psa_from_psa()</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Créer une table temporaire des pseudo-NIR des patients avec AVC</span></span>
 <span><span class="va">patients_psa_avc</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"TMP_SEJOURS_AVC"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -446,21 +451,21 @@ référentiel des bénéficiaires en utilisant
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbWriteTable.html" class="external-link">dbWriteTable</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"TMP_PATIENTS_AVC_PSA"</span>, <span class="va">patients_psa_avc</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Récupérer tous les identifiants patients associés</span></span>
-<span><span class="va">patients_identifiants_avc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/retrieve_all_psa_from_psa.html">retrieve_all_psa_from_psa</a></span><span class="op">(</span></span>
+<span><span class="va">patients_identifiants_avc</span> <span class="op">&lt;-</span> <span class="fu">retrieve_all_psa_from_psa</span><span class="op">(</span></span>
 <span>  ben_table_name <span class="op">=</span> <span class="st">"TMP_PATIENTS_AVC_PSA"</span>,</span>
 <span>  conn <span class="op">=</span> <span class="va">conn</span>,</span>
-<span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Retourner data.frame</span></span>
+<span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Retourner data.frame</span></span>
 <span>  check_arc_table <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># Pas de recherche dans la table d'identifiant archivée,</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Filtrer les patients avec des critères de qualité</span></span>
 <span><span class="va">patients_avc_qualite</span> <span class="op">&lt;-</span> <span class="va">patients_identifiants_avc</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
-<span>    <span class="op">!</span><span class="va">psa_w_multiple_idt_or_nir</span>,  <span class="co"># Éviter les PSA multiples</span></span>
-<span>    <span class="va">cdi_nir_00</span>,                   <span class="co"># NIR non fictifs</span></span>
-<span>    <span class="va">nir_ano_defined</span>,              <span class="co"># NIR anonyme défini</span></span>
-<span>    <span class="op">!</span><span class="va">birth_date_variation</span>,        <span class="co"># Pas de variation date naissance</span></span>
-<span>    <span class="op">!</span><span class="va">sex_variation</span>               <span class="co"># Pas de variation sexe</span></span>
+<span>    <span class="op">!</span><span class="va">psa_w_multiple_idt_or_nir</span>, <span class="co"># Éviter les PSA multiples</span></span>
+<span>    <span class="va">cdi_nir_00</span>, <span class="co"># NIR non fictifs</span></span>
+<span>    <span class="va">nir_ano_defined</span>, <span class="co"># NIR anonyme défini</span></span>
+<span>    <span class="op">!</span><span class="va">birth_date_variation</span>, <span class="co"># Pas de variation date naissance</span></span>
+<span>    <span class="op">!</span><span class="va">sex_variation</span> <span class="co"># Pas de variation sexe</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="co"># Préparer les identifiants pour les extractions ultérieures</span></span>
 <span><span class="va">patients_ids_filter</span> <span class="op">&lt;-</span> <span class="va">patients_avc_qualite</span> <span class="op">|&gt;</span></span>
@@ -474,18 +479,18 @@ référentiel des bénéficiaires en utilisant
 <h3 id="étape-3-extraction-des-consultations-médicales">Étape 3 : Extraction des consultations médicales<a class="anchor" aria-label="anchor" href="#%C3%A9tape-3-extraction-des-consultations-m%C3%A9dicales"></a>
 </h3>
 <p>Nous extrayons toutes les consultations médicales en ville de ces
-patients en utilisant <code><a href="../reference/extract_consultations_erprsf.html">extract_consultations_erprsf()</a></code>.</p>
+patients en utilisant <code>extract_consultations_erprsf()</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extraire toutes les consultations des patients avec AVC</span></span>
-<span><span class="fu"><a href="../reference/extract_consultations_erprsf.html">extract_consultations_erprsf</a></span><span class="op">(</span></span>
+<span><span class="fu">extract_consultations_erprsf</span><span class="op">(</span></span>
 <span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
-<span>  pse_spe_filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">32</span>, <span class="fl">10</span>, <span class="fl">47</span>, <span class="fl">3</span><span class="op">)</span>,  <span class="co"># Spécalités neuro ou cardio</span></span>
-<span>  prestation_filter <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Toutes les prestations</span></span>
-<span>  analyse_couts <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># Filtrer les majorations</span></span>
-<span>  dis_dtd_lag_months <span class="op">=</span> <span class="fl">6</span>,  <span class="co"># Décalage standard 6 mois</span></span>
+<span>  pse_spe_filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">32</span>, <span class="fl">10</span>, <span class="fl">47</span>, <span class="fl">3</span><span class="op">)</span>, <span class="co"># Spécalités neuro ou cardio</span></span>
+<span>  prestation_filter <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Toutes les prestations</span></span>
+<span>  analyse_couts <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># Filtrer les majorations</span></span>
+<span>  dis_dtd_lag_months <span class="op">=</span> <span class="fl">6</span>, <span class="co"># Décalage standard 6 mois</span></span>
 <span>  patients_ids_filter <span class="op">=</span> <span class="va">patients_ids_filter</span>,</span>
-<span>  output_table_name <span class="op">=</span> <span class="st">"TMP_CONSULTATIONS_AVC"</span>,  <span class="co"># Stocker en table Oracle</span></span>
+<span>  output_table_name <span class="op">=</span> <span class="st">"TMP_CONSULTATIONS_AVC"</span>, <span class="co"># Stocker en table Oracle</span></span>
 <span>  conn <span class="op">=</span> <span class="va">conn</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Extracting consultations</span></span>
@@ -534,23 +539,21 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <h3 id="étape-4-extraction-des-affections-de-longue-durée-ald">Étape 4 : Extraction des Affections de Longue Durée (ALD)<a class="anchor" aria-label="anchor" href="#%C3%A9tape-4-extraction-des-affections-de-longue-dur%C3%A9e-ald"></a>
 </h3>
 <p>Nous extrayons les ALD des patients avec AVC en utilisant
-<code><a href="../reference/extract_long_term_disease.html">extract_long_term_disease()</a></code>.</p>
+<code>extract_long_term_disease()</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Extraire les ALD des patients avec AVC</span></span>
+<code class="sourceCode R"><span><span class="co"># Extraire les ALD des patients avec AVC</span></span>
 <span><span class="va">patients_ids_for_ald</span> <span class="op">&lt;-</span> <span class="va">patients_ids_filter</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BEN_IDT_ANO</span>, <span class="va">BEN_NIR_PSA</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/extract_long_term_disease.html">extract_long_term_disease</a></span><span class="op">(</span></span>
+<span><span class="fu">extract_long_term_disease</span><span class="op">(</span></span>
 <span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
-<span>  icd_cod_starts_with <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Extraire toutes les ALD</span></span>
-<span>  ald_numbers <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Pas de filtre sur numéros ALD</span></span>
-<span>  excl_etm_nat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"11"</span>, <span class="st">"12"</span>, <span class="st">"13"</span><span class="op">)</span>,  <span class="co"># Exclure accidents travail/maladies pro</span></span>
+<span>  icd_cod_starts_with <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Extraire toutes les ALD</span></span>
+<span>  ald_numbers <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Pas de filtre sur numéros ALD</span></span>
+<span>  excl_etm_nat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"11"</span>, <span class="st">"12"</span>, <span class="st">"13"</span><span class="op">)</span>, <span class="co"># Exclure accidents travail/maladies pro</span></span>
 <span>  patients_ids <span class="op">=</span> <span class="va">patients_ids_for_ald</span>,</span>
-<span>  output_table_name <span class="op">=</span> <span class="st">"TMP_ALD_AVC"</span>,  <span class="co"># Stocker en table Oracle</span></span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># Ne pas écraser table existante</span></span>
+<span>  output_table_name <span class="op">=</span> <span class="st">"TMP_ALD_AVC"</span>, <span class="co"># Stocker en table Oracle</span></span>
 <span>  conn <span class="op">=</span> <span class="va">conn</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Extracting LTD status for all ICD 10 codes...</span></span>
@@ -582,6 +585,22 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td align="right">42</td>
+<td align="right">1</td>
+<td align="left">2023-06-08</td>
+<td align="left">2026-01-23</td>
+<td align="left">01</td>
+<td align="left">I20</td>
+</tr>
+<tr class="even">
+<td align="right">87</td>
+<td align="right">12</td>
+<td align="left">2023-03-05</td>
+<td align="left">2025-12-14</td>
+<td align="left">02</td>
+<td align="left">I25</td>
+</tr>
+<tr class="odd">
 <td align="right">43</td>
 <td align="right">5</td>
 <td align="left">2023-07-28</td>
@@ -590,36 +609,20 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <td align="left">I50</td>
 </tr>
 <tr class="even">
-<td align="right">42</td>
-<td align="right">1</td>
-<td align="left">2023-06-08</td>
-<td align="left">2026-01-23</td>
-<td align="left">01</td>
-<td align="left">I20</td>
+<td align="right">72</td>
+<td align="right">12</td>
+<td align="left">2023-01-25</td>
+<td align="left">2024-04-24</td>
+<td align="left">02</td>
+<td align="left">I70</td>
 </tr>
 <tr class="odd">
 <td align="right">87</td>
-<td align="right">12</td>
-<td align="left">2023-03-05</td>
-<td align="left">2025-12-14</td>
-<td align="left">02</td>
-<td align="left">I25</td>
-</tr>
-<tr class="even">
-<td align="right">95</td>
 <td align="right">8</td>
-<td align="left">2023-05-01</td>
-<td align="left">2026-02-08</td>
-<td align="left">03</td>
-<td align="left">I13</td>
-</tr>
-<tr class="odd">
-<td align="right">43</td>
-<td align="right">8</td>
-<td align="left">2023-11-02</td>
-<td align="left">2026-03-27</td>
+<td align="left">2023-06-07</td>
+<td align="left">2025-10-05</td>
 <td align="left">01</td>
-<td align="left">I60</td>
+<td align="left">I21</td>
 </tr>
 </tbody>
 </table>
@@ -683,14 +686,13 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <h3 id="étape-5-extraction-des-prescriptions-médicamenteuses">Étape 5 : Extraction des prescriptions médicamenteuses<a class="anchor" aria-label="anchor" href="#%C3%A9tape-5-extraction-des-prescriptions-m%C3%A9dicamenteuses"></a>
 </h3>
 <p>Nous extrayons les délivrances de médicaments des patients avec AVC
-en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses()</a></code>.</p>
+en utilisant <code>extract_drug_dispenses()</code>.</p>
 <p>C’est la requête la plus longue sur le portail. Pour les 122 887
 patients hospitalisés pour AVC en 2024, elle tourne en 5 min environ.
 Cette lenteur est dûe à la jointure nécessaire entre les deux tables
 volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Extraire les délivrances de médicaments des patients avec AVC</span></span>
+<code class="sourceCode R"><span><span class="co"># Extraire les délivrances de médicaments des patients avec AVC</span></span>
 <span><span class="va">patients_ids_for_drugs</span> <span class="op">&lt;-</span> <span class="va">patients_ids_filter</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BEN_IDT_ANO</span>, <span class="va">BEN_NIR_PSA</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -700,16 +702,16 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <span><span class="co"># C : système cardiovasculaire</span></span>
 <span><span class="va">atc_codes_avc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"C"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses</a></span><span class="op">(</span></span>
+<span><span class="fu">extract_drug_dispenses</span><span class="op">(</span></span>
 <span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
-<span>  atc_cod_starts_with_filter <span class="op">=</span> <span class="va">atc_codes_avc</span>,  <span class="co"># Médicaments SNC et CV</span></span>
-<span>  cip13_cod_filter <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Pas de filtre spécifique CIP13</span></span>
+<span>  atc_cod_starts_with_filter <span class="op">=</span> <span class="va">atc_codes_avc</span>, <span class="co"># Médicaments SNC et CV</span></span>
+<span>  cip13_cod_filter <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Pas de filtre spécifique CIP13</span></span>
 <span>  patients_ids_filter <span class="op">=</span> <span class="va">patients_ids_for_drugs</span>,</span>
-<span>  dis_dtd_lag_months <span class="op">=</span> <span class="fl">6</span>,  <span class="co"># Décalage standard 6 mois</span></span>
-<span>  sup_columns <span class="op">=</span> <span class="cn">NULL</span>,  <span class="co"># Pas de colonnes supplémentaires</span></span>
-<span>  output_table_name <span class="op">=</span> <span class="st">"TMP_DRUG_DISPENSES_AVC"</span>,  <span class="co"># Stocker en table Oracle</span></span>
-<span>  show_sql_query <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># Ne pas afficher requête SQL</span></span>
+<span>  dis_dtd_lag_months <span class="op">=</span> <span class="fl">6</span>, <span class="co"># Décalage standard 6 mois</span></span>
+<span>  sup_columns <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Pas de colonnes supplémentaires</span></span>
+<span>  output_table_name <span class="op">=</span> <span class="st">"TMP_DRUG_DISPENSES_AVC"</span>, <span class="co"># Stocker en table Oracle</span></span>
+<span>  show_sql_query <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># Ne pas afficher requête SQL</span></span>
 <span>  conn <span class="op">=</span> <span class="va">conn</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Extracting drug dispenses with ATC codes starting with N or C</span></span>
@@ -767,6 +769,22 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <td align="left">22</td>
 </tr>
 <tr class="even">
+<td align="right">36</td>
+<td align="left">2024-04-17</td>
+<td align="right">1</td>
+<td align="left">C08CA01</td>
+<td align="left">3400936267343</td>
+<td align="left">02</td>
+</tr>
+<tr class="odd">
+<td align="right">87</td>
+<td align="left">2024-07-16</td>
+<td align="right">1</td>
+<td align="left">C08CA01</td>
+<td align="left">3400936267343</td>
+<td align="left">01</td>
+</tr>
+<tr class="even">
 <td align="right">72</td>
 <td align="left">2024-03-12</td>
 <td align="right">1</td>
@@ -775,28 +793,12 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <td align="left">34</td>
 </tr>
 <tr class="odd">
-<td align="right">36</td>
-<td align="left">2024-04-17</td>
+<td align="right">42</td>
+<td align="left">2024-02-13</td>
 <td align="right">1</td>
 <td align="left">C08CA01</td>
 <td align="left">3400936267343</td>
-<td align="left">02</td>
-</tr>
-<tr class="even">
-<td align="right">87</td>
-<td align="left">2024-07-16</td>
-<td align="right">1</td>
-<td align="left">C08CA01</td>
-<td align="left">3400936267343</td>
-<td align="left">01</td>
-</tr>
-<tr class="odd">
-<td align="right">36</td>
-<td align="left">2024-06-01</td>
-<td align="right">1</td>
-<td align="left">C02AC01</td>
-<td align="left">3400932026555</td>
-<td align="left">22</td>
+<td align="left">34</td>
 </tr>
 </tbody>
 </table>
@@ -849,8 +851,10 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 </h3>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Supprimer les tables temporaires</span></span>
-<span><span class="va">tables_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TMP_PATIENTS_AVC_PSA"</span>, <span class="st">"TMP_SEJOURS_AVC"</span>,</span>
-<span>                      <span class="st">"TMP_CONSULTATIONS_AVC"</span>, <span class="st">"TMP_ALD_AVC"</span>, <span class="st">"TMP_DRUG_DISPENSES_AVC"</span><span class="op">)</span></span>
+<span><span class="va">tables_to_remove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"TMP_PATIENTS_AVC_PSA"</span>, <span class="st">"TMP_SEJOURS_AVC"</span>,</span>
+<span>  <span class="st">"TMP_CONSULTATIONS_AVC"</span>, <span class="st">"TMP_ALD_AVC"</span>, <span class="st">"TMP_DRUG_DISPENSES_AVC"</span></span>
+<span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">table_name</span> <span class="kw">in</span> <span class="va">tables_to_remove</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbExistsTable.html" class="external-link">dbExistsTable</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">table_name</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbRemoveTable.html" class="external-link">dbRemoveTable</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">table_name</span><span class="op">)</span></span>
@@ -866,7 +870,7 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <p>Ce tutoriel a présenté quelques fonctions concernant des étapes
 d’extraction usuelles à partir du SNDS en utilisant le package
 <code>sndsTools</code>.</p>
-<p>La liste complète des fonctions existantes est disponible dans la <a href="https://sndstoolers.github.io/sndsTools/reference/index.html#extraction-snds" class="external-link">documentation
+<p>La liste complète des fonctions existantes est disponible dans la <a href="https://sndstoolers.github.io/sndsTools/reference/index.html#extraction-snds">documentation
 du package</a>.</p>
 </div>
 </div>

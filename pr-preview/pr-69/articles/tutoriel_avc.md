@@ -21,19 +21,19 @@ Les objectifs de cette étude sont :
 
 1.  Identifier les patients avec une hospitalisation pour AVC en 2024
     (codes CIM-10 : I61, I62, I63, I64) via la fonction
-    [`extract_hospital_stays()`](../reference/extract_hospital_stays.md)
+    `extract_hospital_stays()`
 
 2.  Récupérer leurs identifiants complets via
-    [`retrieve_all_psa_from_psa()`](../reference/retrieve_all_psa_from_psa.md)
+    `retrieve_all_psa_from_psa()`
 
 3.  Extraire leurs consultations médicales en ville via
-    [`extract_consultations_erprsf()`](../reference/extract_consultations_erprsf.md)
+    `extract_consultations_erprsf()`
 
 4.  Extraire leurs Affections de Longue Durée (ALD) via
-    [`extract_long_term_disease()`](../reference/extract_long_term_disease.md)
+    `extract_long_term_disease()`
 
 5.  Extraire leurs prescriptions médicamenteuses en ville via
-    [`extract_drug_dispenses()`](../reference/extract_drug_dispenses.md)
+    `extract_drug_dispenses()`
 
 6.  Nettoyer et fermer la connexion à la base de données
 
@@ -53,22 +53,21 @@ données fictives sont générées pour illustrer les étapes de l’étude.
 ``` r
 # Charger les packages nécessaires
 if (dir.exists("~/sasdata1")) {
-    # sur le portail CNAM
-    source("../sndsTools_all.R")
-    # Établir la connexion à la base de données
-    conn <- connect_oracle()
+  # sur le portail CNAM
+  source("../sndsTools_all.R")
+  # Établir la connexion à la base de données
+  conn <- connect_oracle()
 } else {
-    # hors portail CNAM (ex. pour construire cette vignette)
-    library(sndsTools)
-    # Charge des données fictives
-    conn <- create_mock_database(
-      n_patients = 100,
-      year = 2024,
-      start_date = as.Date("2024-01-01"),
-      end_date = as.Date("2024-12-31")
-    )
+  # hors portail CNAM (ex. pour construire cette vignette)
+  library(sndsTools)
+  # Charge des données fictives
+  conn <- connect_synthetic_data_avc(
+    n_patients = 100,
+    year = 2024,
+    start_date = as.Date("2024-01-01"),
+    end_date = as.Date("2024-12-31")
+  )
 }
-#> [1] "Le code ne s'exécute pas sur le portail CNAM.\n    Initialisation d'une connexion duckdb en mémoire."
 #> Base de données factice créée avec 100 patients
 #> Période : 2024-01-01 à 2024-12-31
 #> Tables fictives MCO, ER_PRS_F, ER_PHA_F et ER_ETE_F pour l'année 2024
@@ -94,8 +93,7 @@ library(knitr)
 ### Étape 1 : Extraction des hospitalisations pour AVC
 
 Nous commençons par extraire les séjours hospitaliers avec un diagnostic
-principal d’AVC en utilisant la fonction
-[`extract_hospital_stays()`](../reference/extract_hospital_stays.md).
+principal d’AVC en utilisant la fonction `extract_hospital_stays()`.
 
 Les [codes CIM-10 pour les
 AVC](https://fr.wikipedia.org/wiki/CIM-10_Chapitre_09_:_Maladies_de_l%27appareil_circulatoire)
@@ -116,12 +114,12 @@ extract_hospital_stays(
   start_date = start_date,
   end_date = end_date,
   dp_cim10_codes_filter = codes_avc,
-  or_dr_with_same_codes_filter = TRUE,  # Inclure les diagnostics reliés
-  or_da_with_same_codes_filter = FALSE,  # Exclure diagnostics associés similaires
-  and_da_with_other_codes_filter = FALSE,  # Exclure diagnostics associés différents
-  da_cim10_codes_filter = NULL,  # Pas de filtre sur diagnostics associés
-  patients_ids_filter = NULL,  # Extraire tous les patients
-  output_table_name = "TMP_SEJOURS_AVC",  # Stocker en table Oracle
+  or_dr_with_same_codes_filter = TRUE, # Inclure les diagnostics reliés
+  or_da_with_same_codes_filter = FALSE, # Exclure diagnostics associés similaires
+  and_da_with_other_codes_filter = FALSE, # Exclure diagnostics associés différents
+  da_cim10_codes_filter = NULL, # Pas de filtre sur diagnostics associés
+  patients_ids_filter = NULL, # Extraire tous les patients
+  output_table_name = "TMP_SEJOURS_AVC", # Stocker en table Oracle
   conn = conn
 )
 #> Results saved to table TMP_SEJOURS_AVC in Oracle.
@@ -141,7 +139,7 @@ kable(sejours_avc_head)
 |  190076 |       3 |       3 |      10 |       3 |       2 |       6 | 7       | 6       | 6       | 5       | I62     | NA      | 05K76   | 94      | 81924   | 2       |      45 |      36 |      10050 | 2024-06-22  | 2024-07-02  | I25        | NA         | NA      |
 |  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I10        | I10        | NA      |
 |  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I20        | I64        | NA      |
-|  490232 |      20 |      20 |      18 |       1 |       1 |       2 | 6       | 2       | 6       | 2       | I62     | I12     | 05M42   | 84      | 33760   | 1       |      73 |     310 |      10094 | 2024-08-31  | 2024-09-18  | I10        | NA         | NA      |
+|  468916 |       9 |       9 |       7 |       2 |       1 |      14 | 6       | 8       | 7       | 6       | I62     | I61     | 05K70   | 67      | 77373   | 1       |      83 |     199 |      10042 | 2024-11-26  | 2024-12-03  | I61        | NA         | NA      |
 
 ``` r
 
@@ -166,7 +164,7 @@ kable(avc_par_type)
 [récupérant leurs identifiants uniques
 `BEN_NIR_ANO`](https://documentation-snds.health-data-hub.fr/snds/fiches/fiche_beneficiaire.html)
 dans le référentiel des bénéficiaires en utilisant
-[`retrieve_all_psa_from_psa()`](../reference/retrieve_all_psa_from_psa.md).
+`retrieve_all_psa_from_psa()`.
 
 ``` r
 # Créer une table temporaire des pseudo-NIR des patients avec AVC
@@ -182,18 +180,18 @@ DBI::dbWriteTable(conn, "TMP_PATIENTS_AVC_PSA", patients_psa_avc, overwrite = TR
 patients_identifiants_avc <- retrieve_all_psa_from_psa(
   ben_table_name = "TMP_PATIENTS_AVC_PSA",
   conn = conn,
-  output_table_name = NULL,  # Retourner data.frame
+  output_table_name = NULL, # Retourner data.frame
   check_arc_table = FALSE # Pas de recherche dans la table d'identifiant archivée,
 )
 
 # Filtrer les patients avec des critères de qualité
 patients_avc_qualite <- patients_identifiants_avc |>
   filter(
-    !psa_w_multiple_idt_or_nir,  # Éviter les PSA multiples
-    cdi_nir_00,                   # NIR non fictifs
-    nir_ano_defined,              # NIR anonyme défini
-    !birth_date_variation,        # Pas de variation date naissance
-    !sex_variation               # Pas de variation sexe
+    !psa_w_multiple_idt_or_nir, # Éviter les PSA multiples
+    cdi_nir_00, # NIR non fictifs
+    nir_ano_defined, # NIR anonyme défini
+    !birth_date_variation, # Pas de variation date naissance
+    !sex_variation # Pas de variation sexe
   )
 # Préparer les identifiants pour les extractions ultérieures
 patients_ids_filter <- patients_avc_qualite |>
@@ -207,20 +205,19 @@ paste("Nombre de patients uniques avec AVC :", nrow(patients_avc_qualite))
 ### Étape 3 : Extraction des consultations médicales
 
 Nous extrayons toutes les consultations médicales en ville de ces
-patients en utilisant
-[`extract_consultations_erprsf()`](../reference/extract_consultations_erprsf.md).
+patients en utilisant `extract_consultations_erprsf()`.
 
 ``` r
 # Extraire toutes les consultations des patients avec AVC
 extract_consultations_erprsf(
   start_date = start_date,
   end_date = end_date,
-  pse_spe_filter = c(32, 10, 47, 3),  # Spécalités neuro ou cardio
-  prestation_filter = NULL,  # Toutes les prestations
-  analyse_couts = FALSE,  # Filtrer les majorations
-  dis_dtd_lag_months = 6,  # Décalage standard 6 mois
+  pse_spe_filter = c(32, 10, 47, 3), # Spécalités neuro ou cardio
+  prestation_filter = NULL, # Toutes les prestations
+  analyse_couts = FALSE, # Filtrer les majorations
+  dis_dtd_lag_months = 6, # Décalage standard 6 mois
   patients_ids_filter = patients_ids_filter,
-  output_table_name = "TMP_CONSULTATIONS_AVC",  # Stocker en table Oracle
+  output_table_name = "TMP_CONSULTATIONS_AVC", # Stocker en table Oracle
   conn = conn
 )
 #> Extracting consultations
@@ -263,10 +260,9 @@ consultations_par_patient <- dplyr::tbl(conn, "TMP_CONSULTATIONS_AVC") |>
 ### Étape 4 : Extraction des Affections de Longue Durée (ALD)
 
 Nous extrayons les ALD des patients avec AVC en utilisant
-[`extract_long_term_disease()`](../reference/extract_long_term_disease.md).
+`extract_long_term_disease()`.
 
 ``` r
-
 # Extraire les ALD des patients avec AVC
 patients_ids_for_ald <- patients_ids_filter |>
   select(BEN_IDT_ANO, BEN_NIR_PSA) |>
@@ -275,12 +271,11 @@ patients_ids_for_ald <- patients_ids_filter |>
 extract_long_term_disease(
   start_date = start_date,
   end_date = end_date,
-  icd_cod_starts_with = NULL,  # Extraire toutes les ALD
-  ald_numbers = NULL,  # Pas de filtre sur numéros ALD
-  excl_etm_nat = c("11", "12", "13"),  # Exclure accidents travail/maladies pro
+  icd_cod_starts_with = NULL, # Extraire toutes les ALD
+  ald_numbers = NULL, # Pas de filtre sur numéros ALD
+  excl_etm_nat = c("11", "12", "13"), # Exclure accidents travail/maladies pro
   patients_ids = patients_ids_for_ald,
-  output_table_name = "TMP_ALD_AVC",  # Stocker en table Oracle
-  overwrite = FALSE,  # Ne pas écraser table existante
+  output_table_name = "TMP_ALD_AVC", # Stocker en table Oracle
   conn = conn
 )
 #> Extracting LTD status for all ICD 10 codes...
@@ -297,11 +292,11 @@ kable(ald_avc_head)
 
 | BEN_IDT_ANO | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
 |------------:|------------:|:------------|:------------|:------------|:------------|
-|          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
 |          42 |           1 | 2023-06-08  | 2026-01-23  | 01          | I20         |
 |          87 |          12 | 2023-03-05  | 2025-12-14  | 02          | I25         |
-|          95 |           8 | 2023-05-01  | 2026-02-08  | 03          | I13         |
-|          43 |           8 | 2023-11-02  | 2026-03-27  | 01          | I60         |
+|          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
+|          72 |          12 | 2023-01-25  | 2024-04-24  | 02          | I70         |
+|          87 |           8 | 2023-06-07  | 2025-10-05  | 01          | I21         |
 
 ``` r
 
@@ -339,8 +334,7 @@ print(paste("Pourcentage de patients AVC avec une ALD :", pourcentage_ald, "%"))
 ### Étape 5 : Extraction des prescriptions médicamenteuses
 
 Nous extrayons les délivrances de médicaments des patients avec AVC en
-utilisant
-[`extract_drug_dispenses()`](../reference/extract_drug_dispenses.md).
+utilisant `extract_drug_dispenses()`.
 
 C’est la requête la plus longue sur le portail. Pour les 122 887
 patients hospitalisés pour AVC en 2024, elle tourne en 5 min environ.
@@ -348,7 +342,6 @@ Cette lenteur est dûe à la jointure nécessaire entre les deux tables
 volumineuses `ER_PHA_F` et `ER_PRS_F`.
 
 ``` r
-
 # Extraire les délivrances de médicaments des patients avec AVC
 patients_ids_for_drugs <- patients_ids_filter |>
   select(BEN_IDT_ANO, BEN_NIR_PSA) |>
@@ -362,13 +355,13 @@ atc_codes_avc <- c("N", "C")
 extract_drug_dispenses(
   start_date = start_date,
   end_date = end_date,
-  atc_cod_starts_with_filter = atc_codes_avc,  # Médicaments SNC et CV
-  cip13_cod_filter = NULL,  # Pas de filtre spécifique CIP13
+  atc_cod_starts_with_filter = atc_codes_avc, # Médicaments SNC et CV
+  cip13_cod_filter = NULL, # Pas de filtre spécifique CIP13
   patients_ids_filter = patients_ids_for_drugs,
-  dis_dtd_lag_months = 6,  # Décalage standard 6 mois
-  sup_columns = NULL,  # Pas de colonnes supplémentaires
-  output_table_name = "TMP_DRUG_DISPENSES_AVC",  # Stocker en table Oracle
-  show_sql_query = FALSE,  # Ne pas afficher requête SQL
+  dis_dtd_lag_months = 6, # Décalage standard 6 mois
+  sup_columns = NULL, # Pas de colonnes supplémentaires
+  output_table_name = "TMP_DRUG_DISPENSES_AVC", # Stocker en table Oracle
+  show_sql_query = FALSE, # Ne pas afficher requête SQL
   conn = conn
 )
 #> Extracting drug dispenses with ATC codes starting with N or C
@@ -404,10 +397,10 @@ kable(drugs_avc_head)
 | BEN_IDT_ANO | EXE_SOI_DTD | PHA_ACT_QSN | PHA_ATC_CLA | PHA_PRS_C13   | PSP_SPE_COD |
 |------------:|:------------|------------:|:------------|:--------------|:------------|
 |          95 | 2024-02-17  |           1 | C08CA01     | 3400936267343 | 22          |
-|          72 | 2024-03-12  |           1 | C02AC01     | 3400932026555 | 34          |
 |          36 | 2024-04-17  |           1 | C08CA01     | 3400936267343 | 02          |
 |          87 | 2024-07-16  |           1 | C08CA01     | 3400936267343 | 01          |
-|          36 | 2024-06-01  |           1 | C02AC01     | 3400932026555 | 22          |
+|          72 | 2024-03-12  |           1 | C02AC01     | 3400932026555 | 34          |
+|          42 | 2024-02-13  |           1 | C08CA01     | 3400936267343 | 34          |
 
 ``` r
 
@@ -432,8 +425,10 @@ kable(head(drugs_par_atc, 5))
 
 ``` r
 # Supprimer les tables temporaires
-tables_to_remove <- c("TMP_PATIENTS_AVC_PSA", "TMP_SEJOURS_AVC",
-                      "TMP_CONSULTATIONS_AVC", "TMP_ALD_AVC", "TMP_DRUG_DISPENSES_AVC")
+tables_to_remove <- c(
+  "TMP_PATIENTS_AVC_PSA", "TMP_SEJOURS_AVC",
+  "TMP_CONSULTATIONS_AVC", "TMP_ALD_AVC", "TMP_DRUG_DISPENSES_AVC"
+)
 for (table_name in tables_to_remove) {
   if (DBI::dbExistsTable(conn, table_name)) {
     DBI::dbRemoveTable(conn, table_name)
