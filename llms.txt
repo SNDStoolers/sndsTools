@@ -97,6 +97,11 @@ TODO (figure à mettre dans man/figures)
 - [Canal de discussion
   Tchap](https://tchap.gouv.fr/#/room/!VvGizERQTCBTXKScgj:agent.social.tchap.gouv.fr?via=agent.social.tchap.gouv.fr&via=agent.tchap.gouv.fr&via=agent.finances.tchap.gouv.fr)
 
+- Mailing list de diffusion : Pour vous abonner, envoyez un message à
+  <sympa_inria@inria.fr> avec en objet `subscribe sndstools Prénom Nom`
+  (en remplaçant Prénom Nom par les vôtres),puis laissez le corps du
+  message vide.
+
 # Package index
 
 ## Extraction SNDS
