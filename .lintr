@@ -1,6 +1,11 @@
-linters: 
-  linters_with_defaults(object_usage_linter = NULL, object_name_linter=NULL)# see vignette("lintr")
+linters:
+  linters_with_defaults(
+    object_usage_linter = NULL,
+    indentation_linter = NULL,
+    object_name_linter=NULL
+  ) # see vignette("lintr")
   # Reasons for removed linters:
     # - object_usage_linter: raise warning every time we use without string a variable name in dplyr syntax.
+    # - object_name_linter: We want to be able to use capital letters for constants (e.g. IS_PORTAIL). 
 encoding: "UTF-8"
 exclusions: "vignettes/"

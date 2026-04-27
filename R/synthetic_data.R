@@ -17,7 +17,7 @@
 #' fichiers sont produits par Health Data Hub et hébergés sur data.gouv.fr.
 #'#'
 #' @export
-#' @family dev
+#' @family synthetic
 connect_synthetic_snds <- function(
   path2db = NULL,
   force_insert = FALSE,
