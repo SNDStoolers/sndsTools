@@ -8,16 +8,16 @@ vasculaire cérébral (AVC) en 2024.
 
 ## Contexte de l’étude
 
-Dans le cadre de cette étude, nous souhaitons analyser les parcours de
-soins des patients hospitalisés pour un AVC au cours de l’année 2024.
-Nous utiliserons les fonctions disponibles dans `sndsTools` pour
-extraire et analyser les données pertinentes.
+Dans le cadre de cette étude “exemple”, nous souhaitons analyser les
+parcours de soins des patients hospitalisés pour un AVC au cours de
+l’année 2024. Nous utiliserons les fonctions disponibles dans
+`sndsTools` pour extraire et analyser les données pertinentes.
 
 Cette étude est un exemple pédagogique de l’utilisation du package
 `sndsTools`. Elle ne constitue en aucun cas une étude réelle valide
 scientifiquement concernant les patients hospitalisés pour un AVC.
 
-Les objectifs de cette étude sont :
+Les étapes de cette étude “exemple” sont :
 
 1.  Identifier les patients avec une hospitalisation pour AVC en 2024
     (codes CIM-10 : I61, I62, I63, I64) via la fonction
@@ -35,11 +35,12 @@ Les objectifs de cette étude sont :
 5.  Extraire leurs prescriptions médicamenteuses en ville via
     [`extract_drug_dispenses()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_dispenses.md)
 
-6.  Nettoyer et fermer la connexion à la base de données
+6.  Fermer la connexion à la base de données
 
 ### Prérequis
 
-Avant de commencer, assurez-vous d’avoir :
+Si vous souhaitez reproduire cette étude sur le portail CNAM,
+assurez-vous d’avoir :
 
 - Une connexion à la base de données Oracle du SNDS sur le portail de la
   CNAM
@@ -123,7 +124,7 @@ kable(sejours_avc_head)
 |  190076 |       3 |       3 |      10 |       3 |       2 |       6 | 7       | 6       | 6       | 5       | I62     | NA      | 05K76   | 94      | 81924   | 2       |      45 |      36 |      10050 | 2024-06-22  | 2024-07-02  | I25        | NA         | NA      |
 |  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I20        | I64        | NA      |
 |  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I10        | I10        | NA      |
-|  153240 |       7 |       7 |      14 |       2 |       2 |      18 | 7       | 5       | 6       | 5       | I10     | I61     | 05C76   | 50      | 02175   | 2       |      61 |     206 |      10041 | 2024-04-29  | 2024-05-13  | I20        | NA         | NA      |
+|  468916 |       9 |       9 |       7 |       2 |       1 |      14 | 6       | 8       | 7       | 6       | I62     | I61     | 05K70   | 67      | 77373   | 1       |      83 |     199 |      10042 | 2024-11-26  | 2024-12-03  | I61        | NA         | NA      |
 
 ``` r
 
@@ -275,11 +276,11 @@ kable(ald_avc_head)
 
 | BEN_IDT_ANO | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
 |------------:|------------:|:------------|:------------|:------------|:------------|
-|          43 |           8 | 2023-11-02  | 2026-03-27  | 01          | I60         |
-|          95 |           8 | 2023-05-01  | 2026-02-08  | 03          | I13         |
+|          42 |           1 | 2023-06-08  | 2026-01-23  | 01          | I20         |
+|          87 |          12 | 2023-03-05  | 2025-12-14  | 02          | I25         |
+|          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
 |          72 |          12 | 2023-01-25  | 2024-04-24  | 02          | I70         |
 |          87 |           8 | 2023-06-07  | 2025-10-05  | 01          | I21         |
-|          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
 
 ``` r
 
@@ -295,9 +296,9 @@ kable(head(ald_resume, 5))
 | MED_MTF_COD |   n | pourcentage |
 |:------------|----:|------------:|
 | I60         |   1 |        14.3 |
+| I25         |   1 |        14.3 |
 | I70         |   1 |        14.3 |
 | I21         |   1 |        14.3 |
-| I25         |   1 |        14.3 |
 | I50         |   1 |        14.3 |
 
 ``` r
@@ -380,10 +381,10 @@ kable(drugs_avc_head)
 | BEN_IDT_ANO | EXE_SOI_DTD | PHA_ACT_QSN | PHA_ATC_CLA | PHA_PRS_C13   | PSP_SPE_COD |
 |------------:|:------------|------------:|:------------|:--------------|:------------|
 |          95 | 2024-02-17  |           1 | C08CA01     | 3400936267343 | 22          |
-|          72 | 2024-03-12  |           1 | C02AC01     | 3400932026555 | 34          |
+|          87 | 2024-07-16  |           1 | C08CA01     | 3400936267343 | 01          |
+|          36 | 2024-04-17  |           1 | C08CA01     | 3400936267343 | 02          |
 |          36 | 2024-06-01  |           1 | C02AC01     | 3400932026555 | 22          |
 |          95 | 2024-11-01  |           2 | C09AA02     | 3400955555555 | 01          |
-|          42 | 2024-02-13  |           1 | C08CA01     | 3400936267343 | 34          |
 
 ``` r
 

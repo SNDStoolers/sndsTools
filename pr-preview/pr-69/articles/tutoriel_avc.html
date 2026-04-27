@@ -89,17 +89,18 @@ vasculaire cérébral (AVC) en 2024.</p>
 <div class="section level2">
 <h2 id="contexte-de-létude">Contexte de l’étude<a class="anchor" aria-label="anchor" href="#contexte-de-l%C3%A9tude"></a>
 </h2>
-<p>Dans le cadre de cette étude, nous souhaitons analyser les parcours
-de soins des patients hospitalisés pour un AVC au cours de l’année 2024.
-Nous utiliserons les fonctions disponibles dans <code>sndsTools</code>
-pour extraire et analyser les données pertinentes.</p>
+<p>Dans le cadre de cette étude “exemple”, nous souhaitons analyser les
+parcours de soins des patients hospitalisés pour un AVC au cours de
+l’année 2024. Nous utiliserons les fonctions disponibles dans
+<code>sndsTools</code> pour extraire et analyser les données
+pertinentes.</p>
 <div class="alert alert-warning">
 <p>Cette étude est un exemple pédagogique de l’utilisation du package
 <code>sndsTools</code>. Elle ne constitue en aucun cas une étude réelle
 valide scientifiquement concernant les patients hospitalisés pour un
 AVC.</p>
 </div>
-<p>Les objectifs de cette étude sont :</p>
+<p>Les étapes de cette étude “exemple” sont :</p>
 <ol style="list-style-type: decimal">
 <li><p>Identifier les patients avec une hospitalisation pour AVC en 2024
 (codes CIM-10 : I61, I62, I63, I64) via la fonction
@@ -112,12 +113,13 @@ AVC.</p>
 <code><a href="../reference/extract_long_term_disease.html">extract_long_term_disease()</a></code></p></li>
 <li><p>Extraire leurs prescriptions médicamenteuses en ville via
 <code><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses()</a></code></p></li>
-<li><p>Nettoyer et fermer la connexion à la base de données</p></li>
+<li><p>Fermer la connexion à la base de données</p></li>
 </ol>
 <div class="section level3">
 <h3 id="prérequis">Prérequis<a class="anchor" aria-label="anchor" href="#pr%C3%A9requis"></a>
 </h3>
-<p>Avant de commencer, assurez-vous d’avoir :</p>
+<p>Si vous souhaitez reproduire cette étude sur le portail CNAM,
+assurez-vous d’avoir :</p>
 <ul>
 <li><p>Une connexion à la base de données Oracle du SNDS sur le portail
 de la CNAM</p></li>
@@ -356,29 +358,29 @@ cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
-<td align="right">153240</td>
+<td align="right">468916</td>
+<td align="right">9</td>
+<td align="right">9</td>
 <td align="right">7</td>
-<td align="right">7</td>
+<td align="right">2</td>
+<td align="right">1</td>
 <td align="right">14</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">18</td>
-<td align="left">7</td>
-<td align="left">5</td>
 <td align="left">6</td>
-<td align="left">5</td>
-<td align="left">I10</td>
+<td align="left">8</td>
+<td align="left">7</td>
+<td align="left">6</td>
+<td align="left">I62</td>
 <td align="left">I61</td>
-<td align="left">05C76</td>
-<td align="left">50</td>
-<td align="left">02175</td>
-<td align="left">2</td>
-<td align="right">61</td>
-<td align="right">206</td>
-<td align="right">10041</td>
-<td align="left">2024-04-29</td>
-<td align="left">2024-05-13</td>
-<td align="left">I20</td>
+<td align="left">05K70</td>
+<td align="left">67</td>
+<td align="left">77373</td>
+<td align="left">1</td>
+<td align="right">83</td>
+<td align="right">199</td>
+<td align="right">10042</td>
+<td align="left">2024-11-26</td>
+<td align="left">2024-12-03</td>
+<td align="left">I61</td>
 <td align="left">NA</td>
 <td align="left">NA</td>
 </tr>
@@ -572,36 +574,20 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">43</td>
-<td align="right">8</td>
-<td align="left">2023-11-02</td>
-<td align="left">2026-03-27</td>
+<td align="right">42</td>
+<td align="right">1</td>
+<td align="left">2023-06-08</td>
+<td align="left">2026-01-23</td>
 <td align="left">01</td>
-<td align="left">I60</td>
-</tr>
-<tr class="even">
-<td align="right">95</td>
-<td align="right">8</td>
-<td align="left">2023-05-01</td>
-<td align="left">2026-02-08</td>
-<td align="left">03</td>
-<td align="left">I13</td>
-</tr>
-<tr class="odd">
-<td align="right">72</td>
-<td align="right">12</td>
-<td align="left">2023-01-25</td>
-<td align="left">2024-04-24</td>
-<td align="left">02</td>
-<td align="left">I70</td>
+<td align="left">I20</td>
 </tr>
 <tr class="even">
 <td align="right">87</td>
-<td align="right">8</td>
-<td align="left">2023-06-07</td>
-<td align="left">2025-10-05</td>
-<td align="left">01</td>
-<td align="left">I21</td>
+<td align="right">12</td>
+<td align="left">2023-03-05</td>
+<td align="left">2025-12-14</td>
+<td align="left">02</td>
+<td align="left">I25</td>
 </tr>
 <tr class="odd">
 <td align="right">43</td>
@@ -610,6 +596,22 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <td align="left">2024-04-25</td>
 <td align="left">01</td>
 <td align="left">I50</td>
+</tr>
+<tr class="even">
+<td align="right">72</td>
+<td align="right">12</td>
+<td align="left">2023-01-25</td>
+<td align="left">2024-04-24</td>
+<td align="left">02</td>
+<td align="left">I70</td>
+</tr>
+<tr class="odd">
+<td align="right">87</td>
+<td align="right">8</td>
+<td align="left">2023-06-07</td>
+<td align="left">2025-10-05</td>
+<td align="left">01</td>
+<td align="left">I21</td>
 </tr>
 </tbody>
 </table>
@@ -635,17 +637,17 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <td align="right">14.3</td>
 </tr>
 <tr class="even">
-<td align="left">I70</td>
+<td align="left">I25</td>
 <td align="right">1</td>
 <td align="right">14.3</td>
 </tr>
 <tr class="odd">
-<td align="left">I21</td>
+<td align="left">I70</td>
 <td align="right">1</td>
 <td align="right">14.3</td>
 </tr>
 <tr class="even">
-<td align="left">I25</td>
+<td align="left">I21</td>
 <td align="right">1</td>
 <td align="right">14.3</td>
 </tr>
@@ -755,14 +757,22 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <td align="left">22</td>
 </tr>
 <tr class="even">
-<td align="right">72</td>
-<td align="left">2024-03-12</td>
+<td align="right">87</td>
+<td align="left">2024-07-16</td>
 <td align="right">1</td>
-<td align="left">C02AC01</td>
-<td align="left">3400932026555</td>
-<td align="left">34</td>
+<td align="left">C08CA01</td>
+<td align="left">3400936267343</td>
+<td align="left">01</td>
 </tr>
 <tr class="odd">
+<td align="right">36</td>
+<td align="left">2024-04-17</td>
+<td align="right">1</td>
+<td align="left">C08CA01</td>
+<td align="left">3400936267343</td>
+<td align="left">02</td>
+</tr>
+<tr class="even">
 <td align="right">36</td>
 <td align="left">2024-06-01</td>
 <td align="right">1</td>
@@ -770,21 +780,13 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <td align="left">3400932026555</td>
 <td align="left">22</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="right">95</td>
 <td align="left">2024-11-01</td>
 <td align="right">2</td>
 <td align="left">C09AA02</td>
 <td align="left">3400955555555</td>
 <td align="left">01</td>
-</tr>
-<tr class="odd">
-<td align="right">42</td>
-<td align="left">2024-02-13</td>
-<td align="right">1</td>
-<td align="left">C08CA01</td>
-<td align="left">3400936267343</td>
-<td align="left">34</td>
 </tr>
 </tbody>
 </table>
