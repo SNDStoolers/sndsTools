@@ -73,3 +73,5 @@ TODO (figure à mettre dans man/figures)
 - [Présentation du package à l'Institut du Cerveau, janvier 2026](https://info.m2dou.fr/_static/files/presentations/2026-01-26_sndsTools_ICM.pdf)
 
 - [Canal de discussion Tchap](https://tchap.gouv.fr/#/room/!VvGizERQTCBTXKScgj:agent.social.tchap.gouv.fr?via=agent.social.tchap.gouv.fr&via=agent.tchap.gouv.fr&via=agent.finances.tchap.gouv.fr)
+
+- Mailing list de diffusion : Pour vous abonner, envoyez un message à sympa_inria@inria.fr avec en objet `subscribe sndstools Prénom Nom` (en remplaçant Prénom Nom par les vôtres),puis laissez le corps du message vide.
