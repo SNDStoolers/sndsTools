@@ -80,9 +80,9 @@ conn <- connect_synthetic_snds(
   ),
   force_insert = TRUE
 )
-#> INFO [2026-05-12 14:09:48] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
-#> INFO [2026-05-12 14:10:03] All files downloaded and extracted to: /home/runner/.cache/sndsTools
-#> INFO [2026-05-12 14:10:05] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
+#> INFO [2026-05-12 14:18:48] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
+#> INFO [2026-05-12 14:19:01] All files downloaded and extracted to: /home/runner/.cache/sndsTools
+#> INFO [2026-05-12 14:19:03] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
 DBI::dbListTables(conn)
 #> [1] "ER_PRS_F"      "user_synonyms"
 ```

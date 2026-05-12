@@ -1,26 +1,28 @@
-# Télécharger les fichiers CSV synthétiques SNDS
+# Obtenir les formats de colonnes à partir du fichier kwikly
 
-Télécharge les fichiers zip depuis [le dépôt de la Plateforme de Données
-de Santé sur
-datagouv.fr](https://www.data.gouv.fr/datasets/donnees-synthetiques-de-la-base-principales-du-systeme-national-des-donnees-de-sante)
-et les décompresse.
+Lit le fichier kwikly pour obtenir les formats de colonnes à utiliser
+lors de la lecture des fichiers CSV synthétiques. Le fichier kwikly est
+téléchargé depuis le dépôt de la CNAM si nécessaire.
 
 ## Usage
 
 ``` r
-download_synthetic_snds_csv(db_path)
+get_kwikly_format(table_name)
 ```
 
 ## Arguments
 
-- db_path:
+- table_name:
 
-  Character. Répertoire dans lequel télécharger et extraire les
-  fichiers.
+  Character. Nom de la table pour laquelle obtenir les formats de
+  colonnes. Par exemple, "T_MCO", "T_RIM_P", etc.
 
 ## Value
 
-Nothing.
+Named list. Une liste nommée de formats de colonnes à utiliser avec
+readr::cols() lors de la lecture du CSV. Les noms de la liste
+correspondent aux noms des colonnes, et les valeurs sont des objets
+readr::col\_\* indiquant le type de chaque colonne.
 
 ## See also
 
@@ -35,5 +37,5 @@ Other synthetic:
 [`create_mock_ir_pha_r()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_ir_pha_r.md),
 [`create_mock_mco_tables()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_mco_tables.md),
 [`create_mock_patients_ids()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_patients_ids.md),
-[`get_kwikly_format()`](https://sndstoolers.github.io/sndsTools/reference/get_kwikly_format.md),
+[`download_synthetic_snds_csv()`](https://sndstoolers.github.io/sndsTools/reference/download_synthetic_snds_csv.md),
 [`insert_synthetic_snds_table()`](https://sndstoolers.github.io/sndsTools/reference/insert_synthetic_snds_table.md)
