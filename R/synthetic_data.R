@@ -1,12 +1,12 @@
 #' Télécharge les données synthétiques SNDS et les charge dans une base DuckDB
 #'
-#' Télécharge tous les fichiers de données synthétiques SNDS depuis l'API de
-#' Health Data Hub sur data.gouv.fr, décompresse les archives ZIP, lit les
+#' Télécharge les données synthétiques SNDS depuis le compte de
+#' la Plateforme des Données de Santé sur data.gouv.fr avec la fonction
+#' \code{\link{other_function}}, décompresse les archives ZIP, puis lit les
 #' fichiers CSV et les charge dans une base DuckDB locale.
 #'
-#' @param path2b Character. Chemin vers le fichier de la base DuckDB à créer.
-#'   La valeur par défaut est `./synthetic_snds.duckdb` dans le répertoire de
-#'   travail courant.
+#' @param path2b Character. Chemin vers le fichier de la base DuckDB à créer. La
+#'   valeur par défaut est `~/.cache/sndsTools/synthetic_snds.duckdb`.
 #' @param force_insert Logical. Si TRUE, force la réinsertion des données même
 #'   si la base existe déjà (FALSE par défaut). Si FALSE et que la base existe,
 #' la fonction retourne la connexion à la base existante sans réinsertion.
