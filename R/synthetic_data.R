@@ -133,7 +133,8 @@ connect_synthetic_snds <- function(
 #'
 #' @return Nothing.
 #'
-#' @keywords internal
+#' @export
+#' @family synthetic
 # nolint end
 download_synthetic_snds_csv <- function(db_path) {
   synth_resources <- c(
@@ -176,19 +177,46 @@ download_synthetic_snds_csv <- function(db_path) {
         stop("Failed to download: ", zip_name, " error: ", e$message)
       }
     )
-    # Unzip
-    extracted_files <- utils::unzip(zip_path, exdir = db_path)
-    # Move extracted dir to expected name since the zip contains a single dir with a non utf-8 name # nolint
-    extracted_dir <- dirname(extracted_files[1])
+    # Décompression robuste sur Windows : certaines archives contiennent des
+    # noms de fichiers non UTF-8, ce qui peut faire échouer utils::unzip().
     expected_dir <- file.path(db_path, zip_name)
-
-    if (extracted_dir != expected_dir) {
-      dir.create(expected_dir, showWarnings = FALSE)
-      for (f in extracted_files) {
-        file.rename(f, file.path(expected_dir, basename(f)))
-      }
-      unlink(extracted_dir, recursive = TRUE)
+    if (!dir.exists(expected_dir)) {
+      dir.create(expected_dir, recursive = TRUE)
     }
+
+    if (.Platform$OS.type == "windows") {
+      ps_zip <- gsub(
+        "'",
+        "''",
+        normalizePath(zip_path, winslash = "\\", mustWork = FALSE)
+      )
+      ps_dir <- gsub(
+        "'",
+        "''",
+        normalizePath(expected_dir, winslash = "\\", mustWork = FALSE)
+      )
+      ps_cmd <- paste0(
+        "Expand-Archive -LiteralPath '",
+        ps_zip,
+        "' -DestinationPath '",
+        ps_dir,
+        "' -Force"
+      )
+      status <- suppressWarnings(
+        system2(
+          "powershell",
+          c("-NoProfile", "-NonInteractive", "-Command", ps_cmd),
+          stdout = FALSE,
+          stderr = FALSE
+        )
+      )
+      if (!identical(status, 0L)) {
+        utils::unzip(zip_path, exdir = expected_dir)
+      }
+    } else {
+      utils::unzip(zip_path, exdir = expected_dir)
+    }
+
     file.remove(zip_path)
   }
   logger::log_info(paste0(
@@ -204,7 +232,8 @@ download_synthetic_snds_csv <- function(db_path) {
 #' @param conn DuckDB connection. Connexion à la base DuckDB.
 #' @param path2csv Character. Chemin vers le fichier CSV à insérer.
 #' @return Invisible. Retourne la connexion DuckDB après insertion.
-#' @keywords internal
+#' @export
+#' @family synthetic
 insert_synthetic_snds_table <- function(
   conn,
   path2csv,
@@ -245,7 +274,19 @@ insert_synthetic_snds_table <- function(
   invisible(conn)
 }
 
-
+#' Obtenir les formats de colonnes à partir du fichier kwikly
+#'
+#' Lit le fichier kwikly pour obtenir les formats de colonnes à utiliser lors de
+#' la lecture des fichiers CSV synthétiques. Le fichier kwikly est téléchargé
+#' depuis le dépôt de la CNAM si nécessaire.
+#' @param table_name Character. Nom de la table pour laquelle obtenir les
+#' formats de colonnes. Par exemple, "T_MCO", "T_RIM_P", etc.
+#' @return Named list. Une liste nommée de formats de colonnes à utiliser avec
+#' readr::cols() lors de la lecture du CSV. Les noms de la liste correspondent
+#' aux noms des colonnes, et les valeurs sont des objets readr::col_* indiquant
+#' le type de chaque colonne.
+#' @export
+#' @family synthetic
 get_kwikly_format <- function(table_name) {
   url2kwikly <- "https://gitlab.com/healthdatahub/applications-du-hdh/documentation-snds/-/raw/master/snds/files/CNAM_NEW/formations/kwikly/KWIKLY_Katalogue_Sniiram_SNDS_v2026-1.xlsm" #nolint
 
