@@ -115,6 +115,7 @@ cd sndsTools
     les dépendances de développement. Dans la console R, lancez :
 
 ``` r
+
 devtools::install(dependencies = TRUE)
 ```
 

@@ -52,6 +52,7 @@ Cette vignette peut être exécutée hors du portail CNAM. Dans ce cas, des
 données fictives sont générées pour illustrer les étapes de l’étude.
 
 ``` r
+
 # Charger les packages nécessaires
 if (dir.exists("~/sasdata1")) {
   # sur le portail CNAM
@@ -88,6 +89,7 @@ intracrâniennes non traumatiques), I63 (infarctus cérébral) et I64
 (accident vasculaire cérébral non précisé).
 
 ``` r
+
 # Définir la période d'étude - année 2024
 start_date <- as.Date("2024-01-01")
 end_date <- as.Date("2024-12-31")
@@ -119,14 +121,15 @@ kable(sejours_avc_head)
 ```
 
 | ETA_NUM | RSA_NUM | SEJ_NUM | SEJ_NBJ | NBR_DGN | NBR_RUM | NBR_ACT | ENT_MOD | ENT_PRV | SOR_MOD | SOR_DES | DGN_PAL | DGN_REL | GRG_GHM | BDI_DEP | BDI_COD | COD_SEX | AGE_ANN | AGE_JOU | NIR_ANO_17 | EXE_SOI_DTD | EXE_SOI_DTF | DGN_PAL_UM | DGN_REL_UM | ASS_DGN |
-|--------:|--------:|--------:|--------:|--------:|--------:|--------:|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|:--------|--------:|--------:|-----------:|:------------|:------------|:-----------|:-----------|:--------|
-|  190076 |       3 |       3 |      10 |       3 |       2 |       6 | 7       | 6       | 6       | 5       | I62     | NA      | 05K76   | 94      | 81924   | 2       |      45 |      36 |      10050 | 2024-06-22  | 2024-07-02  | I50        | I63        | NA      |
-|  190076 |       3 |       3 |      10 |       3 |       2 |       6 | 7       | 6       | 6       | 5       | I62     | NA      | 05K76   | 94      | 81924   | 2       |      45 |      36 |      10050 | 2024-06-22  | 2024-07-02  | I25        | NA         | NA      |
-|  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I10        | I10        | NA      |
-|  883006 |      23 |      23 |      17 |       2 |       2 |      11 | 6       | 2       | 6       | 7       | I62     | NA      | 05M30   | 08      | 49331   | 2       |      78 |      37 |      10035 | 2024-06-04  | 2024-06-21  | I20        | I64        | NA      |
-|  468916 |       9 |       9 |       7 |       2 |       1 |      14 | 6       | 8       | 7       | 6       | I62     | I61     | 05K70   | 67      | 77373   | 1       |      83 |     199 |      10042 | 2024-11-26  | 2024-12-03  | I61        | NA         | NA      |
+|---:|---:|---:|---:|---:|---:|---:|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|---:|---:|---:|:---|:---|:---|:---|:---|
+| 190076 | 3 | 3 | 10 | 3 | 2 | 6 | 7 | 6 | 6 | 5 | I62 | NA | 05K76 | 94 | 81924 | 2 | 45 | 36 | 10050 | 2024-06-22 | 2024-07-02 | I50 | I63 | NA |
+| 190076 | 3 | 3 | 10 | 3 | 2 | 6 | 7 | 6 | 6 | 5 | I62 | NA | 05K76 | 94 | 81924 | 2 | 45 | 36 | 10050 | 2024-06-22 | 2024-07-02 | I25 | NA | NA |
+| 883006 | 23 | 23 | 17 | 2 | 2 | 11 | 6 | 2 | 6 | 7 | I62 | NA | 05M30 | 08 | 49331 | 2 | 78 | 37 | 10035 | 2024-06-04 | 2024-06-21 | I10 | I10 | NA |
+| 883006 | 23 | 23 | 17 | 2 | 2 | 11 | 6 | 2 | 6 | 7 | I62 | NA | 05M30 | 08 | 49331 | 2 | 78 | 37 | 10035 | 2024-06-04 | 2024-06-21 | I20 | I64 | NA |
+| 468916 | 9 | 9 | 7 | 2 | 1 | 14 | 6 | 8 | 7 | 6 | I62 | I61 | 05K70 | 67 | 77373 | 1 | 83 | 199 | 10042 | 2024-11-26 | 2024-12-03 | I61 | NA | NA |
 
 ``` r
+
 
 # Analyser la répartition par type d'AVC
 avc_par_type <- dplyr::tbl(conn, "TMP_SEJOURS_AVC") |>
@@ -152,6 +155,7 @@ dans le référentiel des bénéficiaires en utilisant
 [`retrieve_all_psa_from_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_psa.md).
 
 ``` r
+
 # Créer une table temporaire des pseudo-NIR des patients avec AVC
 patients_psa_avc <- dplyr::tbl(conn, "TMP_SEJOURS_AVC") |>
   dplyr::select(BEN_NIR_PSA = NIR_ANO_17) |>
@@ -194,6 +198,7 @@ patients en utilisant
 [`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md).
 
 ``` r
+
 # Extraire toutes les consultations des patients avec AVC
 extract_consultations_erprsf(
   start_date = start_date,
@@ -230,6 +235,7 @@ kable(head(consultations_par_specialite, 5))
 
 ``` r
 
+
 # Analyser le nombre de consultations par patient
 consultations_par_patient <- dplyr::tbl(conn, "TMP_CONSULTATIONS_AVC") |>
   dplyr::group_by(BEN_IDT_ANO) |>
@@ -248,6 +254,7 @@ Nous extrayons les ALD des patients avec AVC en utilisant
 [`extract_long_term_disease()`](https://sndstoolers.github.io/sndsTools/reference/extract_long_term_disease.md).
 
 ``` r
+
 # Extraire les ALD des patients avec AVC
 patients_ids_for_ald <- patients_ids_filter |>
   select(BEN_IDT_ANO, BEN_NIR_PSA) |>
@@ -284,6 +291,7 @@ kable(ald_avc_head)
 
 ``` r
 
+
 # Analyser la répartition par type d'ALD
 ald_resume <- dplyr::tbl(conn, "TMP_ALD_AVC") |>
   dplyr::count(MED_MTF_COD, sort = TRUE) |>
@@ -302,6 +310,7 @@ kable(head(ald_resume, 5))
 | I50         |   1 |        14.3 |
 
 ``` r
+
 
 # Analyser le pourcentage de patients AVC avec une ALD
 patients_avec_ald <- dplyr::tbl(conn, "TMP_ALD_AVC") |>
@@ -327,6 +336,7 @@ Cette lenteur est dûe à la jointure nécessaire entre les deux tables
 volumineuses `ER_PHA_F` et `ER_PRS_F`.
 
 ``` r
+
 # Extraire les délivrances de médicaments des patients avec AVC
 patients_ids_for_drugs <- patients_ids_filter |>
   select(BEN_IDT_ANO, BEN_NIR_PSA) |>
@@ -388,6 +398,7 @@ kable(drugs_avc_head)
 
 ``` r
 
+
 # Analyser la répartition par code ATC
 drugs_par_atc <- dplyr::tbl(conn, "TMP_DRUG_DISPENSES_AVC") |>
   dplyr::count(PHA_ATC_CLA, sort = TRUE) |>
@@ -408,6 +419,7 @@ kable(head(drugs_par_atc, 5))
 ### Étape 6 : Nettoyage et fermeture de la session
 
 ``` r
+
 # Supprimer les tables temporaires
 tables_to_remove <- c(
   "TMP_PATIENTS_AVC_PSA", "TMP_SEJOURS_AVC",

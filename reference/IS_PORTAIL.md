@@ -8,10 +8,6 @@ Est-ce que le code tourne sur le portail de la CNAM ?
 IS_PORTAIL
 ```
 
-## Format
-
-An object of class `logical` of length 1.
-
 ## See also
 
 Other utils:

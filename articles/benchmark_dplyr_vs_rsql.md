@@ -20,6 +20,7 @@ L’extraction est faite en bouclant par mois sur la date de flux.
 ### Comparaison des performances entre `dplyr` et `RSQL`
 
 ``` r
+
 library(sndsTools)
 
 # Paramètres d'extraction
@@ -135,6 +136,7 @@ la vitesse d’extraction de `dplyr` en fonction du nombre de lignes et de
 colonnes extraites.
 
 ``` r
+
 library(sndsTools)
 
 # Paramètres d'extraction
@@ -226,6 +228,7 @@ for (i in seq_along(start_dates)) {
 ### benchmark dplyr/RSQL
 
 ``` r
+
 library(sndsTools)
 path2pkg_data <- system.file("extdata", package = "sndsTools")
 # path2pkg_data <- "../inst/extdata"
@@ -245,6 +248,7 @@ timing_results <- read.csv(file.path(path2pkg_data, "benchmark_rsql_dplyr.csv"))
     ## '/home/runner/work/_temp/Library/sndsTools/extdata/benchmark_rsql_dplyr.csv'
 
 ``` r
+
 timing_results
 ```
 
@@ -267,6 +271,7 @@ timing_results
 #### Durée des extractions
 
 ``` r
+
 # plot time results
 library(ggplot2)
 
@@ -304,6 +309,7 @@ timing_results |>
 #### Contenu des extractions (nombre de lignes)
 
 ``` r
+
 # plot time results
 library(ggplot2)
 
@@ -337,6 +343,7 @@ timing_results |>
 #### Vitesse d’extraction (en nombre de lignes extraites par minute)
 
 ``` r
+
 # plot time results
 library(ggplot2)
 
@@ -379,6 +386,7 @@ requête donnée (effectuée en dplyr) en fonction du nombre de colonnes
 extraites pour la requête étudiée.
 
 ``` r
+
 path2pkg_data <- system.file("extdata", package = "sndsTools")
 # path2pkg_data <- "inst/extdata"
 
@@ -422,6 +430,7 @@ timing_results_cols
     ## 6                               21
 
 ``` r
+
 # plot time results
 library(ggplot2)
 

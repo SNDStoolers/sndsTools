@@ -1,8 +1,9 @@
 # Télécharge les données synthétiques SNDS et les charge dans une base DuckDB
 
-Télécharge tous les fichiers de données synthétiques SNDS depuis l'API
-de Health Data Hub sur data.gouv.fr, décompresse les archives ZIP, lit
-les fichiers CSV et les charge dans une base DuckDB locale.
+Télécharge les données synthétiques SNDS depuis le compte de la
+Plateforme des Données de Santé sur data.gouv.fr avec la fonction
+`other_function`, décompresse les archives ZIP, puis lit les fichiers
+CSV et les charge dans une base DuckDB locale.
 
 ## Usage
 
@@ -40,8 +41,7 @@ connect_synthetic_snds(
 - path2b:
 
   Character. Chemin vers le fichier de la base DuckDB à créer. La valeur
-  par défaut est `./synthetic_snds.duckdb` dans le répertoire de travail
-  courant.
+  par défaut est `~/.cache/sndsTools/synthetic_snds.duckdb`.
 
 ## Value
 

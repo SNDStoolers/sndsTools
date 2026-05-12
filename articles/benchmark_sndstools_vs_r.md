@@ -3,6 +3,7 @@
 ## Paramètres de la comparaison
 
 ``` r
+
 library(dplyr)
 library(lubridate)
 
@@ -23,6 +24,7 @@ en indiquant la date de début de la période d’intérêt, la date de fin,
 et l’ATC qui nous intéresse.
 
 ``` r
+
 source(here::here("sndsTools.R"))
 conn <- connect_oracle()
 
@@ -46,6 +48,7 @@ habituels, puis on fait une jointure avec `ER_PHA_F` filtrée sur les CIP
 de quétiapine récupérés dans `IR_PHA_R`.
 
 ``` r
+
 library(ROracle)
 drv <- dbDriver("Oracle")
 conn <- dbConnect(drv, dbname = "IPIAMPR2.WORLD")
@@ -126,6 +129,7 @@ l’événement, on vérifie que chaque ligne de la sortie classique est dans
 la sortie de sndsTools et vice versa.
 
 ``` r
+
 # Comparaison ligne à ligne
 line_by_line_differences <- output_quetiapine_classique |>
   mutate(EXE_SOI_DTD = as_date(EXE_SOI_DTD)) |>
@@ -151,6 +155,7 @@ row.names = FALSE
 ```
 
 ``` r
+
 library(ggplot2)
 plot_data <- read.csv(here::here("inst/extdata/benchmark_sndstools_vs_r.csv"))
 # Graphique

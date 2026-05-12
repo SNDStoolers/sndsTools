@@ -41,12 +41,14 @@ d’utiliser une release stable du paquet.
 Ouvrir le paquet avec Rstudio, puis lancer :
 
 ``` r
+
 devtools::install(dependencies = TRUE)
 ```
 
 Puis pour charger le paquet :
 
 ``` r
+
 library(sndsTools)
 ```
 
@@ -68,6 +70,7 @@ données. Les appels suivants seront plus rapides, car les données seront
 mises en cache localement.
 
 ``` r
+
 # Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.
 # On se limite à la table ER_PRS_F pour gagner du temps.
 # Pour avoir toute la base synthétique, enlever l'argument subset_tables ou le mettre à NULL.
@@ -77,9 +80,9 @@ conn <- connect_synthetic_snds(
   ),
   force_insert = TRUE
 )
-#> INFO [2026-04-29 09:36:35] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
-#> INFO [2026-04-29 09:37:01] All files downloaded and extracted to: /home/runner/.cache/sndsTools
-#> INFO [2026-04-29 09:37:03] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
+#> INFO [2026-05-12 14:09:48] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
+#> INFO [2026-05-12 14:10:03] All files downloaded and extracted to: /home/runner/.cache/sndsTools
+#> INFO [2026-05-12 14:10:05] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
 DBI::dbListTables(conn)
 #> [1] "ER_PRS_F"      "user_synonyms"
 ```
@@ -87,6 +90,7 @@ DBI::dbListTables(conn)
 #### Exemple basique d’extraction de données (consultations de chirurgie vasculaire)
 
 ``` r
+
 consultations_df <- extract_consultations_erprsf(
   conn = conn,
   start_date = as.Date("2011-01-01"),
@@ -99,11 +103,12 @@ consultations_df <- extract_consultations_erprsf(
 consultations_df |> knitr::kable()
 ```
 
-| BEN_NIR_PSA       | EXE_SOI_DTD | PSE_SPE_COD | PFS_EXE_NUM | PRS_NAT_REF | PRS_ACT_QTE | BEN_RNG_GEM |
-|:------------------|:------------|------------:|:------------|------------:|------------:|------------:|
-| PEyUrNJzINkmgxwUz | 2019-12-23  |          48 | HKcvLcRye   |        2132 |           1 |           3 |
+| BEN_NIR_PSA | EXE_SOI_DTD | PSE_SPE_COD | PFS_EXE_NUM | PRS_NAT_REF | PRS_ACT_QTE | BEN_RNG_GEM |
+|:---|:---|---:|:---|---:|---:|---:|
+| PEyUrNJzINkmgxwUz | 2019-12-23 | 48 | HKcvLcRye | 2132 | 1 | 3 |
 
 ``` r
+
 
 # Fermer la connexion à la base de données en fin de programme
 conn |> DBI::dbDisconnect()
