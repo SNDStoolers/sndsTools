@@ -130,8 +130,6 @@ Dans cet ordre de priorité :
 En anglais dans le code, en français dans la partie visible pour les
 utilisateurs (Rd, vignettes, etc.)
 
-### Arguments des fonctions
-
 ## Processus d’acceptation des pull requests
 
 - Il est recommandé de créer une nouvelle branche git pour chaque
