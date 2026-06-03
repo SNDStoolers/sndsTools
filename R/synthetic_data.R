@@ -288,13 +288,15 @@ insert_synthetic_snds_table <- function(
 #' @export
 #' @family synthetic
 get_kwikly_format <- function(table_name) {
-  url2kwikly <- "https://gitlab.com/healthdatahub/applications-du-hdh/documentation-snds/-/raw/master/snds/files/CNAM_NEW/formations/kwikly/KWIKLY_Katalogue_Sniiram_SNDS_v2026-1.xlsm" #nolint
-
-  # download the kwikly if it does not exist in cachedir
-  dir2kwikly <- file.path(DIR2SNDS_CACHE, "kwikly.xlsx")
-  if (!file.exists(dir2kwikly)) {
-    utils::download.file(url2kwikly, dir2kwikly, mode = "wb", quiet = TRUE)
+  dir2kwikly <- system.file(
+    "extdata",
+    "KWIKLY_Katalogue_Sniiram_SNDS_v2026-1.xlsm",
+    package = "sndsTools"
+  )
+  if (identical(dir2kwikly, "")) {
+    stop("KWIKLY file not found in inst/extdata")
   }
+
   table_name_ <- toupper(table_name)
   if (stringr::str_starts(table_name_, "T_")) {
     table_name_ <- stringr::str_replace(table_name_, "AA", "XX")
