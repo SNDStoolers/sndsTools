@@ -43,8 +43,6 @@
 #' @param output_table_name Character Optionnel. Si fourni, les résultats seront
 #'   sauvegardés dans une table portant ce nom dans la base de données au lieu
 #'   d'être retournés sous forme de data frame.
-#' @param overwrite Logical. Indique si la table `output_table_name` doit être
-#'   écrasée dans le cas où elle existe déjà. Défaut à TRUE.
 #' @param conn DBI connection Une connexion à la base de données Oracle.
 #'   Si non fournie, une connexion est établie par défaut.
 #' @return Si output_table_name est NULL, retourne un data.frame contenant les
