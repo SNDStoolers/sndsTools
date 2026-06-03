@@ -6,7 +6,7 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## \[0.2.0\] - 2026-06-03
+## \[0.2.2\] - 2026-06-03
 
 ### Added
 
@@ -24,6 +24,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added vignette `tutoriel_avc.Rmd` - Complete stroke study tutorial
 - Added vignette `benchmark_sndstools_vs_r.Rmd` - Performance comparison
   between sndsTools and base R
+- Added to vignette `contribuer.Rmd` API conventions
 
 ### Changed
 
@@ -32,6 +33,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   consistency
 - Changed constants from `constants()` function to direct variable
   exports
+- Renamed all extraction functions to be consistent with the API naming
+  convention
 
 ### Fixed
 
@@ -44,6 +47,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added validation to ensure `output_table_name` is in uppercase (#89)
 - Corrected broken links in README (#88)
 - Better parameter harmonization across extraction functions
+- Fixed get_kwikly_format broken by removed reference on documentation
+  snds website
 
 ### Removed
 
