@@ -14,13 +14,13 @@ Ce projet est un effort communautaire. Les nouveaux contributeurs sont les bienv
 
 ## Répondre à une question sur une issue
 
-De nombreuses questions sont posées sur les [issues](https://github.com/SNDStoolers/sndsTools/issues). Vous pouvez y répondre en donnant des conseils, ou en proposant une solution. 
+De nombreuses questions sont posées sur les [issues](https://github.com/SNDStoolers/sndsTools/issues). Vous pouvez y répondre en donnant des conseils, ou en proposant une solution.
 
 ## Créer une nouvelle issue
 
-Si vous avez trouvé un bug, ou si vous avez une question sur une fonctionnalité, vous pouvez [créer une nouvelle issue](https://github.com/SNDStoolers/sndsTools/issues/new/choose). 
+Si vous avez trouvé un bug, ou si vous avez une question sur une fonctionnalité, vous pouvez [créer une nouvelle issue](https://github.com/SNDStoolers/sndsTools/issues/new/choose).
 
-En cas de bug, il est important de donner un exemple reproductible [`reprex`](https://www.tidyverse.org/help/#reprex). Celui-ci contient le code nécessaire pour reproduire le bug, et le message d'erreur complet. Il est très important pour qu'un développeur plus expérimenté puisse comprendre le problème et vous aider. 
+En cas de bug, il est important de donner un exemple reproductible [`reprex`](https://www.tidyverse.org/help/#reprex). Celui-ci contient le code nécessaire pour reproduire le bug, et le message d'erreur complet. Il est très important pour qu'un développeur plus expérimenté puisse comprendre le problème et vous aider.
 
 ## Contribuer à la documentation
 
@@ -38,19 +38,19 @@ Afin de résoudre un bug, ou d'ajouter une nouvelle fonctionnalité, vous pouvez
 
 - Etre patient : Les contributeurs sont bénévoles, effectuent la plupart du travail sur leur temps libre et peuvent ne pas répondre immédiatement à vos questions.
 
-- Etre respectueux : Les contributeurs viennent de différents horizons, et ont des niveaux de compétences différents. Il est important de respecter les opinions des autres, et de rester bienveillant. 
+- Etre respectueux : Les contributeurs viennent de différents horizons, et ont des niveaux de compétences différents. Il est important de respecter les opinions des autres, et de rester bienveillant.
 
 # Processus d'acceptation des pull requests
 
 - Il est recommandé de créer une nouvelle branche git pour chaque nouvelle pull request (PR).
 - Un code nouveau proposant une nouvelle fonctionnalité doit respecter les conventions de style R. Vous pouvez utiliser le paquet [styler](https://cran.r-project.org/package=styler) pour appliquer ces styles, mais s'il vous plait ne restyler pas du code qui n'a rien à faire avec votre PR.
-- Nous utilisons [roxygen2](https://cran.r-project.org/package=roxygen2), avec la syntaxe Markdown pour la documentation. 
-- Nous suivons [le guide de style de code R du tidyverse](https://style.tidyverse.org/index.html). La seule différence avec le guide actuel est que nous utilisons le pipe natif `|>` au lieu de `%>%`. 
+- Nous utilisons [roxygen2](https://cran.r-project.org/package=roxygen2), avec la syntaxe Markdown pour la documentation.
+- Nous suivons [le guide de style de code R du tidyverse](https://style.tidyverse.org/index.html). La seule différence avec le guide actuel est que nous utilisons le pipe natif `|>` au lieu de `%>%`.
 - Pour **SQL**, nous suivons [le guide de style SQL de Mozilla](https://docs.telemetry.mozilla.org/concepts/sql_style).
 - Nous utilisons [testthat](https://cran.r-project.org/package=testthat) pour les tests. Les contributions avec des tests inclus sont acceptés plus facilement.
 - Une nouvelle PR doit être revue par au moins un core contributeur avant d'être intégrée.
 
-# Comment contribuer concrètement ? 
+# Comment contribuer concrètement ?
 
 Afin de modifier le code, il est au préalable nécessaire de forker le dépôt principal sur GitHub, puis de soumettre une "pull request" (PR).
 
@@ -62,7 +62,7 @@ Dans les premières étapes, nous expliquons comment installer localement {sndsT
 
 3. Clonez votre fork du dépôt {sndsTools} depuis votre compte GitHub sur votre disque local :
 
-```bash	
+```bash
 git clone git@github.com:YourLogin/sndsTools.git
 cd sndsTools
 ```
@@ -97,7 +97,7 @@ git checkout -b my-new-feature
 
 Et commencez à faire vos changements. Utilisez toujours une branche différente pour chaque nouvelle fonctionnalité ou bug fix. C'est une bonne pratique de ne jamais coder sur la branche `main`.
 
-8. Une fois que vous avez terminé vos modifications, vous pouvez les commiter : 
+8. Une fois que vous avez terminé vos modifications, vous pouvez les commiter :
 
 ```bash
 git add modified_files
@@ -114,13 +114,12 @@ git push origin my-new-feature
 
 Il est possible qu'à un moment, vous ayez besoin de résoudre des conflits, si d'autres contributeurs ont modifié le code pendant que vous travailliez sur votre branche. Vous pouvez vous référer à [cette documentation pour résoudre les conflits](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/).
 
-10. Avant de demander une revue pour votre pull request, vérifier avec les commandes suivantes dans le terminal que le code passent certains test de qualité : 
+10. Avant de demander une revue pour votre pull request, vérifier avec les commandes suivantes dans le terminal que le code passent certains test de qualité :
 
 - que votre code ne casse pas de tests : `make test`
 - que votre code respecte les conventions de style : `make style`
 - que votre code respecte les conventions de lint : `make lint` (nécessite l'extension [air formatter](https://tidyverse.org/blog/2025/02/air/) installée)
 - que la documentation se génère correctement : `make doc-html`
-
 # Environnement de développement
 
 L'environnement de développement recommandé est Rstudio ou vscode.
@@ -129,8 +128,18 @@ Un environnement de développement conteneurisé avec R et les paquets nécessai
 
 # Références pour contribuer
 
-La meilleur manière d'apprendre comment contribuer est de se lancer ! 
+La meilleur manière d'apprendre comment contribuer est de se lancer !
 Néamoins, la lecture de certaines ressources peut être utile :
 
 - [Guide de contribution de tidyverse](https://www.tidyverse.org/contribute/)
 - [Apprendre git](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git)
+
+# Créer une nouvelle release
+
+On adhère au [versionnage sémantique](https://semver.org/spec/v2.0.0.html).
+
+Quand un version est prête à être publiée:
+ - compléter le changelog dans `CHANGELOG.md` en suivant les conventions de ce fichier
+ - créer une nouvelle release dans le terminal avec la commande `git tag -a vX.Y.Z -m "Release version X.Y.Z"` (remplacer X.Y.Z par le numéro de version)
+ - pousser la nouvelle release sur GitHub avec `git push origin vX.Y.Z`
+ - aller sur la page des releases du projet sur GitHub, et publier la release que vous venez de créer. Ajoutez la copie du changelog correspondant à cette release dans la description de la release ainsi que le nom des contributeurs.
