@@ -349,7 +349,6 @@ extract_drug_dispenses <- function(
           ) |>
           dplyr::filter(
             DPN_QLF != 71L,
-            CPL_MAJ_TOP < 2L,
             (ETE_IND_TAA != 1L) | is.na(ETE_IND_TAA)
           )
 
