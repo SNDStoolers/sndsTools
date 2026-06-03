@@ -61,6 +61,77 @@ request](https://github.com/SNDStoolers/sndsTools/pulls).
   et ont des niveaux de compétences différents. Il est important de
   respecter les opinions des autres, et de rester bienveillant.
 
+## API
+
+Nous essayons d’adopter une API cohérente et intuitive pour toutes les
+fonctions. Le plus simple pour créer une nouvelle fonction est de se
+référer à une fonction existante qui fait quelque chose de similaire, et
+de suivre les mêmes conventions pour les noms de fonctions et les
+arguments. La section suivante détaille les conventions que nous
+essayons de suivre. L’argumentaire est discuté dans [l’issue
+\#32](https://github.com/SNDStoolers/sndsTools/issues/32).
+
+### Nom des fonctions
+
+- La fonction commence par un verbe d’action suivi du concept sur lequel
+  elle agit suivi de la table ou le produit sur lequel elle agit.
+
+- Chaque élément est séparé par un trait d’union.
+
+- Exemple : extract_consultations_erprsf\` *extrait* les *consultations*
+  de la table *erprsf*. Si plusieurs tables sont concernées, utiliser la
+  table la plus importante ou la plus spécifique.
+
+### Paramètres des fonctions
+
+Dans cet ordre de priorité :
+
+- Dates de début `start_date`, `end_date`
+
+- Filtres : suffixé par `_filter`, par exemple `pse_spe_filter`.
+  Plusieurs filtres peuvent être utilisés dans la même fonction.
+
+- Autres paramètres éventuels.
+
+- `patients_ids_filter` (Optionnel) : Filtrer sur une liste
+  d’identifiants de patients si non NULL.
+
+- `output_table_name` : Nom de la table de sortie Oracle si non NULL,
+  sinon la fonction retourne un data.frame.
+
+- `conn` : Objet de connexion à la base de données Oracle. Si NULL, la
+  fonction retourne un data.frame.
+
+### Valeur de retour
+
+- Par défaut, les fonctions retournent un data.frame. Si l’argument
+  `output_table_name` est spécifié, la fonction écrit la table dans la
+  base de données Oracle et retourne NULL.
+
+- Format de la table de sortie : un data.frame avec une ligne par
+  événement de soin. Les colonnes sont au minimum l’identifiant patient
+  ((`BEN_NIR_PSA`, `BEN_RNG_GEM`) ou `NIR_ANO_17` et/ou `BEN_IDT_ANO`),
+  une date de début `EXE_SOI_DTD`, éventuellement une date de fin, et
+  une colonne par filtre utilisé. Les variables sont nommées en
+  snake_case.
+
+### Autres conventions
+
+- Gestion des tables :
+
+  - Pas d’overwrite sur une table existante avec le même nom que la
+    table de sortie `output_table_name`.
+
+  - Pas de suppression d’une table que l’on n’a pas créé dans la même
+    fonction.
+
+### Commentaires
+
+En anglais dans le code, en français dans la partie visible pour les
+utilisateurs (Rd, vignettes, etc.)
+
+### Arguments des fonctions
+
 ## Processus d’acceptation des pull requests
 
 - Il est recommandé de créer une nouvelle branche git pour chaque
@@ -185,9 +256,8 @@ conflits](https://help.github.com/articles/resolving-a-merge-conflict-using-the-
 - que votre code respecte les conventions de lint : `make lint`
   (nécessite l’extension [air
   formatter](https://tidyverse.org/blog/2025/02/air/) installée)
-- que la documentation se génère correctement : `make doc-html`
-
-## Environnement de développement
+- que la documentation se génère correctement : `make doc-html` \#
+  Environnement de développement
 
 L’environnement de développement recommandé est Rstudio ou vscode.
 
@@ -208,3 +278,18 @@ Néamoins, la lecture de certaines ressources peut être utile :
   tidyverse](https://www.tidyverse.org/contribute/)
 - [Apprendre
   git](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git)
+
+## Créer une nouvelle release
+
+On adhère au [versionnage
+sémantique](https://semver.org/spec/v2.0.0.html).
+
+Quand un version est prête à être publiée: - compléter le changelog dans
+`CHANGELOG.md` en suivant les conventions de ce fichier - créer une
+nouvelle release dans le terminal avec la commande
+`git tag -a vX.Y.Z -m "Release version X.Y.Z"` (remplacer X.Y.Z par le
+numéro de version) - pousser la nouvelle release sur GitHub avec
+`git push origin vX.Y.Z` - aller sur la page des releases du projet sur
+GitHub, et publier la release que vous venez de créer. Ajoutez la copie
+du changelog correspondant à cette release dans la description de la
+release ainsi que le nom des contributeurs.

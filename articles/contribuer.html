@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Contribuer • sndsTools</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Contribuer">
 </head>
@@ -142,6 +142,91 @@ bienveillant.</p></li>
 </ul>
 </div>
 <div class="section level2">
+<h2 id="api">API<a class="anchor" aria-label="anchor" href="#api"></a>
+</h2>
+<p>Nous essayons d’adopter une API cohérente et intuitive pour toutes
+les fonctions. Le plus simple pour créer une nouvelle fonction est de se
+référer à une fonction existante qui fait quelque chose de similaire, et
+de suivre les mêmes conventions pour les noms de fonctions et les
+arguments. La section suivante détaille les conventions que nous
+essayons de suivre. L’argumentaire est discuté dans <a href="https://github.com/SNDStoolers/sndsTools/issues/32" class="external-link">l’issue
+#32</a>.</p>
+<div class="section level3">
+<h3 id="nom-des-fonctions">Nom des fonctions<a class="anchor" aria-label="anchor" href="#nom-des-fonctions"></a>
+</h3>
+<ul>
+<li><p>La fonction commence par un verbe d’action suivi du concept sur
+lequel elle agit suivi de la table ou le produit sur lequel elle
+agit.</p></li>
+<li><p>Chaque élément est séparé par un trait d’union.</p></li>
+<li><p>Exemple : extract_consultations_erprsf` <em>extrait</em> les
+<em>consultations</em> de la table <em>erprsf</em>. Si plusieurs tables
+sont concernées, utiliser la table la plus importante ou la plus
+spécifique.</p></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="paramètres-des-fonctions">Paramètres des fonctions<a class="anchor" aria-label="anchor" href="#param%C3%A8tres-des-fonctions"></a>
+</h3>
+<p>Dans cet ordre de priorité :</p>
+<ul>
+<li><p>Dates de début <code>start_date</code>,
+<code>end_date</code></p></li>
+<li><p>Filtres : suffixé par <code>_filter</code>, par exemple
+<code>pse_spe_filter</code>. Plusieurs filtres peuvent être utilisés
+dans la même fonction.</p></li>
+<li><p>Autres paramètres éventuels.</p></li>
+<li><p><code>patients_ids_filter</code> (Optionnel) : Filtrer sur une
+liste d’identifiants de patients si non NULL.</p></li>
+<li><p><code>output_table_name</code> : Nom de la table de sortie Oracle
+si non NULL, sinon la fonction retourne un data.frame.</p></li>
+<li><p><code>conn</code> : Objet de connexion à la base de données
+Oracle. Si NULL, la fonction retourne un data.frame.</p></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="valeur-de-retour">Valeur de retour<a class="anchor" aria-label="anchor" href="#valeur-de-retour"></a>
+</h3>
+<ul>
+<li><p>Par défaut, les fonctions retournent un data.frame. Si l’argument
+<code>output_table_name</code> est spécifié, la fonction écrit la table
+dans la base de données Oracle et retourne NULL.</p></li>
+<li><p>Format de la table de sortie : un data.frame avec une ligne par
+événement de soin. Les colonnes sont au minimum l’identifiant patient
+((<code>BEN_NIR_PSA</code>, <code>BEN_RNG_GEM</code>) ou
+<code>NIR_ANO_17</code> et/ou <code>BEN_IDT_ANO</code>), une date de
+début <code>EXE_SOI_DTD</code>, éventuellement une date de fin, et une
+colonne par filtre utilisé. Les variables sont nommées en
+snake_case.</p></li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="autres-conventions">Autres conventions<a class="anchor" aria-label="anchor" href="#autres-conventions"></a>
+</h3>
+<ul>
+<li>
+<p>Gestion des tables :</p>
+<ul>
+<li><p>Pas d’overwrite sur une table existante avec le même nom que la
+table de sortie <code>output_table_name</code>.</p></li>
+<li><p>Pas de suppression d’une table que l’on n’a pas créé dans la même
+fonction.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="commentaires">Commentaires<a class="anchor" aria-label="anchor" href="#commentaires"></a>
+</h3>
+<p>En anglais dans le code, en français dans la partie visible pour les
+utilisateurs (Rd, vignettes, etc.)</p>
+</div>
+<div class="section level3">
+<h3 id="arguments-des-fonctions">Arguments des fonctions<a class="anchor" aria-label="anchor" href="#arguments-des-fonctions"></a>
+</h3>
+</div>
+</div>
+<div class="section level2">
 <h2 id="processus-dacceptation-des-pull-requests">Processus d’acceptation des pull requests<a class="anchor" aria-label="anchor" href="#processus-dacceptation-des-pull-requests"></a>
 </h2>
 <ul>
@@ -251,13 +336,8 @@ test de qualité :</li>
 <code>make lint</code> (nécessite l’extension <a href="https://tidyverse.org/blog/2025/02/air/" class="external-link">air formatter</a>
 installée)</li>
 <li>que la documentation se génère correctement :
-<code>make doc-html</code>
-</li>
+<code>make doc-html</code> # Environnement de développement</li>
 </ul>
-</div>
-<div class="section level2">
-<h2 id="environnement-de-développement">Environnement de développement<a class="anchor" aria-label="anchor" href="#environnement-de-d%C3%A9veloppement"></a>
-</h2>
 <p>L’environnement de développement recommandé est Rstudio ou
 vscode.</p>
 <p>Un environnement de développement conteneurisé avec R et les paquets
@@ -278,6 +358,21 @@ contribution de tidyverse</a></li>
 <li><a href="https://docs.github.com/en/get-started/getting-started-with-git/set-up-git" class="external-link">Apprendre
 git</a></li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="créer-une-nouvelle-release">Créer une nouvelle release<a class="anchor" aria-label="anchor" href="#cr%C3%A9er-une-nouvelle-release"></a>
+</h2>
+<p>On adhère au <a href="https://semver.org/spec/v2.0.0.html" class="external-link">versionnage
+sémantique</a>.</p>
+<p>Quand un version est prête à être publiée: - compléter le changelog
+dans <code>CHANGELOG.md</code> en suivant les conventions de ce fichier
+- créer une nouvelle release dans le terminal avec la commande
+<code>git tag -a vX.Y.Z -m "Release version X.Y.Z"</code> (remplacer
+X.Y.Z par le numéro de version) - pousser la nouvelle release sur GitHub
+avec <code>git push origin vX.Y.Z</code> - aller sur la page des
+releases du projet sur GitHub, et publier la release que vous venez de
+créer. Ajoutez la copie du changelog correspondant à cette release dans
+la description de la release ainsi que le nom des contributeurs.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Exemple d'étude possible avec sndsTools • sndsTools</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Exemple d'étude possible avec sndsTools">
 </head>
@@ -104,15 +104,15 @@ AVC.</p>
 <ol style="list-style-type: decimal">
 <li><p>Identifier les patients avec une hospitalisation pour AVC en 2024
 (codes CIM-10 : I61, I62, I63, I64) via la fonction
-<code><a href="../reference/extract_hospital_stays.html">extract_hospital_stays()</a></code></p></li>
+<code><a href="../reference/extract_stays_mcob.html">extract_stays_mcob()</a></code></p></li>
 <li><p>Récupérer leurs identifiants complets via
 <code><a href="../reference/retrieve_all_psa_from_psa.html">retrieve_all_psa_from_psa()</a></code></p></li>
 <li><p>Extraire leurs consultations médicales en ville via
 <code><a href="../reference/extract_consultations_erprsf.html">extract_consultations_erprsf()</a></code></p></li>
 <li><p>Extraire leurs Affections de Longue Durée (ALD) via
-<code><a href="../reference/extract_long_term_disease.html">extract_long_term_disease()</a></code></p></li>
+<code><a href="../reference/extract_longtermdiseases_irimbr.html">extract_longtermdiseases_irimbr()</a></code></p></li>
 <li><p>Extraire leurs prescriptions médicamenteuses en ville via
-<code><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses()</a></code></p></li>
+<code><a href="../reference/extract_drugs_erphaf.html">extract_drugs_erphaf()</a></code></p></li>
 <li><p>Fermer la connexion à la base de données</p></li>
 </ol>
 <div class="section level3">
@@ -159,7 +159,7 @@ l’étude.</p>
 </h3>
 <p>Nous commençons par extraire les séjours hospitaliers avec un
 diagnostic principal d’AVC en utilisant la fonction
-<code><a href="../reference/extract_hospital_stays.html">extract_hospital_stays()</a></code>.</p>
+<code><a href="../reference/extract_stays_mcob.html">extract_stays_mcob()</a></code>.</p>
 <p>Les <a href="https://fr.wikipedia.org/wiki/CIM-10_Chapitre_09_:_Maladies_de_l%27appareil_circulatoire" class="external-link">codes
 CIM-10 pour les AVC</a> sont I61 (hémorragie intracérébrale), I62
 (autres hémorragies intracrâniennes non traumatiques), I63 (infarctus
@@ -173,7 +173,7 @@ cérébral) et I64 (accident vasculaire cérébral non précisé).</p>
 <span><span class="va">codes_avc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"I61"</span>, <span class="st">"I62"</span>, <span class="st">"I63"</span>, <span class="st">"I64"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extraire les séjours avec diagnostics d'AVC</span></span>
-<span><span class="fu"><a href="../reference/extract_hospital_stays.html">extract_hospital_stays</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="../reference/extract_stays_mcob.html">extract_stays_mcob</a></span><span class="op">(</span></span>
 <span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
 <span>  dp_cim10_codes_filter <span class="op">=</span> <span class="va">codes_avc</span>,</span>
@@ -529,14 +529,14 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <h3 id="étape-4-extraction-des-affections-de-longue-durée-ald">Étape 4 : Extraction des Affections de Longue Durée (ALD)<a class="anchor" aria-label="anchor" href="#%C3%A9tape-4-extraction-des-affections-de-longue-dur%C3%A9e-ald"></a>
 </h3>
 <p>Nous extrayons les ALD des patients avec AVC en utilisant
-<code><a href="../reference/extract_long_term_disease.html">extract_long_term_disease()</a></code>.</p>
+<code><a href="../reference/extract_longtermdiseases_irimbr.html">extract_longtermdiseases_irimbr()</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extraire les ALD des patients avec AVC</span></span>
 <span><span class="va">patients_ids_for_ald</span> <span class="op">&lt;-</span> <span class="va">patients_ids_filter</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">BEN_IDT_ANO</span>, <span class="va">BEN_NIR_PSA</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/extract_long_term_disease.html">extract_long_term_disease</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="../reference/extract_longtermdiseases_irimbr.html">extract_longtermdiseases_irimbr</a></span><span class="op">(</span></span>
 <span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
 <span>  icd_cod_starts_with <span class="op">=</span> <span class="cn">NULL</span>, <span class="co"># Extraire toutes les ALD</span></span>
@@ -574,22 +574,6 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">42</td>
-<td align="right">1</td>
-<td align="left">2023-06-08</td>
-<td align="left">2026-01-23</td>
-<td align="left">01</td>
-<td align="left">I20</td>
-</tr>
-<tr class="even">
-<td align="right">87</td>
-<td align="right">12</td>
-<td align="left">2023-03-05</td>
-<td align="left">2025-12-14</td>
-<td align="left">02</td>
-<td align="left">I25</td>
-</tr>
-<tr class="odd">
 <td align="right">43</td>
 <td align="right">5</td>
 <td align="left">2023-07-28</td>
@@ -598,20 +582,36 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <td align="left">I50</td>
 </tr>
 <tr class="even">
-<td align="right">43</td>
-<td align="right">8</td>
-<td align="left">2023-11-02</td>
-<td align="left">2026-03-27</td>
+<td align="right">42</td>
+<td align="right">1</td>
+<td align="left">2023-06-08</td>
+<td align="left">2026-01-23</td>
 <td align="left">01</td>
-<td align="left">I60</td>
+<td align="left">I20</td>
 </tr>
 <tr class="odd">
-<td align="right">95</td>
+<td align="right">87</td>
+<td align="right">12</td>
+<td align="left">2023-03-05</td>
+<td align="left">2025-12-14</td>
+<td align="left">02</td>
+<td align="left">I25</td>
+</tr>
+<tr class="even">
+<td align="right">72</td>
+<td align="right">12</td>
+<td align="left">2023-01-25</td>
+<td align="left">2024-04-24</td>
+<td align="left">02</td>
+<td align="left">I70</td>
+</tr>
+<tr class="odd">
+<td align="right">87</td>
 <td align="right">8</td>
-<td align="left">2023-05-01</td>
-<td align="left">2026-02-08</td>
-<td align="left">03</td>
-<td align="left">I13</td>
+<td align="left">2023-06-07</td>
+<td align="left">2025-10-05</td>
+<td align="left">01</td>
+<td align="left">I21</td>
 </tr>
 </tbody>
 </table>
@@ -675,7 +675,7 @@ patients en utilisant <code><a href="../reference/extract_consultations_erprsf.h
 <h3 id="étape-5-extraction-des-prescriptions-médicamenteuses">Étape 5 : Extraction des prescriptions médicamenteuses<a class="anchor" aria-label="anchor" href="#%C3%A9tape-5-extraction-des-prescriptions-m%C3%A9dicamenteuses"></a>
 </h3>
 <p>Nous extrayons les délivrances de médicaments des patients avec AVC
-en utilisant <code><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses()</a></code>.</p>
+en utilisant <code><a href="../reference/extract_drugs_erphaf.html">extract_drugs_erphaf()</a></code>.</p>
 <p>C’est la requête la plus longue sur le portail. Pour les 122 887
 patients hospitalisés pour AVC en 2024, elle tourne en 5 min environ.
 Cette lenteur est dûe à la jointure nécessaire entre les deux tables
@@ -691,7 +691,7 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <span><span class="co"># C : système cardiovasculaire</span></span>
 <span><span class="va">atc_codes_avc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="st">"C"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/extract_drug_dispenses.html">extract_drug_dispenses</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="../reference/extract_drugs_erphaf.html">extract_drugs_erphaf</a></span><span class="op">(</span></span>
 <span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span>
 <span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span>
 <span>  atc_cod_starts_with_filter <span class="op">=</span> <span class="va">atc_codes_avc</span>, <span class="co"># Médicaments SNC et CV</span></span>
@@ -757,36 +757,36 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <td align="left">22</td>
 </tr>
 <tr class="even">
-<td align="right">42</td>
-<td align="left">2024-02-13</td>
-<td align="right">1</td>
-<td align="left">C08CA01</td>
-<td align="left">3400936267343</td>
-<td align="left">34</td>
-</tr>
-<tr class="odd">
-<td align="right">36</td>
-<td align="left">2024-04-17</td>
-<td align="right">1</td>
-<td align="left">C08CA01</td>
-<td align="left">3400936267343</td>
-<td align="left">02</td>
-</tr>
-<tr class="even">
-<td align="right">87</td>
-<td align="left">2024-07-16</td>
-<td align="right">1</td>
-<td align="left">C08CA01</td>
-<td align="left">3400936267343</td>
-<td align="left">01</td>
-</tr>
-<tr class="odd">
 <td align="right">36</td>
 <td align="left">2024-06-01</td>
 <td align="right">1</td>
 <td align="left">C02AC01</td>
 <td align="left">3400932026555</td>
 <td align="left">22</td>
+</tr>
+<tr class="odd">
+<td align="right">95</td>
+<td align="left">2024-11-01</td>
+<td align="right">2</td>
+<td align="left">C09AA02</td>
+<td align="left">3400955555555</td>
+<td align="left">01</td>
+</tr>
+<tr class="even">
+<td align="right">72</td>
+<td align="left">2024-03-12</td>
+<td align="right">1</td>
+<td align="left">C02AC01</td>
+<td align="left">3400932026555</td>
+<td align="left">34</td>
+</tr>
+<tr class="odd">
+<td align="right">42</td>
+<td align="left">2024-02-13</td>
+<td align="right">1</td>
+<td align="left">C08CA01</td>
+<td align="left">3400936267343</td>
+<td align="left">34</td>
 </tr>
 </tbody>
 </table>
@@ -809,27 +809,27 @@ volumineuses <code>ER_PHA_F</code> et <code>ER_PRS_F</code>.</p>
 <tr class="odd">
 <td align="left">C09AA02</td>
 <td align="right">8</td>
-<td align="right">26.7</td>
+<td align="right">25.8</td>
 </tr>
 <tr class="even">
 <td align="left">C08CA01</td>
 <td align="right">5</td>
-<td align="right">16.7</td>
+<td align="right">16.1</td>
 </tr>
 <tr class="odd">
-<td align="left">C02AC01</td>
-<td align="right">4</td>
-<td align="right">13.3</td>
+<td align="left">C03AA03</td>
+<td align="right">5</td>
+<td align="right">16.1</td>
 </tr>
 <tr class="even">
-<td align="left">C03AA03</td>
+<td align="left">C02AC01</td>
 <td align="right">4</td>
-<td align="right">13.3</td>
+<td align="right">12.9</td>
 </tr>
 <tr class="odd">
 <td align="left">C07AB07</td>
 <td align="right">4</td>
-<td align="right">13.3</td>
+<td align="right">12.9</td>
 </tr>
 </tbody>
 </table>

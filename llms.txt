@@ -106,24 +106,24 @@ SNDS.
 
 - [`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md)
   : Extraction des consultations dans le DCIR.
-- [`extract_drug_dispenses()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_dispenses.md)
+- [`extract_consultations_mcofcstc()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_mcofcstc.md)
+  : Extraction des consultations externes à l'hôpital (MCO).
+- [`extract_drugs_erphaf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erphaf.md)
   : Extraction des délivrances de médicaments.
-- [`extract_drug_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_erucdf.md)
+- [`extract_drugs_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erucdf.md)
   : Extrait les dispensations de médicaments en accès précoces depuis le
   DCIR.
-- [`extract_hospital_consultations()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_consultations.md)
-  : Extraction des consultations externes à l'hôpital (MCO).
-- [`extract_hospital_stays()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_stays.md)
-  : Extraction des diagnostics des séjours hospitaliers (MCO).
-- [`extract_long_term_disease()`](https://sndstoolers.github.io/sndsTools/reference/extract_long_term_disease.md)
+- [`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md)
   : Extraction des Affections Longue Durée (ALD)
+- [`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md)
+  : Extraction des diagnostics des séjours hospitaliers (MCO).
 
 ## Extraction SNDS en SQL
 
 Fonctions pour extraire les données de soins individuelles à partir du
 SNDS en pur SQL.
 
-- [`sql_extract_drug_dispenses()`](https://sndstoolers.github.io/sndsTools/reference/sql_extract_drug_dispenses.md)
+- [`sql_extract_drugs_erphaf()`](https://sndstoolers.github.io/sndsTools/reference/sql_extract_drugs_erphaf.md)
   : Extraction des délivrances de médicaments à partir de SQL injecté
   dans du R (modèle dbExecute de Thomas Soeiro).
 

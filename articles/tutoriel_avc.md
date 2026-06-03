@@ -21,7 +21,7 @@ Les étapes de cette étude “exemple” sont :
 
 1.  Identifier les patients avec une hospitalisation pour AVC en 2024
     (codes CIM-10 : I61, I62, I63, I64) via la fonction
-    [`extract_hospital_stays()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_stays.md)
+    [`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md)
 
 2.  Récupérer leurs identifiants complets via
     [`retrieve_all_psa_from_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_psa.md)
@@ -30,10 +30,10 @@ Les étapes de cette étude “exemple” sont :
     [`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md)
 
 4.  Extraire leurs Affections de Longue Durée (ALD) via
-    [`extract_long_term_disease()`](https://sndstoolers.github.io/sndsTools/reference/extract_long_term_disease.md)
+    [`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md)
 
 5.  Extraire leurs prescriptions médicamenteuses en ville via
-    [`extract_drug_dispenses()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_dispenses.md)
+    [`extract_drugs_erphaf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erphaf.md)
 
 6.  Fermer la connexion à la base de données
 
@@ -80,7 +80,7 @@ library(knitr)
 
 Nous commençons par extraire les séjours hospitaliers avec un diagnostic
 principal d’AVC en utilisant la fonction
-[`extract_hospital_stays()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_stays.md).
+[`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md).
 
 Les [codes CIM-10 pour les
 AVC](https://fr.wikipedia.org/wiki/CIM-10_Chapitre_09_:_Maladies_de_l%27appareil_circulatoire)
@@ -98,7 +98,7 @@ end_date <- as.Date("2024-12-31")
 codes_avc <- c("I61", "I62", "I63", "I64")
 
 # Extraire les séjours avec diagnostics d'AVC
-extract_hospital_stays(
+extract_stays_mcob(
   start_date = start_date,
   end_date = end_date,
   dp_cim10_codes_filter = codes_avc,
@@ -251,7 +251,7 @@ consultations_par_patient <- dplyr::tbl(conn, "TMP_CONSULTATIONS_AVC") |>
 ### Étape 4 : Extraction des Affections de Longue Durée (ALD)
 
 Nous extrayons les ALD des patients avec AVC en utilisant
-[`extract_long_term_disease()`](https://sndstoolers.github.io/sndsTools/reference/extract_long_term_disease.md).
+[`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md).
 
 ``` r
 
@@ -260,7 +260,7 @@ patients_ids_for_ald <- patients_ids_filter |>
   select(BEN_IDT_ANO, BEN_NIR_PSA) |>
   distinct()
 
-extract_long_term_disease(
+extract_longtermdiseases_irimbr(
   start_date = start_date,
   end_date = end_date,
   icd_cod_starts_with = NULL, # Extraire toutes les ALD
@@ -283,11 +283,11 @@ kable(ald_avc_head)
 
 | BEN_IDT_ANO | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
 |------------:|------------:|:------------|:------------|:------------|:------------|
+|          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
 |          42 |           1 | 2023-06-08  | 2026-01-23  | 01          | I20         |
 |          87 |          12 | 2023-03-05  | 2025-12-14  | 02          | I25         |
-|          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
-|          43 |           8 | 2023-11-02  | 2026-03-27  | 01          | I60         |
-|          95 |           8 | 2023-05-01  | 2026-02-08  | 03          | I13         |
+|          72 |          12 | 2023-01-25  | 2024-04-24  | 02          | I70         |
+|          87 |           8 | 2023-06-07  | 2025-10-05  | 01          | I21         |
 
 ``` r
 
@@ -328,7 +328,7 @@ print(paste("Pourcentage de patients AVC avec une ALD :", pourcentage_ald, "%"))
 
 Nous extrayons les délivrances de médicaments des patients avec AVC en
 utilisant
-[`extract_drug_dispenses()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_dispenses.md).
+[`extract_drugs_erphaf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erphaf.md).
 
 C’est la requête la plus longue sur le portail. Pour les 122 887
 patients hospitalisés pour AVC en 2024, elle tourne en 5 min environ.
@@ -347,7 +347,7 @@ patients_ids_for_drugs <- patients_ids_filter |>
 # C : système cardiovasculaire
 atc_codes_avc <- c("N", "C")
 
-extract_drug_dispenses(
+extract_drugs_erphaf(
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with_filter = atc_codes_avc, # Médicaments SNC et CV
@@ -391,10 +391,10 @@ kable(drugs_avc_head)
 | BEN_IDT_ANO | EXE_SOI_DTD | PHA_ACT_QSN | PHA_ATC_CLA | PHA_PRS_C13   | PSP_SPE_COD |
 |------------:|:------------|------------:|:------------|:--------------|:------------|
 |          95 | 2024-02-17  |           1 | C08CA01     | 3400936267343 | 22          |
-|          42 | 2024-02-13  |           1 | C08CA01     | 3400936267343 | 34          |
-|          36 | 2024-04-17  |           1 | C08CA01     | 3400936267343 | 02          |
-|          87 | 2024-07-16  |           1 | C08CA01     | 3400936267343 | 01          |
 |          36 | 2024-06-01  |           1 | C02AC01     | 3400932026555 | 22          |
+|          95 | 2024-11-01  |           2 | C09AA02     | 3400955555555 | 01          |
+|          72 | 2024-03-12  |           1 | C02AC01     | 3400932026555 | 34          |
+|          42 | 2024-02-13  |           1 | C08CA01     | 3400936267343 | 34          |
 
 ``` r
 
@@ -410,11 +410,11 @@ kable(head(drugs_par_atc, 5))
 
 | PHA_ATC_CLA |   n | pourcentage |
 |:------------|----:|------------:|
-| C09AA02     |   8 |        26.7 |
-| C08CA01     |   5 |        16.7 |
-| C02AC01     |   4 |        13.3 |
-| C03AA03     |   4 |        13.3 |
-| C07AB07     |   4 |        13.3 |
+| C09AA02     |   8 |        25.8 |
+| C08CA01     |   5 |        16.1 |
+| C03AA03     |   5 |        16.1 |
+| C02AC01     |   4 |        12.9 |
+| C07AB07     |   4 |        12.9 |
 
 ### Étape 6 : Nettoyage et fermeture de la session
 

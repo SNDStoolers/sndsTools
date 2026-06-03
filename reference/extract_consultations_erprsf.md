@@ -123,11 +123,11 @@ libéraux](https://documentation-snds.health-data-hub.fr/snds/fiches/activite_me
 ## See also
 
 Other extract:
-[`extract_drug_dispenses()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_dispenses.md),
-[`extract_drug_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drug_erucdf.md),
-[`extract_hospital_consultations()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_consultations.md),
-[`extract_hospital_stays()`](https://sndstoolers.github.io/sndsTools/reference/extract_hospital_stays.md),
-[`extract_long_term_disease()`](https://sndstoolers.github.io/sndsTools/reference/extract_long_term_disease.md)
+[`extract_consultations_mcofcstc()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_mcofcstc.md),
+[`extract_drugs_erphaf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erphaf.md),
+[`extract_drugs_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erucdf.md),
+[`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md),
+[`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md)
 
 ## Examples
 
