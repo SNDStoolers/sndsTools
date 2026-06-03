@@ -102,11 +102,11 @@ DBI::dbWriteTable(conn, "IR_PHA_R", fake_irphar, overwrite = TRUE)
 DBI::dbWriteTable(conn, "ER_PRS_F", fake_erprsf, overwrite = TRUE)
 DBI::dbWriteTable(conn, "ER_ETE_F", fake_eretef, overwrite = TRUE)
 
-test_that("sql_extract_drug_dispenses works for ATC", {
+test_that("sql_extract_drugs_erphaf works for ATC", {
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
 
-  drug_dispenses <- sql_extract_drug_dispenses(
+  drug_dispenses <- sql_extract_drugs_erphaf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = c("J05"),
@@ -140,11 +140,11 @@ test_that("sql_extract_drug_dispenses works for ATC", {
   DBI::dbRemoveTable(conn, "TMP_DRUG_DISPENSES")
 })
 
-test_that("sql_extract_drug_dispenses works for CIP13", {
+test_that("sql_extract_drugs_erphaf works for CIP13", {
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
 
-  drug_dispenses <- sql_extract_drug_dispenses(
+  drug_dispenses <- sql_extract_drugs_erphaf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = c("J05"),

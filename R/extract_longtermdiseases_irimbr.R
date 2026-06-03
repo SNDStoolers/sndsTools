@@ -68,7 +68,7 @@
 #' end_date <- as.Date("2010-01-03")
 #' icd_cod_starts_with <- c("G20")
 #'
-#' long_term_disease <- extract_long_term_disease(
+#' long_term_disease <- extract_longtermdiseases_irimbr(
 #'   start_date = start_date,
 #'   end_date = end_date,
 #'   icd_cod_starts_with = icd_cod_starts_with
@@ -76,7 +76,7 @@
 #' }
 #' @export
 #' @family extract
-extract_long_term_disease <- function(
+extract_longtermdiseases_irimbr <- function(
   start_date = NULL,
   end_date = NULL,
   icd_cod_starts_with = NULL,

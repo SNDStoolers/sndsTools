@@ -46,7 +46,7 @@ ben_table_name <- ben_ids_orauser
 output_table_name <- NULL
 r_output_path <- NULL
 
-hospital_stays <- extract_hospital_stays(
+hospital_stays <- extract_stays_mcob(
   start_date = start_date,
   end_date = end_date,
   dp_cim10_codes_starts_with = dp_cim10_codes_starts_with,

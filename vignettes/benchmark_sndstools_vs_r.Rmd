@@ -36,14 +36,14 @@ date_fin = "2023-01-14"
 
 ### `sndsTools`
 
-On appelle la fonction `extract_drug_dispenses()` en indiquant la date de début de la période d'intérêt, la date de fin, et l'ATC qui nous intéresse.
+On appelle la fonction `extract_drugs_erphaf()` en indiquant la date de début de la période d'intérêt, la date de fin, et l'ATC qui nous intéresse.
 
 ```{r, echo = T}
 source(here::here("sndsTools.R"))
 conn <- connect_oracle()
 
 t0 = Sys.time()
-output_quetiapine_sndstools <- extract_drug_dispenses(
+output_quetiapine_sndstools <- extract_drugs_erphaf(
   start_date = as.Date(date_deb),
   end_date = as.Date(date_fin),
   atc_cod_starts_with_filter = atc_quetiapine,

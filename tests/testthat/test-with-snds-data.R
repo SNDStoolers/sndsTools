@@ -10,8 +10,8 @@ test_that("extract and retrieve functions work with real SNDS data", {
   start_date <- as.Date("2023-01-01")
   end_date <- as.Date("2023-01-01")
 
-  # Test : extract_hospital_stays
-  result_hospital_stays <- extract_hospital_stays(
+  # Test : extract_stays_mcob
+  result_hospital_stays <- extract_stays_mcob(
     start_date = start_date,
     end_date = end_date,
     dp_cim10_codes = c("A00", "B00"),
@@ -20,8 +20,8 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_hospital_stays))
   expect_true(nrow(result_hospital_stays) >= 0)
 
-  # Test : extract_drug_dispenses with dis_dtd_lag_months = 0
-  result_drug_dispenses <- extract_drug_dispenses(
+  # Test : extract_drugs_erphaf with dis_dtd_lag_months = 0
+  result_drug_dispenses <- extract_drugs_erphaf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = "N",
@@ -32,8 +32,8 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_drug_dispenses))
   expect_true(nrow(result_drug_dispenses) >= 0)
 
-  # Test : extract_drug_erucdf with dis_dtd_lag_months = 0 and UCD filter
-  result_drug_erucdf <- extract_drug_erucdf(
+  # Test : extract_drugs_erucdf with dis_dtd_lag_months = 0 and UCD filter
+  result_drug_erucdf <- extract_drugs_erucdf(
     start_date = start_date,
     end_date = as.Date("2023-01-31"),
     ucd_codes_filter = c("0000009419723"),
@@ -55,8 +55,8 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_consultations_erprsf))
   expect_true(nrow(result_consultations_erprsf) >= 0)
 
-  # Test : extract_hospital_consultations
-  result_hospital_consultations <- extract_hospital_consultations(
+  # Test : extract_consultations_mcofcstc
+  result_hospital_consultations <- extract_consultations_mcofcstc(
     start_date = start_date,
     end_date = end_date,
     spe_codes_filter = c("01"),
@@ -65,8 +65,8 @@ test_that("extract and retrieve functions work with real SNDS data", {
   expect_true(is.data.frame(result_hospital_consultations))
   expect_true(nrow(result_hospital_consultations) >= 0)
 
-  # Test : extract_long_term_disease
-  result_long_term_disease <- extract_long_term_disease(
+  # Test : extract_longtermdiseases_irimbr
+  result_long_term_disease <- extract_longtermdiseases_irimbr(
     start_date = start_date,
     end_date = end_date,
     icd_cod_starts_with = c("G20"),

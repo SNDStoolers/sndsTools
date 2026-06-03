@@ -1,6 +1,6 @@
 require(dplyr)
 
-test_that("extract_long_term_disease works", {
+test_that("extract_longtermdiseases_irimbr works", {
   conn <- connect_duckdb(PATH2TEST_DB)
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -37,7 +37,7 @@ test_that("extract_long_term_disease works", {
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
 
-  ald <- extract_long_term_disease(
+  ald <- extract_longtermdiseases_irimbr(
     start_date = start_date,
     end_date = end_date,
     icd_cod_starts_with = c("I6"),

@@ -93,12 +93,12 @@ DBI::dbWriteTable(conn, "ER_PRS_F", fake_er_prs_f, overwrite = TRUE)
 DBI::dbWriteTable(conn, "ER_UCD_F", fake_er_ucd_f, overwrite = TRUE)
 DBI::dbWriteTable(conn, "ER_ETE_F", fake_er_ete_f, overwrite = TRUE)
 
-test_that("extract_drug_erucdf respects UCD filter", {
+test_that("extract_drugs_erucdf respects UCD filter", {
   start_date <- as.Date("01/01/2019", format = "%d/%m/%Y")
   end_date <- as.Date("01/04/2019", format = "%d/%m/%Y")
 
   # Test with specific UCD filter (only J05 codes)
-  result_with_filter <- extract_drug_erucdf(
+  result_with_filter <- extract_drugs_erucdf(
     start_date = start_date,
     end_date = end_date,
     ucd_codes_filter = c("9231824"),

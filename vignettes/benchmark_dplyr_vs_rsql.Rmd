@@ -2,9 +2,9 @@
 title: "Benchmarking dplyr vs RSQL"
 author: "Matthieu Doutreligne"
 date: "2025-01-27"
-output: 
-  html_document: 
-    bookdown::html_document2: 
+output:
+  html_document:
+    bookdown::html_document2:
       base_format: rmarkdown::html_vignette
 vignette: >
     %\VignetteIndexEntry{Benchmarking dplyr vs RSQL}
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 
 # Motivation
 
-## Question 
+## Question
 
 Y-a-t-il une différence de performance sur le portail entre manipuler les données avec la syntaxe `dplyr` ou en injectant du SQL directement dans une requête de `DBI::dbExecute` ?
 
@@ -33,7 +33,7 @@ La période retenue est 2020-2023. Le benchmark étudie le temps pris par les de
 
 ## Comparaison des performances entre `dplyr` et `RSQL`
 
-```{r}	
+```{r}
 library(sndsTools)
 
 # Paramètres d'extraction
@@ -43,8 +43,8 @@ atc_vitamine_d_5 <- c("A12AX", "A11JA", "A11BA")
 
 cip_vitamine_d_b <- c(3400935657190, 3400936584969, 3400936923751, 3400934880254)
 
-# Colonnes supplémentaires pour la fonction `extract_drug_dispenses`.
-# Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_dispenses`.
+# Colonnes supplémentaires pour la fonction `extract_drugs_erphaf`.
+# Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drugs_erphaf`.
 sup_columns <- c(
   "BEN_CMU_TOP",
   "BEN_AMA_COD",
@@ -86,7 +86,7 @@ for (i in seq_along(start_dates)) {
   formatted_study_dates <- glue::glue('{format(start_date, "%Y%m%d")}_{format(end_date, "%Y%m%d")}')
   dplyr_table_name <- glue::glue("dplyr_{formatted_study_dates}")
   time_0_dplyr <- Sys.time()
-  extract_drug_dispenses(
+  extract_drugs_erphaf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = atc_vitamine_d_7,
@@ -106,7 +106,7 @@ for (i in seq_along(start_dates)) {
   # benchmark de RSQL
   sql_table_name <- glue::glue("sql_{formatted_study_dates}")
   time_0_sql <- Sys.time()
-  sql_extract_drug_dispenses(
+  sql_extract_drugs_erphaf(
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = atc_vitamine_d_7,
@@ -155,8 +155,8 @@ atc_vitamine_d_7 <- c("M05BB03", "M05BB04", "A11CC05", "A11CC01", "A12CD51")
 atc_vitamine_d_5 <- c("A12AX", "A11JA", "A11BA")
 cip_vitamine_d_b <- c(3400935657190, 3400936584969, 3400936923751, 3400934880254)
 
-# Colonnes supplémentaires pour la fonction `extract_drug_dispenses`.
-# Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drug_dispenses`.
+# Colonnes supplémentaires pour la fonction `extract_drugs_erphaf`.
+# Ces colonnes sont extraites par défaut dans la fonction `sql_extract_drugs_erphaf`.
 columns_to_extract <- c(
   "BEN_CMU_TOP",
   "BEN_AMA_COD",
@@ -198,7 +198,7 @@ for (i in seq_along(start_dates)) {
     )
     dplyr_table_name <- glue::glue("dplyr_{formatted_study_dates}")
     time_0_dplyr <- Sys.time()
-    extract_drug_dispenses(
+    extract_drugs_erphaf(
       start_date = start_date,
       end_date = end_date,
       atc_cod_starts_with_filter = atc_vitamine_d_7,
@@ -358,7 +358,7 @@ timing_results |>
 
 Il ne semble pas y avoir de différence significative entre les deux méthodes d'extraction.
 
-## Résultats du benchmark en nombres de lignes x colonnes 
+## Résultats du benchmark en nombres de lignes x colonnes
 
 Ce second benchmark étudie la différence pouvant être observée pour une requête donnée (effectuée en dplyr) en fonction du nombre de colonnes extraites pour la requête étudiée.
 
@@ -407,7 +407,7 @@ ggplot(timing_results_cols,
   )
 ```
 
-Attention: Le temps supplémentaire pris par l'extraction de colonnes supplémentaires peut avoir deux causes : 
+Attention: Le temps supplémentaire pris par l'extraction de colonnes supplémentaires peut avoir deux causes :
 
 - des nombres de lignes plus élevés du fait d'un distinct sur plus de colonnes.
 

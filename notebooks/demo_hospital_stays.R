@@ -11,7 +11,7 @@ ben_table_name <- "PD_10_22_IDS"
 output_table_name <- "TEST_HOSPITAL_STAYS"
 r_output_path <- "~/sasdata1/park/visualize/data/raw"
 
-extract_hospital_stays(
+extract_stays_mcob(
   start_date = start_date,
   end_date = end_date,
   dp_cim10_codes_starts_with = dp_cim10_codes_starts_with,

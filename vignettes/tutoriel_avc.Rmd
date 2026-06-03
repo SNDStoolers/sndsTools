@@ -39,16 +39,16 @@ Cette étude est un exemple pédagogique de l'utilisation du package `sndsTools`
 
 Les étapes de cette étude "exemple" sont :
 
-1. Identifier les patients avec une hospitalisation pour AVC en 2024 (codes CIM-10 : I61, I62, I63, I64) via la fonction `extract_hospital_stays()`
+1. Identifier les patients avec une hospitalisation pour AVC en 2024 (codes CIM-10 : I61, I62, I63, I64) via la fonction `extract_stays_mcob()`
 
 2. Récupérer leurs identifiants complets via `retrieve_all_psa_from_psa()`
 
 3. Extraire leurs consultations médicales en ville via `extract_consultations_erprsf()`
 
-4. Extraire leurs Affections de Longue Durée (ALD) via `extract_long_term_disease()`
+4. Extraire leurs Affections de Longue Durée (ALD) via `extract_longtermdiseases_irimbr()`
 
 5. Extraire leurs prescriptions médicamenteuses en ville
-    via `extract_drug_dispenses()`
+    via `extract_drugs_erphaf()`
 
 6. Fermer la connexion à la base de données
 
@@ -91,7 +91,7 @@ library(knitr)
 
 ## Étape 1 : Extraction des hospitalisations pour AVC
 
-Nous commençons par extraire les séjours hospitaliers avec un diagnostic principal d'AVC en utilisant la fonction `extract_hospital_stays()`.
+Nous commençons par extraire les séjours hospitaliers avec un diagnostic principal d'AVC en utilisant la fonction `extract_stays_mcob()`.
 
 Les [codes CIM-10 pour les AVC](https://fr.wikipedia.org/wiki/CIM-10_Chapitre_09_:_Maladies_de_l%27appareil_circulatoire) sont I61 (hémorragie intracérébrale), I62 (autres hémorragies intracrâniennes non traumatiques), I63 (infarctus cérébral) et I64 (accident vasculaire cérébral non précisé).
 
@@ -104,7 +104,7 @@ end_date <- as.Date("2024-12-31")
 codes_avc <- c("I61", "I62", "I63", "I64")
 
 # Extraire les séjours avec diagnostics d'AVC
-extract_hospital_stays(
+extract_stays_mcob(
   start_date = start_date,
   end_date = end_date,
   dp_cim10_codes_filter = codes_avc,
@@ -215,7 +215,7 @@ consultations_par_patient <- dplyr::tbl(conn, "TMP_CONSULTATIONS_AVC") |>
 
 ## Étape 4 : Extraction des Affections de Longue Durée (ALD)
 
-Nous extrayons les ALD des patients avec AVC en utilisant `extract_long_term_disease()`.
+Nous extrayons les ALD des patients avec AVC en utilisant `extract_longtermdiseases_irimbr()`.
 
 ```{r extract_ald_avc}
 # Extraire les ALD des patients avec AVC
@@ -223,7 +223,7 @@ patients_ids_for_ald <- patients_ids_filter |>
   select(BEN_IDT_ANO, BEN_NIR_PSA) |>
   distinct()
 
-extract_long_term_disease(
+extract_longtermdiseases_irimbr(
   start_date = start_date,
   end_date = end_date,
   icd_cod_starts_with = NULL, # Extraire toutes les ALD
@@ -262,13 +262,13 @@ print(paste("Pourcentage de patients AVC avec une ALD :", pourcentage_ald, "%"))
 
 ## Étape 5 : Extraction des prescriptions médicamenteuses
 
-Nous extrayons les délivrances de médicaments des patients avec AVC en utilisant `extract_drug_dispenses()`.
+Nous extrayons les délivrances de médicaments des patients avec AVC en utilisant `extract_drugs_erphaf()`.
 
 C'est la requête la plus longue sur le portail.
 Pour les 122 887 patients hospitalisés pour AVC en 2024, elle tourne en 5 min environ.
 Cette lenteur est dûe à la jointure nécessaire entre les deux tables volumineuses `ER_PHA_F` et `ER_PRS_F`.
 
-```{r extract_drug_dispenses_avc}
+```{r extract_drugs_erphaf_avc}
 # Extraire les délivrances de médicaments des patients avec AVC
 patients_ids_for_drugs <- patients_ids_filter |>
   select(BEN_IDT_ANO, BEN_NIR_PSA) |>
@@ -279,7 +279,7 @@ patients_ids_for_drugs <- patients_ids_filter |>
 # C : système cardiovasculaire
 atc_codes_avc <- c("N", "C")
 
-extract_drug_dispenses(
+extract_drugs_erphaf(
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with_filter = atc_codes_avc, # Médicaments SNC et CV

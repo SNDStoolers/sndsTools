@@ -1,6 +1,6 @@
 require(dplyr)
 
-test_that("extract_hospital_consultations works", {
+test_that("extract_consultations_mcofcstc works", {
   conn <- connect_duckdb(PATH2TEST_DB)
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -44,7 +44,7 @@ test_that("extract_hospital_consultations works", {
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
   spe_codes_filter <- c("01", "22", "32", "34")
 
-  consultations <- extract_hospital_consultations(
+  consultations <- extract_consultations_mcofcstc(
     start_date = start_date,
     end_date = end_date,
     spe_codes_filter = spe_codes_filter,
@@ -81,7 +81,7 @@ test_that("extract_hospital_consultations works", {
   )
 })
 
-test_that("extract_hospital_consultations works with multiple filters", {
+test_that("extract_consultations_mcofcstc works with multiple filters", {
   conn <- connect_duckdb(PATH2TEST_DB)
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -128,7 +128,7 @@ test_that("extract_hospital_consultations works with multiple filters", {
   prestation_codes_filter <- c("C")
   ccam_codes_filter <- c("ACQK001", "ACQH003")
 
-  consultations <- extract_hospital_consultations(
+  consultations <- extract_consultations_mcofcstc(
     start_date = start_date,
     end_date = end_date,
     spe_codes_filter = spe_codes_filter,

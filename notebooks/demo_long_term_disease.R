@@ -8,7 +8,7 @@ library(lubridate)
 is_package <- require(sndsTools)
 
 if (!is_package) {
-  source("../R/extract_long_term_disease.R")
+  source("../R/extract_longtermdiseases_irimbr.R")
   source("../R/utils.R")
 }
 
@@ -19,7 +19,7 @@ start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-12-31")
 icd_cod_starts_with <- c("G20")
 
-ald <- extract_long_term_disease(
+ald <- extract_longtermdiseases_irimbr(
   start_date = start_date,
   end_date = end_date,
   icd_cod_starts_with = icd_cod_starts_with
@@ -27,7 +27,7 @@ ald <- extract_long_term_disease(
 head(ald)
 
 # You can also provide your own database connection
-# to the extract_drug_dispenses function. This is useful
+# to the extract_longtermdiseases_irimbr function. This is useful
 # to avoid opening and closing a connection for each
 # extraction function call.
 conn <- connect_oracle()
@@ -35,7 +35,7 @@ start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-12-31")
 icd_cod_starts_with <- c("G20")
 
-ald <- extract_long_term_disease(
+ald <- extract_longtermdiseases_irimbr(
   start_date = start_date,
   end_date = end_date,
   icd_cod_starts_with = icd_cod_starts_with,
@@ -50,7 +50,7 @@ start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-12-31")
 ald_numbers <- c(8)
 
-ald <- extract_long_term_disease(
+ald <- extract_longtermdiseases_irimbr(
   start_date = start_date,
   end_date = end_date,
   ald_numbers = ald_numbers
@@ -67,7 +67,7 @@ ald_numbers <- c(8)
 output_table_name <- "TMP_LTD"
 print(DBI::dbExistsTable(conn, output_table_name))
 
-extract_long_term_disease(
+extract_longtermdiseases_irimbr(
   start_date = start_date,
   end_date = end_date,
   ald_numbers = ald_numbers,

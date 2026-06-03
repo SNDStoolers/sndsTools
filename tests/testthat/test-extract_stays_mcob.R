@@ -56,7 +56,7 @@ create_mock_hospital_stays <- function(conn) {
   DBI::dbWriteTable(conn, "T_MCO19UM", fake_um_table, overwrite = TRUE)
 }
 
-test_that("extract_hospital_stays works", {
+test_that("extract_stays_mcob works", {
   conn <- connect_duckdb(PATH2TEST_DB)
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -68,7 +68,7 @@ test_that("extract_hospital_stays works", {
     BEN_NIR_PSA = c("12345", "23456", "34567")
   )
 
-  hospital_stays <- extract_hospital_stays(
+  hospital_stays <- extract_stays_mcob(
     start_date = as.Date("01/01/2019", format = "%d/%m/%Y"),
     end_date = as.Date("31/12/2019", format = "%d/%m/%Y"),
     dp_cim10_codes_filter = c("A", "B"),
@@ -116,7 +116,7 @@ test_that("extract_hospital_stays works", {
   )
 })
 
-test_that("extract_hospital_stays works without any filters", {
+test_that("extract_stays_mcob works without any filters", {
   conn <- connect_duckdb(PATH2TEST_DB)
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -126,7 +126,7 @@ test_that("extract_hospital_stays works without any filters", {
     BEN_NIR_PSA = c("12345")
   )
 
-  hospital_stays <- extract_hospital_stays(
+  hospital_stays <- extract_stays_mcob(
     start_date = as.Date("01/01/2019", format = "%d/%m/%Y"),
     end_date = as.Date("31/12/2019", format = "%d/%m/%Y"),
     dp_cim10_codes_filter = NULL,

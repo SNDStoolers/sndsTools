@@ -53,7 +53,7 @@
 #'
 #'  @examples
 #'  \dontrun{
-#'  result <- extract_drug_erucdf(
+#'  result <- extract_drugs_erucdf(
 #'    start_date = as.Date("2019-01-01"),
 #'    end_date = as.Date("2019-12-31"),
 #'    ucd_codes_filter = c("0000009419723"),
@@ -63,7 +63,7 @@
 #' }*
 #' @family extract
 #' @export
-extract_drug_erucdf <- function(
+extract_drugs_erucdf <- function(
   start_date,
   end_date,
   ucd_codes_filter = NULL,
