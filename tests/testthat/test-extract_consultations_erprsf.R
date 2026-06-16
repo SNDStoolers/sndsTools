@@ -47,7 +47,7 @@ test_that("extract_consultations_erprsf_works ", {
   )
 
   expect_equal(
-    consultations |> arrange(BEN_IDT_ANO, EXE_SOI_DTD),
+    consultations |> arrange(BEN_IDT_ANO, EXE_SOI_DTD) |> collect(),
     structure(
       list(
         BEN_IDT_ANO = c(
