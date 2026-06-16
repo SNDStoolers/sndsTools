@@ -39,6 +39,7 @@ un message explicatif.
 ## See also
 
 Other utils:
+[`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md),
 [`IS_PORTAIL`](https://sndstoolers.github.io/sndsTools/reference/IS_PORTAIL.md),
 [`connect_duckdb()`](https://sndstoolers.github.io/sndsTools/reference/connect_duckdb.md),
 [`connect_oracle()`](https://sndstoolers.github.io/sndsTools/reference/connect_oracle.md),

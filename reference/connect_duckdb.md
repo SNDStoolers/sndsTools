@@ -25,6 +25,7 @@ dbConnection Connexion à la base de données duckdb
 ## See also
 
 Other utils:
+[`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md),
 [`IS_PORTAIL`](https://sndstoolers.github.io/sndsTools/reference/IS_PORTAIL.md),
 [`check_output_table_name()`](https://sndstoolers.github.io/sndsTools/reference/check_output_table_name.md),
 [`connect_oracle()`](https://sndstoolers.github.io/sndsTools/reference/connect_oracle.md),

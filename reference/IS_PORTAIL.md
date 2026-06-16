@@ -11,6 +11,7 @@ IS_PORTAIL
 ## See also
 
 Other utils:
+[`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md),
 [`check_output_table_name()`](https://sndstoolers.github.io/sndsTools/reference/check_output_table_name.md),
 [`connect_duckdb()`](https://sndstoolers.github.io/sndsTools/reference/connect_duckdb.md),
 [`connect_oracle()`](https://sndstoolers.github.io/sndsTools/reference/connect_oracle.md),

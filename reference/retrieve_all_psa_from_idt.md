@@ -112,6 +112,7 @@ visant à améliorer le processus d'inclusion.
 ## See also
 
 Other utils:
+[`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md),
 [`IS_PORTAIL`](https://sndstoolers.github.io/sndsTools/reference/IS_PORTAIL.md),
 [`check_output_table_name()`](https://sndstoolers.github.io/sndsTools/reference/check_output_table_name.md),
 [`connect_duckdb()`](https://sndstoolers.github.io/sndsTools/reference/connect_duckdb.md),

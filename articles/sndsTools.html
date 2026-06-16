@@ -147,15 +147,16 @@ cache localement.</p>
 <span><span class="co"># Pour avoir toute la base synthétique, enlever l'argument subset_tables ou le mettre à NULL.</span></span>
 <span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect_synthetic_snds.html">connect_synthetic_snds</a></span><span class="op">(</span></span>
 <span>  subset_tables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"ER_PRS_F"</span></span>
+<span>    <span class="st">"ER_PRS_F"</span>,</span>
+<span>    <span class="st">"T_MCO19B"</span></span>
 <span>  <span class="op">)</span>,</span>
 <span>  force_insert <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO [2026-06-04 09:05:23] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb</span></span>
-<span><span class="co">#&gt; INFO [2026-06-04 09:05:38] All files downloaded and extracted to: /home/runner/.cache/sndsTools</span></span>
-<span><span class="co">#&gt; INFO [2026-06-04 09:05:39] Successfully loaded 2 tables: ER_PRS_F, user_synonyms</span></span>
+<span><span class="co">#&gt; INFO [2026-06-16 13:51:37] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb</span></span>
+<span><span class="co">#&gt; INFO [2026-06-16 13:51:56] All files downloaded and extracted to: /home/runner/.cache/sndsTools</span></span>
+<span><span class="co">#&gt; INFO [2026-06-16 13:51:58] Successfully loaded 3 tables: ER_PRS_F, T_MCO19B, user_synonyms</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "ER_PRS_F"      "user_synonyms"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "ER_PRS_F"      "T_MCO19B"      "user_synonyms"</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="exemple-basique-dextraction-de-données-consultations-de-chirurgie-vasculaire">Exemple basique d’extraction de données (consultations de chirurgie
 vasculaire)<a class="anchor" aria-label="anchor" href="#exemple-basique-dextraction-de-donn%C3%A9es-consultations-de-chirurgie-vasculaire"></a>

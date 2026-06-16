@@ -32,6 +32,9 @@ SNDS en pur SQL.
 
 Fonctions utilitaires pour manipuler les données extraites.
 
+- [`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md)
+  : Clés de jointure des tables DCIR
+
 - [`IS_PORTAIL`](https://sndstoolers.github.io/sndsTools/reference/IS_PORTAIL.md)
   : Est-ce que le code tourne sur le portail de la CNAM ?
 

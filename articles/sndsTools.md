@@ -76,15 +76,16 @@ mises en cache localement.
 # Pour avoir toute la base synthétique, enlever l'argument subset_tables ou le mettre à NULL.
 conn <- connect_synthetic_snds(
   subset_tables = c(
-    "ER_PRS_F"
+    "ER_PRS_F",
+    "T_MCO19B"
   ),
   force_insert = TRUE
 )
-#> INFO [2026-06-04 09:05:23] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
-#> INFO [2026-06-04 09:05:38] All files downloaded and extracted to: /home/runner/.cache/sndsTools
-#> INFO [2026-06-04 09:05:39] Successfully loaded 2 tables: ER_PRS_F, user_synonyms
+#> INFO [2026-06-16 13:51:37] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb
+#> INFO [2026-06-16 13:51:56] All files downloaded and extracted to: /home/runner/.cache/sndsTools
+#> INFO [2026-06-16 13:51:58] Successfully loaded 3 tables: ER_PRS_F, T_MCO19B, user_synonyms
 DBI::dbListTables(conn)
-#> [1] "ER_PRS_F"      "user_synonyms"
+#> [1] "ER_PRS_F"      "T_MCO19B"      "user_synonyms"
 ```
 
 #### Exemple basique d’extraction de données (consultations de chirurgie vasculaire)
