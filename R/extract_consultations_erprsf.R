@@ -51,11 +51,11 @@
 #' aux BEN_IDT_ANO fournis. Défaut à `NULL`.
 #' @param output_table_name Character (Optionnel). Si fourni, les résultats
 #' seront sauvegardés dans une table portant ce nom dans la base de données au
-#' lieu d'être retournés sous forme de data frame. Si cette table existe déjà,
+#' lieu d'être retournés sous forme de lazy table. Si cette table existe déjà,
 #' le programme s'arrête avec un message d'erreur. Défaut à `NULL`.
 #' @param conn DBI connection (Optionnel). Une connexion à la base de données
 #' Oracle. Par défaut, une connexion est établie avec oracle.
-#' @return Si `output_table_name` est `NULL`, retourne un data frame contenant
+#' @return Si `output_table_name` est `NULL`, retourne une lazy table contenant
 #' les consultations. Si `output_table_name` est fourni, sauvegarde les
 #' résultats dans la table spécifiée dans Oracle et retourne `NULL` de manière
 #' invisible.
@@ -105,12 +105,10 @@ extract_consultations_erprsf <- function(
   }
 
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+  
   if (!is.null(output_table_name)) {
     output_table_name_is_temp <- FALSE
     check_output_table_name(output_table_name, conn)
-  } else {
-    output_table_name_is_temp <- TRUE
-    output_table_name <- glue::glue("TMP_DISP_{timestamp}")
   }
 
   if (!is.null(patients_ids_filter)) {
@@ -122,7 +120,7 @@ extract_consultations_erprsf <- function(
       !anyDuplicated(patients_ids_filter)
     )
     patients_ids_table_name <- glue::glue("TMP_PATIENTS_IDS_{timestamp}")
-    DBI::dbWriteTable(conn, patients_ids_table_name, patients_ids_filter)
+    DBI::dbWriteTable(conn, patients_ids_table_name, patients_ids_filter, temporary = TRUE)
   }
 
   dis_dtd_end_date <-
@@ -159,135 +157,132 @@ extract_consultations_erprsf <- function(
     width = 80
   )
   pb$tick(0)
-  for (year in start_year:end_year) {
-    pb$tick(
-      tokens = list(
-        year1 = year,
-        year2 = start_year,
-        year3 = end_year
-      )
-    )
-    if (year < first_non_archived_year) {
-      er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
-    } else {
-      er_prs_f <- dplyr::tbl(conn, "ER_PRS_F")
-    }
 
-    if (year == end_year) {
-      dis_dtd_condition <- glue::glue(
-        "FLX_DIS_DTD BETWEEN DATE '{year}-02-01'
-        AND DATE '{formatted_dis_dtd_end_date}'"
-      )
-    } else {
-      dis_dtd_condition <- glue::glue(
-        "FLX_DIS_DTD BETWEEN DATE '{year}-02-01'
-      AND DATE '{year + 1}-01-01'"
-      )
-    }
-    soi_dtd_condition <- glue::glue(
-      "EXE_SOI_DTD BETWEEN DATE '{formatted_start_date}'
-      AND DATE '{formatted_end_date}'"
-    )
-
-    # TODO: Ces filtres qualité devraient être externalisés dans une fonction
-    # spécifique, documentée avec les références aux documentations de la CNAM
-    # concernant les choix.
-    er_prs_f_clean <- er_prs_f |>
-      dplyr::filter(
-        dbplyr::sql(soi_dtd_condition),
-        dbplyr::sql(dis_dtd_condition)
-      ) |>
-      dplyr::filter(
-        (DPN_QLF != 71 | is.na(DPN_QLF)),
-        # Suppression de l'activité des actes et consultations externes (ACE)
-        # remontée pour information, cette activité est mesurée par ailleurs
-        # pour les établissements de santé dans le champ de la SAE
-        (PRS_DPN_QLP != 71 | is.na(PRS_DPN_QLP)),
-      )
-    if (!analyse_couts) {
-      er_prs_f_clean <- er_prs_f_clean |>
-        dplyr::filter(
-          # Suppression des ACE pour information
-          (CPL_MAJ_TOP < 2),
-          # Suppression des majorations
-          (CPL_AFF_COD != 16),
-          PRS_ACT_QTE > 0
+  queries <- start_year:end_year |>
+    purrr::map(function(year) {
+      pb$tick(
+        tokens = list(
+          year1 = year,
+          year2 = start_year,
+          year3 = end_year
         )
-    }
+      )
+      if (year < first_non_archived_year) {
+        er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
+      } else {
+        er_prs_f <- dplyr::tbl(conn, "ER_PRS_F")
+      }
 
-    cols_to_select <- c(
-      "EXE_SOI_DTD",
-      "PSE_SPE_COD",
-      "PFS_EXE_NUM",
-      "PRS_NAT_REF",
-      "PRS_ACT_QTE",
-      "BEN_RNG_GEM"
-    )
-    # apply query filters
-    query <- er_prs_f_clean |>
-      dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select))
-    if (!is.null(prestation_filter)) {
-      query <- query |>
-        dplyr::filter(
-          PRS_NAT_REF %in% prestation_filter
+      if (year == end_year) {
+        dis_dtd_condition <- glue::glue(
+          "FLX_DIS_DTD BETWEEN DATE '{year}-02-01'
+          AND DATE '{formatted_dis_dtd_end_date}'"
         )
-    }
-    if (!is.null(pse_spe_filter)) {
-      query <- query |>
-        dplyr::filter(
-          PSE_SPE_COD %in% pse_spe_filter
+      } else {
+        dis_dtd_condition <- glue::glue(
+          "FLX_DIS_DTD BETWEEN DATE '{year}-02-01'
+        AND DATE '{year + 1}-01-01'"
         )
-    }
-    query <- query |>
-      dplyr::distinct()
+      }
+      soi_dtd_condition <- glue::glue(
+        "EXE_SOI_DTD BETWEEN DATE '{formatted_start_date}'
+        AND DATE '{formatted_end_date}'"
+      )
 
-    # TODO : le lien avec les patients_ids_filter pourrait être extrait comme un
-    # utilitaire.
-    if (!is.null(patients_ids_filter)) {
-      patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
-      patients_ids_table <- patients_ids_table |>
-        dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM) |>
-        dplyr::distinct()
-      query <- query |>
-        dplyr::inner_join(
-          patients_ids_table,
-          by = c("BEN_NIR_PSA", "BEN_RNG_GEM")
+      # TODO: Ces filtres qualité devraient être externalisés dans une fonction
+      # spécifique, documentée avec les références aux documentations de la CNAM
+      # concernant les choix.
+      er_prs_f_clean <- er_prs_f |>
+        dplyr::filter(
+          dbplyr::sql(soi_dtd_condition),
+          dbplyr::sql(dis_dtd_condition)
         ) |>
-        dplyr::select(BEN_IDT_ANO, dplyr::all_of(cols_to_select)) |>
+        dplyr::filter(
+          (DPN_QLF != 71 | is.na(DPN_QLF)),
+          # Suppression de l'activité des actes et consultations externes (ACE)
+          # remontée pour information, cette activité est mesurée par ailleurs
+          # pour les établissements de santé dans le champ de la SAE
+          (PRS_DPN_QLP != 71 | is.na(PRS_DPN_QLP)),
+        )
+      if (!analyse_couts) {
+        er_prs_f_clean <- er_prs_f_clean |>
+          dplyr::filter(
+            # Suppression des ACE pour information
+            (CPL_MAJ_TOP < 2),
+            # Suppression des majorations
+            (CPL_AFF_COD != 16),
+            PRS_ACT_QTE > 0
+          )
+      }
+
+      cols_to_select <- c(
+        "EXE_SOI_DTD",
+        "PSE_SPE_COD",
+        "PFS_EXE_NUM",
+        "PRS_NAT_REF",
+        "PRS_ACT_QTE",
+        "BEN_RNG_GEM"
+      )
+      # apply query filters
+      query <- er_prs_f_clean |>
+        dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select))
+      if (!is.null(prestation_filter)) {
+        query <- query |>
+          dplyr::filter(
+            PRS_NAT_REF %in% prestation_filter
+          )
+      }
+      if (!is.null(pse_spe_filter)) {
+        query <- query |>
+          dplyr::filter(
+            PSE_SPE_COD %in% pse_spe_filter
+          )
+      }
+      query <- query |>
         dplyr::distinct()
-    }
 
-    query <- query |> dbplyr::sql_render()
-    if (DBI::dbExistsTable(conn, output_table_name)) {
-      DBI::dbExecute(
-        conn,
-        glue::glue("INSERT INTO {output_table_name} {query}")
-      )
-    } else {
-      DBI::dbExecute(
-        conn,
-        glue::glue("CREATE TABLE {output_table_name} AS {query}")
-      )
-    }
-  }
+      # TODO : le lien avec les patients_ids_filter pourrait être extrait comme un
+      # utilitaire.
+      if (!is.null(patients_ids_filter)) {
+        patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
+        patients_ids_table <- patients_ids_table |>
+          dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM) |>
+          dplyr::distinct()
+        
+        query <- query |>
+          dplyr::inner_join(
+            patients_ids_table,
+            by = c("BEN_NIR_PSA", "BEN_RNG_GEM")
+          ) |>
+          dplyr::select(BEN_IDT_ANO, dplyr::all_of(cols_to_select)) |>
+          dplyr::distinct()
+      }
+    })
 
-  # cleaning tables
-  if (!is.null(patients_ids_filter)) {
-    DBI::dbRemoveTable(conn, patients_ids_table_name)
-  }
+  full_query <- purrr::reduce(queries, dplyr::union_all)
 
-  if (output_table_name_is_temp) {
-    query <- dplyr::tbl(conn, output_table_name)
-    result <- dplyr::collect(query)
-    DBI::dbRemoveTable(conn, output_table_name)
-  } else {
+  if (!is.null(output_table_name)) {
+    full_query <- full_query |> dbplyr::sql_render()
+
+    DBI::dbExecute(
+      conn,
+      glue::glue("CREATE TABLE {output_table_name} AS {full_query}")
+    )
+
     result <- invisible(NULL)
     message(glue::glue("Results saved to table {output_table_name} in Oracle."))
-  }
 
-  if (connection_opened) {
-    DBI::dbDisconnect(conn)
-  }
+    # cleaning tables
+    if (!is.null(patients_ids_filter)) {
+      DBI::dbRemoveTable(conn, patients_ids_table_name)
+    }
 
+    if (connection_opened) {
+      DBI::dbDisconnect(conn)
+    }
+  } else {
+    result <- full_query
+  }
+  
   result
 }
