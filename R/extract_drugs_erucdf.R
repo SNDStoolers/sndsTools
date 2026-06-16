@@ -137,17 +137,6 @@ extract_drugs_erucdf <- function(
     logger::log_info(glue::glue("Extracting drug dispenses for all UTC codes"))
   }
 
-  dcir_join_keys <- c(
-    "DCT_ORD_NUM",
-    "FLX_DIS_DTD",
-    "FLX_EMT_ORD",
-    "FLX_EMT_NUM",
-    "FLX_EMT_TYP",
-    "FLX_TRT_DTD",
-    "ORG_CLE_NUM",
-    "PRS_ORD_NUM",
-    "REM_TYP_AFF"
-  )
   # filter
   filter_ucd <- dplyr::tibble(UCD_UCD_COD = ucd_codes_filter)
   filter_ucd_table_name <- "SDNS_TOOLS_TMP_FILTER_UCD"
@@ -225,7 +214,7 @@ extract_drugs_erucdf <- function(
       }
 
       ap_dans_er_ucd_f <- er_prs_f_filtered |>
-        dplyr::inner_join(er_ucd_f_filtered, by = dcir_join_keys)
+        dplyr::inner_join(er_ucd_f_filtered, by = COLS_DCIR_JOIN_KEY)
 
       er_ete_f <- dplyr::tbl(conn, "ER_ETE_F") |>
         dplyr::filter(
@@ -233,7 +222,7 @@ extract_drugs_erucdf <- function(
           (ETE_IND_TAA != 1) | is.null(ETE_IND_TAA)
         )
       query <- ap_dans_er_ucd_f |>
-        dplyr::inner_join(er_ete_f, by = dcir_join_keys)
+        dplyr::inner_join(er_ete_f, by = COLS_DCIR_JOIN_KEY)
 
       cols_to_select <- c(
         "BEN_NIR_PSA",

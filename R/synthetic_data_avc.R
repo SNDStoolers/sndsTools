@@ -185,17 +185,7 @@ create_mock_er_pha_f <- function(er_prs_f) {
   n_rows <- nrow(er_prs_f)
 
   er_prs_f |>
-    dplyr::select(dplyr::all_of(c(
-      "DCT_ORD_NUM",
-      "FLX_DIS_DTD",
-      "FLX_EMT_ORD",
-      "FLX_EMT_NUM",
-      "FLX_EMT_TYP",
-      "FLX_TRT_DTD",
-      "ORG_CLE_NUM",
-      "PRS_ORD_NUM",
-      "REM_TYP_AFF"
-    ))) |>
+    dplyr::select(dplyr::all_of(COLS_DCIR_JOIN_KEY)) |>
     dplyr::mutate(
       PHA_PRS_C13 = sample(antihypertenseur_cips, n_rows, replace = TRUE),
       PHA_ACT_QSN = sample(
