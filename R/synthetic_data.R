@@ -23,6 +23,13 @@
 #' synthétiques pour 50 patients fictifs basés sur le schéma SNDS 2019. Les
 #' fichiers sont produits par Health Data Hub et hébergés sur data.gouv.fr.
 #'
+#' @example
+#' \dontrun{
+#' # Crée une base DuckDB avec les données synthétiques SNDS
+#' conn <- connect_synthetic_snds(
+#'    subset_tables = c("ER_PRS_F", "T_MCO19B"),
+#'    force_insert = TRUE
+#' )
 #' @export
 #' @family synthetic
 connect_synthetic_snds <- function(
@@ -86,9 +93,12 @@ connect_synthetic_snds <- function(
   )
 
   if (!is.null(subset_tables)) {
+    # convert PMSI names into consistent zip names
+    subset_tables <- gsub("^(T_.*)19", "\\1aa", subset_tables)
+
     csv_files <- csv_files[stringr::str_detect(
       csv_files,
-      paste0(subset_tables, collapse = "|")
+      paste0(paste0(subset_tables, ".csv"), collapse = "|")
     )]
   }
   pb <- progress::progress_bar$new(
