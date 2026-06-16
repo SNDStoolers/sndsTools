@@ -317,24 +317,12 @@ extract_drugs_erphaf <- function(
           er_ete_f <- dplyr::tbl(conn, "ER_ETE_F")
         }
 
-        dcir_join_keys <- c(
-          "DCT_ORD_NUM",
-          "FLX_DIS_DTD",
-          "FLX_EMT_ORD",
-          "FLX_EMT_NUM",
-          "FLX_EMT_TYP",
-          "FLX_TRT_DTD",
-          "ORG_CLE_NUM",
-          "PRS_ORD_NUM",
-          "REM_TYP_AFF"
-        )
-
         ir_pha_cols_not_in_er_pha <- setdiff(
           colnames(ir_pha_filtered_table),
           colnames(er_pha_f)
         )
         query <- er_prs_f |>
-          dplyr::inner_join(er_pha_f, by = dcir_join_keys) |>
+          dplyr::inner_join(er_pha_f, by = COLS_DCIR_JOIN_KEY) |>
           dplyr::inner_join(
             ir_pha_filtered_table |>
               dplyr::select(dplyr::all_of(ir_pha_cols_not_in_er_pha)),
@@ -342,7 +330,7 @@ extract_drugs_erphaf <- function(
           )
 
         query <- query |>
-          dplyr::left_join(er_ete_f, by = dcir_join_keys) |>
+          dplyr::left_join(er_ete_f, by = COLS_DCIR_JOIN_KEY) |>
           dplyr::filter(
             dbplyr::sql(soi_dtd_condition),
             dbplyr::sql(dis_dtd_condition)
