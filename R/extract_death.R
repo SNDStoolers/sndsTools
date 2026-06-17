@@ -48,6 +48,11 @@ build_death_diagnosis_conditions <- function(col_name, diagnosis_codes) {
 #' (ex. `"G20"`) capture donc l'ensemble de ses sous-codes (ex. `"G200"`,
 #' `"G201"`).
 #'
+#' La requête est construite de façon **paresseuse** (lazy) et exécutée
+#' intégralement côté base : aucune des tables de décès n'est chargée en mémoire
+#' R. Lorsque `output_table_name` est fourni, le résultat est matérialisé
+#' directement dans la base (`CREATE TABLE ... AS SELECT`), sans `collect`.
+#'
 #' @param start_date Date La date de début de la période de décès à extraire
 #'   (borne incluse).
 #' @param end_date Date La date de fin de la période de décès à extraire (borne
@@ -151,38 +156,40 @@ extract_death <- function(
     all_causes <- all_causes |> dplyr::semi_join(cohort, by = "BEN_IDT_ANO")
   }
 
-  # Une ligne par code de cause initiale.
-  initial_df <- initial_cause |>
+  # Une ligne par code de cause initiale. Tout reste paresseux (SQL) : le
+  # collect éventuel est centralisé dans save_or_return_result().
+  initial_codes <- initial_cause |>
     dplyr::select(
       BEN_IDT_ANO,
       EXE_SOI_DTD = BEN_DCD_DTE,
       CIM_COD = DCD_CIM_COD
     ) |>
     dplyr::distinct() |>
-    dplyr::collect() |>
     dplyr::mutate(STATUS = "Initial cause")
 
-  # Une ligne par code de l'ensemble des causes.
-  other_df <- all_causes |>
+  # Une ligne par code de l'ensemble des causes. Un code déjà rapporté comme
+  # cause initiale du patient n'est pas dupliqué en "Other".
+  other_codes <- all_causes |>
     dplyr::select(
       BEN_IDT_ANO,
       EXE_SOI_DTD = BEN_DCD_DTE,
       CIM_COD = ECD_CIM_COD
     ) |>
     dplyr::distinct() |>
-    dplyr::collect() |>
-    dplyr::mutate(STATUS = "Other")
-
-  # Un code déjà rapporté comme cause initiale du patient n'est pas dupliqué en
-  # "Other".
-  other_df <- other_df |>
+    dplyr::mutate(STATUS = "Other") |>
     dplyr::anti_join(
-      initial_df |> dplyr::select(BEN_IDT_ANO, CIM_COD),
+      initial_codes |> dplyr::select(BEN_IDT_ANO, CIM_COD),
       by = c("BEN_IDT_ANO", "CIM_COD")
     )
 
-  result <- dplyr::bind_rows(initial_df, other_df) |>
-    dplyr::select(BEN_IDT_ANO, EXE_SOI_DTD, CIM_COD, STATUS) |>
+  # union_all (et non bind_rows) car les opérandes sont des requêtes paresseuses.
+  # Les deux branches sont disjointes (anti_join) : pas de doublon introduit.
+  result <- dplyr::union_all(
+    initial_codes |>
+      dplyr::select(BEN_IDT_ANO, EXE_SOI_DTD, CIM_COD, STATUS),
+    other_codes |>
+      dplyr::select(BEN_IDT_ANO, EXE_SOI_DTD, CIM_COD, STATUS)
+  ) |>
     dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, STATUS, CIM_COD)
 
   save_or_return_result(result, output_table_name, conn)
@@ -212,10 +219,14 @@ extract_death <- function(
 #' la période (patient vivant, ou décédé hors `[start_date, end_date]`) est tout
 #' de même restitué, sur une unique ligne `STATUS == "Alive"` avec `CIM_COD` et
 #' `EXE_SOI_DTD` à `NA`. Tous les identifiants fournis (dédoublonnés) sont donc
-#' présents en sortie.
+#' présents en sortie. Cette restitution est obtenue par une jointure externe
+#' (`LEFT JOIN`) de la liste d'identifiants sur les décès.
 #'
 #' La liste d'identifiants est injectée dans une table temporaire de la base
-#' (supprimée en fin d'exécution) pour réaliser la jointure.
+#' (supprimée en fin d'exécution) pour réaliser la jointure. La requête reste
+#' **paresseuse** (lazy) et s'exécute côté base ; lorsque `output_table_name` est
+#' fourni, le résultat est matérialisé directement dans la base
+#' (`CREATE TABLE ... AS SELECT`), sans `collect`.
 #'
 #' @param patient_ids character vector Les identifiants patients
 #'   (`BEN_IDT_ANO`) à extraire. Les doublons sont ignorés.
@@ -311,48 +322,47 @@ extract_death_from_ids <- function(
     dplyr::filter(dbplyr::sql(date_condition), !is.na(BEN_IDT_ANO)) |>
     dplyr::inner_join(ids_db, by = "BEN_IDT_ANO")
 
-  # Une ligne par code de cause initiale.
-  initial_df <- initial_cause |>
+  # Une ligne par code de cause initiale. Tout reste paresseux (SQL) : le
+  # collect éventuel est centralisé dans save_or_return_result().
+  initial_codes <- initial_cause |>
     dplyr::select(
       BEN_IDT_ANO,
       EXE_SOI_DTD = BEN_DCD_DTE,
       CIM_COD = DCD_CIM_COD
     ) |>
     dplyr::distinct() |>
-    dplyr::collect() |>
     dplyr::mutate(STATUS = "Initial cause")
 
-  # Une ligne par code de l'ensemble des causes.
-  other_df <- all_causes |>
+  # Une ligne par code de l'ensemble des causes. Un code déjà rapporté comme
+  # cause initiale n'est pas dupliqué en "Other".
+  other_codes <- all_causes |>
     dplyr::select(
       BEN_IDT_ANO,
       EXE_SOI_DTD = BEN_DCD_DTE,
       CIM_COD = ECD_CIM_COD
     ) |>
     dplyr::distinct() |>
-    dplyr::collect() |>
-    dplyr::mutate(STATUS = "Other")
-
-  # Un code déjà rapporté comme cause initiale n'est pas dupliqué en "Other".
-  other_df <- other_df |>
+    dplyr::mutate(STATUS = "Other") |>
     dplyr::anti_join(
-      initial_df |> dplyr::select(BEN_IDT_ANO, CIM_COD),
+      initial_codes |> dplyr::select(BEN_IDT_ANO, CIM_COD),
       by = c("BEN_IDT_ANO", "CIM_COD")
     )
 
-  deceased <- dplyr::bind_rows(initial_df, other_df)
-
-  # Patients vivants : identifiants fournis sans aucun code de décès dans la
-  # période -> une ligne "Alive" avec code et date à NA.
-  alive_ids <- setdiff(patient_ids, deceased$BEN_IDT_ANO)
-  alive_df <- dplyr::tibble(
-    BEN_IDT_ANO = alive_ids,
-    EXE_SOI_DTD = as.Date(NA),
-    CIM_COD = NA_character_,
-    STATUS = "Alive"
+  deceased <- dplyr::union_all(
+    initial_codes |>
+      dplyr::select(BEN_IDT_ANO, EXE_SOI_DTD, CIM_COD, STATUS),
+    other_codes |>
+      dplyr::select(BEN_IDT_ANO, EXE_SOI_DTD, CIM_COD, STATUS)
   )
 
-  result <- dplyr::bind_rows(deceased, alive_df) |>
+  # Patients vivants : un left_join de la liste d'identifiants sur les décès
+  # restitue tous les identifiants fournis. Pour ceux sans code de décès dans la
+  # période, EXE_SOI_DTD et CIM_COD sont NULL (typés par les colonnes de
+  # `deceased`, ce qui évite tout souci de typage d'un NA littéral) et STATUS est
+  # mis à "Alive". Les décédés conservent leurs lignes de codes.
+  result <- ids_db |>
+    dplyr::left_join(deceased, by = "BEN_IDT_ANO") |>
+    dplyr::mutate(STATUS = dplyr::coalesce(STATUS, "Alive")) |>
     dplyr::select(BEN_IDT_ANO, EXE_SOI_DTD, CIM_COD, STATUS) |>
     dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, STATUS, CIM_COD)
 

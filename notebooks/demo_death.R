@@ -218,6 +218,13 @@ cat(
 # %% [8] Scénario D : sauvegarde du résultat dans une table ----------------------
 # Avec output_table_name, le résultat est écrit dans une table de la base au
 # lieu d'être renvoyé. La fonction renvoie alors NULL de manière invisible.
+#
+# NB (performance) : extract_death() construit sa requête de façon PARESSEUSE
+# (lazy) et ne collecte jamais les tables de décès en mémoire R. Lorsque
+# output_table_name est fourni, le résultat est matérialisé directement dans la
+# base via "CREATE TABLE ... AS SELECT" : la donnée ne transite pas par R (pas
+# de collect, pas d'aller-retour mémoire). Sans output_table_name, le collect
+# n'a lieu qu'une seule fois, au moment de renvoyer le data frame.
 output_table_name <- "TMP_DEMO_DEATH"
 if (DBI::dbExistsTable(conn, output_table_name)) {
   DBI::dbRemoveTable(conn, output_table_name)
