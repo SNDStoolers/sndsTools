@@ -16,7 +16,8 @@ Imports:
     duckdb (>= 1.0.0.2),
     openxlsx,
     knitr,
-    readr
+    readr,
+    stringr
 Authors@R: c(
     person(
         "Antoine", "Belloir", ,
