@@ -1,5 +1,5 @@
 # =============================================================================
-# Démo locale : extract_death() sur les données synthétiques SNDS (DuckDB)
+# Démo locale : extract_death() / extract_death_from_ids() sur DuckDB
 # =============================================================================
 #
 # COMMENT FONCTIONNE UN "NOTEBOOK" R ?
@@ -19,13 +19,26 @@
 #   3. Tout d'un coup, depuis un terminal à la racine du dépôt :
 #         Rscript notebooks/demo_death.R
 #
-# Ce notebook se connecte à la base synthétique SNDS (50 patients fictifs,
-# téléchargée automatiquement au besoin), corrige "à la volée" le format de la
-# date de décès, puis appelle extract_death() sur plusieurs scénarios.
+# POURQUOI DES DONNÉES FICTIVES, ET NON LA BASE SYNTHÉTIQUE ?
+# ----------------------------------------------------------
+# extract_death() s'appuie sur la date de décès BEN_DCD_DTE des tables des
+# causes médicales de décès (KI_CCI_R, KI_ECD_R). Or, dans la base synthétique
+# « corrigée » (parquet de SNDStoolers/synthetic_snds) chargée par
+# connect_synthetic_snds(), la colonne BEN_DCD_DTE est actuellement NULL pour
+# toutes les tables (KI_CCI_R, KI_ECD_R, IR_BEN_R, ER_PRS_F) : les dates de
+# décès, au format SAS dans la source, n'ont pas été parsées lors de la
+# conversion en parquet. Sur ces données, extract_death() ne renverrait donc
+# aucune ligne, quelle que soit la période.
 #
-# FORMAT DE SORTIE (V2) : extract_death() renvoie UNE LIGNE PAR CODE CIM-10 et
-# par patient décédé, avec les colonnes BEN_IDT_ANO, EXE_SOI_DTD, CIM_COD et
-# STATUS. STATUS vaut "Initial cause" si le code est la cause initiale du décès
+# Ce notebook se rend par conséquent AUTONOME : il crée une petite base DuckDB
+# EN MÉMOIRE et y écrit des tables de décès FICTIVES (avec de vraies dates) pour
+# démontrer le comportement de extract_death() et extract_death_from_ids().
+# Aucune donnée n'est téléchargée. Dès que BEN_DCD_DTE sera renseignée en amont,
+# on pourra rejouer ces mêmes appels sur connect_synthetic_snds().
+#
+# FORMAT DE SORTIE : extract_death() renvoie UNE LIGNE PAR CODE CIM-10 et par
+# patient décédé, avec les colonnes BEN_IDT_ANO, EXE_SOI_DTD, CIM_COD et STATUS.
+# STATUS vaut "Initial cause" si le code est la cause initiale du décès
 # (KI_CCI_R), "Other" pour les autres codes de l'ensemble des causes (KI_ECD_R).
 # =============================================================================
 
@@ -40,8 +53,8 @@ pkgload::load_all(here::here())
 # extract_death() renvoie une ligne par code CIM-10. print_deaths_pretty()
 # affiche ce tableau LIGNE PAR LIGNE, colonnes alignées, pour une lecture
 # rapide en console :
-#   BEN_IDT_ANO        DATE        CIM     STATUS
-#   aQsInJLbqvXKdQGHK  1998-06-26  V598    Initial cause
+#   BEN_IDT_ANO  DATE        CIM   STATUS
+#   P1           2015-06-01  M170  Initial cause
 # Par défaut toutes les lignes sont affichées ; passer `n` pour en limiter le
 # nombre (ex. print_deaths_pretty(all_deaths, n = 10)).
 print_deaths_pretty <- function(deaths, n = Inf) {
@@ -53,20 +66,16 @@ print_deaths_pretty <- function(deaths, n = Inf) {
   }
   shown <- utils::head(deaths, n)
 
-  idt_v <- shown$BEN_IDT_ANO
-  dte_v <- format(shown$EXE_SOI_DTD)
-  cod_v <- shown$CIM_COD
-  sta_v <- shown$STATUS
-
   # Affiche les NA comme "NA" (notamment CIM_COD/EXE_SOI_DTD des patients vivants).
   na_to_chr <- function(x) {
     x <- as.character(x)
     x[is.na(x)] <- "NA"
     x
   }
-  idt_v <- na_to_chr(idt_v)
-  dte_v <- na_to_chr(dte_v)
-  cod_v <- na_to_chr(cod_v)
+  idt_v <- na_to_chr(shown$BEN_IDT_ANO)
+  dte_v <- na_to_chr(format(shown$EXE_SOI_DTD))
+  cod_v <- na_to_chr(shown$CIM_COD)
+  sta_v <- shown$STATUS
 
   # Largeur de chaque colonne = max(titre, valeurs) pour aligner en-tête et données.
   w_idt <- max(nchar(c(idt_v, "BEN_IDT_ANO")))
@@ -89,109 +98,52 @@ print_deaths_pretty <- function(deaths, n = Inf) {
   invisible(deaths)
 }
 
-# %% [2] Connexion à la base synthétique ----------------------------------------
-# connect_synthetic_snds() télécharge les données (si absentes) et charge les
-# tables demandées dans une base DuckDB locale. On ne charge ici que les deux
-# tables des causes médicales de décès, pour aller vite.
-data_dir <- path.expand("~/.cache/sndsTools")
-path2db <- file.path(data_dir, "synthetic_snds.duckdb")
+# %% [2] Base DuckDB en mémoire --------------------------------------------------
+# On ouvre une connexion DuckDB EN MÉMOIRE (aucun fichier, donc aucun verrou ni
+# téléchargement). On y écrira nos tables de décès fictives à la cellule
+# suivante. shutdown = TRUE à la fermeture (cellule [10]) libère tout.
+conn <- duckdb::dbConnect(duckdb::duckdb())
 
-# Robustesse (1/2) : si une connexion `conn` d'un run précédent est restée
-# ouverte dans CETTE session, on la referme d'abord. Sinon, en relançant le
-# notebook depuis le début, l'ancienne connexion garderait le fichier verrouillé.
-if (exists("conn") && inherits(conn, "DBIConnection") && DBI::dbIsValid(conn)) {
-  DBI::dbDisconnect(conn, shutdown = TRUE)
-}
-
-# Robustesse (2/2) : DuckDB n'autorise qu'UN SEUL processus à ouvrir un fichier
-# .duckdb à la fois. Si une AUTRE session R (autre terminal, session VS Code
-# laissée ouverte) tient encore la base, la connexion échoue avec « Could not set
-# lock ». On intercepte cette erreur pour afficher la marche à suivre plutôt
-# qu'une longue stacktrace.
-conn <- tryCatch(
-  connect_synthetic_snds(
-    path2db = path2db,
-    subset_tables = c("KI_ECD_R", "KI_CCI_R")
-  ),
-  error = function(e) {
-    if (grepl("lock", conditionMessage(e), ignore.case = TRUE)) {
-      stop(
-        "La base DuckDB est verrouillée par une AUTRE session R.\n",
-        "  -> Ferme ou redémarre cette session, ou exécute-y la cellule [10] :\n",
-        "       DBI::dbDisconnect(conn, shutdown = TRUE)\n",
-        "  Le message DuckDB ci-dessous indique le PID qui tient le verrou.\n\n",
-        conditionMessage(e),
-        call. = FALSE
-      )
-    }
-    stop(e)
-  }
+# %% [2b] Tables de décès fictives ----------------------------------------------
+# On reproduit le schéma des deux tables des causes médicales de décès :
+#   KI_CCI_R = circonstances et CAUSE INITIALE du décès (colonne DCD_CIM_COD)
+#              -> lignes STATUS == "Initial cause"
+#   KI_ECD_R = ENSEMBLE DES CAUSES du décès (colonne ECD_CIM_COD)
+#              -> lignes STATUS == "Other"
+# Cohorte fictive (dates de décès volontairement réparties sur plusieurs années
+# pour illustrer le filtre de période) :
+#   P1 : cause initiale M170 (2015) ; autres causes M170, I10, E11
+#   P2 : cause initiale W010 (2003) ; autre cause X59
+#   P3 : cause initiale I219 (2018) ; autre cause N179
+#   P4 : cause initiale W199 (2010) ; autre cause S065
+#   P5 : pas de cause initiale ; autres causes M545, W500 (2017)
+fake_ki_cci_r <- data.frame(
+  BEN_IDT_ANO = c("P1", "P2", "P3", "P4"),
+  DCD_CIM_COD = c("M170", "W010", "I219", "W199"),
+  BEN_DCD_DTE = as.Date(c("2015-06-01", "2003-04-10", "2018-02-02", "2010-09-15")),
+  stringsAsFactors = FALSE
 )
-
-# KI_CCI_R = circonstances et CAUSE INITIALE du décès (colonne DCD_CIM_COD)
-#            -> lignes STATUS == "Initial cause"
-# KI_ECD_R = ENSEMBLE DES CAUSES du décès (colonne ECD_CIM_COD)
-#            -> lignes STATUS == "Other"
+fake_ki_ecd_r <- data.frame(
+  BEN_IDT_ANO = c("P1", "P1", "P1", "P2", "P3", "P4", "P5", "P5"),
+  ECD_CIM_COD = c("M170", "I10", "E11", "X59", "N179", "S065", "M545", "W500"),
+  BEN_DCD_DTE = as.Date(c(
+    "2015-06-01", "2015-06-01", "2015-06-01", "2003-04-10",
+    "2018-02-02", "2010-09-15", "2017-03-03", "2017-03-03"
+  )),
+  stringsAsFactors = FALSE
+)
+DBI::dbWriteTable(conn, "KI_CCI_R", fake_ki_cci_r, overwrite = TRUE)
+DBI::dbWriteTable(conn, "KI_ECD_R", fake_ki_ecd_r, overwrite = TRUE)
 DBI::dbListTables(conn)
 
-# %% [3] Le problème : la date de décès est NA après chargement ------------------
-# La date BEN_DCD_DTE est stockée au format SAS (ex. "26Jun1998:18:15:58"), mais
-# le chargement standard l'interprète avec le format "%d/%m/%Y". Résultat : la
-# colonne est NA partout, donc le filtre sur la période ne peut pas fonctionner.
-dplyr::tbl(conn, "KI_ECD_R") |>
-  dplyr::select(BEN_IDT_ANO, ECD_CIM_COD, BEN_DCD_DTE) |>
-  head() |>
-  dplyr::collect()
-
-# %% [4] Correction "à la volée" du format de date -------------------------------
-# On relit les CSV bruts en parsant BEN_DCD_DTE avec son vrai format
-# "%d%b%Y:%H:%M:%S" (locale anglaise forcée car les mois sont en anglais :
-# Jun, Dec...), puis on réécrit les tables dans la base.
-#
-# NB : ceci est un correctif LOCAL au notebook. Le correctif propre du pipeline
-# de chargement (get_kwikly_format / synthetic_data.R) est un sujet séparé.
-load_death_table_with_dates <- function(conn, csv_path, table_name) {
-  df <- readr::read_delim(
-    csv_path,
-    delim = ";",
-    show_col_types = FALSE,
-    # On lit toutes les colonnes en texte (évite les avertissements de parsing
-    # sur la donnée synthétique) ; seule BEN_DCD_DTE est ensuite convertie.
-    col_types = readr::cols(.default = readr::col_character())
-  )
-  df$BEN_DCD_DTE <- as.Date(readr::parse_datetime(
-    df$BEN_DCD_DTE,
-    format = "%d%b%Y:%H:%M:%S",
-    locale = readr::locale(date_names = "en")
-  ))
-  DBI::dbWriteTable(conn, table_name, df, overwrite = TRUE)
-  invisible(table_name)
-}
-
-load_death_table_with_dates(
-  conn,
-  file.path(data_dir, "Causes_de_Deces", "KI_ECD_R.csv"),
-  "KI_ECD_R"
-)
-load_death_table_with_dates(
-  conn,
-  file.path(data_dir, "Causes_de_Deces", "KI_CCI_R.csv"),
-  "KI_CCI_R"
-)
-
-# Vérification : les dates sont désormais correctement remplies.
-dplyr::tbl(conn, "KI_ECD_R") |>
-  dplyr::select(BEN_IDT_ANO, ECD_CIM_COD, BEN_DCD_DTE) |>
-  head() |>
-  dplyr::collect()
-
-# %% [5] Scénario A : tous les décès sur une large période -----------------------
+# %% [3] Scénario A : tous les décès sur une large période -----------------------
 # Sans diagnosis_codes, extract_death() renvoie tous les décès de la période,
 # une ligne par code CIM-10 et par patient, avec :
 #   - CIM_COD : un code CIM-10 associé au décès ;
 #   - STATUS  : "Initial cause" (cause initiale, KI_CCI_R) ou "Other" (autre
 #               code de l'ensemble des causes, KI_ECD_R).
-# Un patient peut donc apparaître sur plusieurs lignes.
+# Un patient peut donc apparaître sur plusieurs lignes. Un code déjà rapporté
+# comme cause initiale n'est pas dupliqué en "Other".
 all_deaths <- extract_death(
   start_date = as.Date("1980-01-01"),
   end_date = as.Date("2020-12-31"),
@@ -204,10 +156,9 @@ cat(
 )
 cat("Répartition des STATUS :\n")
 print(table(all_deaths$STATUS))
-# Affichage ligne par ligne, colonnes alignées.
 print_deaths_pretty(all_deaths)
 
-# %% [6] Scénario B : décès par code CIM-10 (recherche par préfixe) ---------------
+# %% [4] Scénario B : décès par code CIM-10 (recherche par préfixe) ---------------
 # "M" capture tous les codes de cause commençant par M (appareil
 # ostéo-articulaire). La recherche se fait dans la cause initiale (KI_CCI_R) ET
 # dans l'ensemble des causes (KI_ECD_R) : un patient est retenu dès qu'un de ses
@@ -222,9 +173,10 @@ deaths_m <- extract_death(
 cat("Décès avec une cause en 'M' :", nrow(deaths_m), "\n")
 print_deaths_pretty(deaths_m)
 
-# %% [7] Scénario C : effet du filtre de période ---------------------------------
+# %% [5] Scénario C : effet du filtre de période ---------------------------------
 # Mêmes codes ("W" = causes externes / chutes), mais une fenêtre temporelle
-# restreinte : seuls les décès survenus dans la période sont conservés.
+# restreinte : seuls les décès survenus dans la période sont conservés. P2 (2003)
+# disparaît quand on ne garde que 2005-2020.
 deaths_w_all <- extract_death(
   start_date = as.Date("1980-01-01"),
   end_date = as.Date("2020-12-31"),
@@ -242,7 +194,7 @@ cat(
   "| depuis 2005 =", nrow(deaths_w_recent), "\n"
 )
 
-# %% [8] Scénario D : sauvegarde du résultat dans une table ----------------------
+# %% [6] Scénario D : sauvegarde du résultat dans une table ----------------------
 # Avec output_table_name, le résultat est écrit dans une table de la base au
 # lieu d'être renvoyé. La fonction renvoie alors NULL de manière invisible.
 #
@@ -270,7 +222,7 @@ dplyr::tbl(conn, output_table_name) |>
   dplyr::collect() |>
   print_deaths_pretty()
 
-# %% [9] Scénario E : extraction par liste d'identifiants ------------------------
+# %% [7] Scénario E : extraction par liste d'identifiants ------------------------
 # extract_death_from_ids() est la fonction sœur de extract_death() : même sortie
 # (une ligne par code CIM-10), mais l'entrée est une LISTE D'IDENTIFIANTS patients
 # au lieu de codes diagnostics. Les identifiants sans décès dans la période
@@ -292,5 +244,5 @@ cat("Répartition des STATUS (dont Alive) :\n")
 print(table(deaths_by_ids$STATUS, useNA = "ifany"))
 print_deaths_pretty(deaths_by_ids)
 
-# %% [10] Fermeture de la connexion ----------------------------------------------
+# %% [8] Fermeture de la connexion -----------------------------------------------
 DBI::dbDisconnect(conn, shutdown = TRUE)
