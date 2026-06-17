@@ -102,6 +102,33 @@ insert_into_table_from_query <- function(
   )
 }
 
+#' Retourne le résultat d'une extraction, ou le sauvegarde dans une table.
+#'
+#' @description
+#' Logique de sortie commune aux fonctions d'extraction qui collectent leur
+#' résultat en mémoire avant de le restituer. Si `output_table_name` est `NULL`,
+#' le data frame `result` est renvoyé tel quel. Sinon, `result` est écrit dans
+#' la table `output_table_name` et la fonction renvoie `NULL` de manière
+#' invisible.
+#'
+#' @param result data.frame Le résultat de l'extraction, déjà collecté en
+#'   mémoire.
+#' @param output_table_name character ou `NULL`. Le nom de la table de sortie.
+#'   Lorsqu'il est fourni, la validité du nom doit déjà avoir été vérifiée par
+#'   l'appelant (`check_output_table_name()`).
+#' @param conn dbConnection La connexion à la base de données.
+#' @return `result` si `output_table_name` est `NULL`, sinon `NULL` invisible.
+#'
+#' @keywords internal
+save_or_return_result <- function(result, output_table_name, conn) {
+  if (is.null(output_table_name)) {
+    return(result)
+  }
+  DBI::dbWriteTable(conn, output_table_name, result)
+  message(glue::glue("Results saved to table {output_table_name} in Oracle."))
+  invisible(NULL)
+}
+
 
 #' Vérifie la validité du nom de la table de sortie Oracle.
 #'
