@@ -1,0 +1,293 @@
+# Contribuer
+
+Ce projet est un effort communautaire. Les nouveaux contributeurs sont
+les bienvenus. Les règles de décision et de gouvernance sont détaillées
+dans le document
+[Gouvernance](https://sndstoolers.github.io/sndsTools/articles/gouvernance.md).
+
+## Différente manière de contribuer
+
+### Répondre à une question sur une issue
+
+De nombreuses questions sont posées sur les
+[issues](https://github.com/SNDStoolers/sndsTools/issues). Vous pouvez y
+répondre en donnant des conseils, ou en proposant une solution.
+
+### Créer une nouvelle issue
+
+Si vous avez trouvé un bug, ou si vous avez une question sur une
+fonctionnalité, vous pouvez [créer une nouvelle
+issue](https://github.com/SNDStoolers/sndsTools/issues/new/choose).
+
+En cas de bug, il est important de donner un exemple reproductible
+[`reprex`](https://www.tidyverse.org/help/#reprex). Celui-ci contient le
+code nécessaire pour reproduire le bug, et le message d’erreur complet.
+Il est très important pour qu’un développeur plus expérimenté puisse
+comprendre le problème et vous aider.
+
+### Contribuer à la documentation
+
+Contribuer à la documentation est aussi important que de contribuer au
+code. Vous pouvez proposer des modifications à la documentation en
+créant une [pull
+request](https://github.com/SNDStoolers/sndsTools/pulls). Les petites
+erreurs et modifications peuvent être corrigée directment dans
+l’interface web GitHub.
+
+**NB:** La documentation est principalement dans le code R, et est
+générée avec le paquet
+[roxygen2](https://cran.r-project.org/package=roxygen2). Pour la
+modifier il faut donc modifier les fichiers `.R` dans le dossier `R/` du
+projet.
+
+### Contribuer au code
+
+Afin de résoudre un bug, ou d’ajouter une nouvelle fonctionnalité, vous
+pouvez créer une [pull
+request](https://github.com/SNDStoolers/sndsTools/pulls).
+
+## Principes généraux de contribution
+
+- Eviter la duplication : Avant de soumettre une nouvelle issue, ou une
+  nouvelle pull request, il est important de s’assurer qu’aucun autre
+  contributeur n’a déjà posé la même question ou contribuer sur le même
+  thème.
+
+- Etre patient : Les contributeurs sont bénévoles, effectuent la plupart
+  du travail sur leur temps libre et peuvent ne pas répondre
+  immédiatement à vos questions.
+
+- Etre respectueux : Les contributeurs viennent de différents horizons,
+  et ont des niveaux de compétences différents. Il est important de
+  respecter les opinions des autres, et de rester bienveillant.
+
+## API
+
+Nous essayons d’adopter une API cohérente et intuitive pour toutes les
+fonctions. Le plus simple pour créer une nouvelle fonction est de se
+référer à une fonction existante qui fait quelque chose de similaire, et
+de suivre les mêmes conventions pour les noms de fonctions et les
+arguments. La section suivante détaille les conventions que nous
+essayons de suivre. L’argumentaire est discuté dans [l’issue
+\#32](https://github.com/SNDStoolers/sndsTools/issues/32).
+
+### Nom des fonctions
+
+- La fonction commence par un verbe d’action suivi du concept sur lequel
+  elle agit suivi de la table ou le produit sur lequel elle agit.
+
+- Chaque élément est séparé par un trait d’union.
+
+- Exemple : extract_consultations_erprsf\` *extrait* les *consultations*
+  de la table *erprsf*. Si plusieurs tables sont concernées, utiliser la
+  table la plus importante ou la plus spécifique.
+
+### Paramètres des fonctions
+
+Dans cet ordre de priorité :
+
+- Dates de début `start_date`, `end_date`
+
+- Filtres : suffixé par `_filter`, par exemple `pse_spe_filter`.
+  Plusieurs filtres peuvent être utilisés dans la même fonction.
+
+- Autres paramètres éventuels.
+
+- `patients_ids_filter` (Optionnel) : Filtrer sur une liste
+  d’identifiants de patients si non NULL.
+
+- `output_table_name` : Nom de la table de sortie Oracle si non NULL,
+  sinon la fonction retourne un data.frame.
+
+- `conn` : Objet de connexion à la base de données Oracle. Si NULL, la
+  fonction retourne un data.frame.
+
+### Valeur de retour
+
+- Par défaut, les fonctions retournent un data.frame. Si l’argument
+  `output_table_name` est spécifié, la fonction écrit la table dans la
+  base de données Oracle et retourne NULL.
+
+- Format de la table de sortie : un data.frame avec une ligne par
+  événement de soin. Les colonnes sont au minimum l’identifiant patient
+  ((`BEN_NIR_PSA`, `BEN_RNG_GEM`) ou `NIR_ANO_17` et/ou `BEN_IDT_ANO`),
+  une date de début `EXE_SOI_DTD`, éventuellement une date de fin, et
+  une colonne par filtre utilisé. Les variables sont nommées en
+  snake_case.
+
+### Autres conventions
+
+- Gestion des tables :
+
+  - Pas d’overwrite sur une table existante avec le même nom que la
+    table de sortie `output_table_name`.
+
+  - Pas de suppression d’une table que l’on n’a pas créé dans la même
+    fonction.
+
+### Commentaires
+
+En anglais dans le code, en français dans la partie visible pour les
+utilisateurs (Rd, vignettes, etc.)
+
+## Processus d’acceptation des pull requests
+
+- Il est recommandé de créer une nouvelle branche git pour chaque
+  nouvelle pull request (PR).
+- Un code nouveau proposant une nouvelle fonctionnalité doit respecter
+  les conventions de style R. Vous pouvez utiliser le paquet
+  [styler](https://cran.r-project.org/package=styler) pour appliquer ces
+  styles, mais s’il vous plait ne restyler pas du code qui n’a rien à
+  faire avec votre PR.
+- Nous utilisons
+  [roxygen2](https://cran.r-project.org/package=roxygen2), avec la
+  syntaxe Markdown pour la documentation.
+- Nous suivons [le guide de style de code R du
+  tidyverse](https://style.tidyverse.org/index.html). La seule
+  différence avec le guide actuel est que nous utilisons le pipe natif
+  `|>` au lieu de `%>%`.
+- Pour **SQL**, nous suivons [le guide de style SQL de
+  Mozilla](https://docs.telemetry.mozilla.org/concepts/sql_style).
+- Nous utilisons [testthat](https://cran.r-project.org/package=testthat)
+  pour les tests. Les contributions avec des tests inclus sont acceptés
+  plus facilement.
+- Une nouvelle PR doit être revue par au moins un core contributeur
+  avant d’être intégrée.
+
+## Comment contribuer concrètement ?
+
+Afin de modifier le code, il est au préalable nécessaire de forker le
+dépôt principal sur GitHub, puis de soumettre une “pull request” (PR).
+
+Dans les premières étapes, nous expliquons comment installer localement
+{sndsTools} et comment configurer votre dépôt git :
+
+1.  [Créez un compte sur GitHub](https://github.com/join) si vous n’en
+    avez pas déjà un.
+
+2.  Forkez le [dépôt du
+    projet](https://github.com/SNDStoolers/sndsTools) : cliquez sur le
+    bouton “Fork” en haut de la page. Cela crée une copie du code sur
+    votre compte GitHub. Pour plus de détails sur la manière de forker
+    un dépôt, consultez [ce
+    guide](https://help.github.com/articles/fork-a-repo/).
+
+3.  Clonez votre fork du dépôt {sndsTools} depuis votre compte GitHub
+    sur votre disque local :
+
+``` bash
+git clone git@github.com:YourLogin/sndsTools.git
+cd sndsTools
+```
+
+4.  Ouvrez le projet dans Rstudio et installez localement le paquet avec
+    les dépendances de développement. Dans la console R, lancez :
+
+``` r
+
+devtools::install(dependencies = TRUE)
+```
+
+5.  Ajoutez le dépôt `upstream remote`. Cela sauvegarde la référence du
+    dépôt {sndsTools}, que vous pouvez utiliser pour garder votre
+    version synchronisée avec les derniers changements.
+
+``` bash
+git remote add upstream git@github.com:SNDStoolers/sndsTools.git
+```
+
+Vous devriez désormais avoir une installation fonctionnelle de
+{sndsTools}, et votre dépôt git correctement configuré. Vous pouvez
+maintenant commencer à contribuer en modifiant le code et en soumettant
+une PR.
+
+6.  Synchronisez votre branche `main` avec la branche `upstream/main`,
+    plus de détail sur la documentation GitHub:
+
+``` bash
+git checkout main
+git fetch upstream
+git merge upstream/main
+```
+
+7.  Créez une nouvelle branche pour votre contribution :
+
+``` bash
+git checkout -b my-new-feature
+```
+
+Et commencez à faire vos changements. Utilisez toujours une branche
+différente pour chaque nouvelle fonctionnalité ou bug fix. C’est une
+bonne pratique de ne jamais coder sur la branche `main`.
+
+8.  Une fois que vous avez terminé vos modifications, vous pouvez les
+    commiter :
+
+``` bash
+git add modified_files
+git commit -m 'Add some feature'
+```
+
+puis les pousser sur votre fork :
+
+``` bash
+git push origin my-new-feature
+```
+
+9.  Suivez [ces
+    instructions](https://help.github.com/articles/creating-a-pull-request-from-a-fork)
+    pour créer une pull request de votre travail. Cela enverra un mail
+    aux mainteneurs du projet pour qu’ils puissent examiner votre code.
+
+Il est possible qu’à un moment, vous ayez besoin de résoudre des
+conflits, si d’autres contributeurs ont modifié le code pendant que vous
+travailliez sur votre branche. Vous pouvez vous référer à [cette
+documentation pour résoudre les
+conflits](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/).
+
+10. Avant de demander une revue pour votre pull request, vérifier avec
+    les commandes suivantes dans le terminal que le code passent
+    certains test de qualité :
+
+- que votre code ne casse pas de tests : `make test`
+- que votre code respecte les conventions de style : `make style`
+- que votre code respecte les conventions de lint : `make lint`
+  (nécessite l’extension [air
+  formatter](https://tidyverse.org/blog/2025/02/air/) installée)
+- que la documentation se génère correctement : `make doc-html` \#
+  Environnement de développement
+
+L’environnement de développement recommandé est Rstudio ou vscode.
+
+Un environnement de développement conteneurisé avec R et les paquets
+nécessaires au développement peut être mis en place avec vscode et
+l’extension Dev container (nécessite docker installé). Le fichier de
+configuration de l’environnement de développement est dans
+`.devcontainer/devcontainer.json`. Ce tutoriel explique [comment
+utiliser les dev containers avec
+vscode](https://code.visualstudio.com/docs/devcontainers/tutorial).
+
+## Références pour contribuer
+
+La meilleur manière d’apprendre comment contribuer est de se lancer !
+Néamoins, la lecture de certaines ressources peut être utile :
+
+- [Guide de contribution de
+  tidyverse](https://www.tidyverse.org/contribute/)
+- [Apprendre
+  git](https://docs.github.com/en/get-started/getting-started-with-git/set-up-git)
+
+## Créer une nouvelle release
+
+On adhère au [versionnage
+sémantique](https://semver.org/spec/v2.0.0.html).
+
+Quand un version est prête à être publiée: - compléter le changelog dans
+`CHANGELOG.md` en suivant les conventions de ce fichier - créer une
+nouvelle release dans le terminal avec la commande
+`git tag -a vX.Y.Z -m "Release version X.Y.Z"` (remplacer X.Y.Z par le
+numéro de version) - pousser la nouvelle release sur GitHub avec
+`git push origin vX.Y.Z` - aller sur la page des releases du projet sur
+GitHub, et publier la release que vous venez de créer. Ajoutez la copie
+du changelog correspondant à cette release dans la description de la
+release ainsi que le nom des contributeurs.
