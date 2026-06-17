@@ -643,7 +643,7 @@ connect_synthetic_data_avc <- function(
   end_date = as.Date("2020-12-31")
 ) {
   # Connexion DuckDB
-  conn <- connect_duckdb(":memory:")
+  conn <- connect_synthetic_snds()
   # Générer les données de base
   patients_ids <- create_mock_patients_ids(n_patients)
   ir_ben_r <- create_mock_ir_ben_r(patients_ids)

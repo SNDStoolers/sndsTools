@@ -83,7 +83,7 @@ fake_eretef <- data.frame(
   cbind(fake_dcir_join_keys |> head(3))
 
 
-conn <- connect_duckdb(PATH2TEST_DB)
+conn <- connect_synthetic_snds()
 on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
 DBI::dbWriteTable(conn, "ER_PHA_F", fake_erphaf, overwrite = TRUE)
