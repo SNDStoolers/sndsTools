@@ -24,17 +24,12 @@ COLS_DCIR_JOIN_KEY <- c(
 
 # Constantes non exportées ie. utilisées uniquement en interne dans le paquet
 
-DIR2SNDS_CACHE <- "~/.cache/sndsTools"
+DIR2SNDS_CACHE <- file.path("~", ".cache", "sndsTools")
 if (!dir.exists(DIR2SNDS_CACHE)) {
   dir.create(DIR2SNDS_CACHE, recursive = TRUE)
 }
 
 PATH2SYNTHETIC_SNDS <- file.path(
   DIR2SNDS_CACHE,
-  "synthetic_snds.duckdb"
-)
-
-PATH2TEST_DB <- file.path(
-  DIR2SNDS_CACHE,
-  "synthetic_snds_test.duckdb"
+  "synthetic_snds_parquet"
 )

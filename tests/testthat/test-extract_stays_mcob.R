@@ -57,7 +57,7 @@ create_mock_hospital_stays <- function(conn) {
 }
 
 test_that("extract_stays_mcob works", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   create_mock_hospital_stays(conn)
@@ -117,7 +117,7 @@ test_that("extract_stays_mcob works", {
 })
 
 test_that("extract_stays_mcob works without any filters", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   create_mock_hospital_stays(conn)

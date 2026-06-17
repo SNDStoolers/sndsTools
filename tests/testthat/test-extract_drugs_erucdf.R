@@ -87,7 +87,7 @@ fake_er_ete_f <- data.frame(
 ) |>
   cbind(fake_dcir_join_keys)
 
-conn <- connect_duckdb(PATH2TEST_DB)
+conn <- connect_synthetic_snds()
 on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 DBI::dbWriteTable(conn, "ER_PRS_F", fake_er_prs_f, overwrite = TRUE)
 DBI::dbWriteTable(conn, "ER_UCD_F", fake_er_ucd_f, overwrite = TRUE)

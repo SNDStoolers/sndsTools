@@ -1,7 +1,7 @@
 require(dplyr)
 
 test_that("extract_consultations_mcofcstc works", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   patients_ids_filter <- data.frame(
@@ -82,7 +82,7 @@ test_that("extract_consultations_mcofcstc works", {
 })
 
 test_that("extract_consultations_mcofcstc works with multiple filters", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   patients_ids_filter <- data.frame(

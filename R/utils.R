@@ -13,38 +13,6 @@ connect_oracle <- function() {
   conn
 }
 
-# TODO: deprecate in favor of connect_synthetic_snds if synthetic data is sufficient for all tests and tutoriels #nolint
-#' Initialisation de la connexion à la base de données duckdb.
-#'
-#' @description Utilisation pour les tests et les tutoriels. Si le code
-#' s'exécute en dehors du portail, il faut initier une connexion duckdb pour
-#' effectuer les tests.
-#'
-#' @param db_path Character. Chemin vers la base de données duckdb à utiliser.
-#' Si NULL, la fonction utilise le chemin par défaut défini dans
-#' `PATH2SYNTHETIC_SNDS`.
-#'
-#' @return dbConnection Connexion à la base de données duckdb
-#'
-#' @export
-#' @family utils
-connect_duckdb <- function(path2db = NULL) {
-  if (is.null(path2db)) {
-    path2db <- PATH2SYNTHETIC_SNDS
-  }
-  conn <- duckdb::dbConnect(duckdb::duckdb(), dbdir = path2db)
-
-  # Generate fake user_synonyms table for testing: used in all er_prs_f
-  # functions
-  if (!DBI::dbExistsTable(conn, "user_synonyms")) {
-    user_synonyms <- data.frame(
-      SYNONYM_NAME = c("ER_PRS_F_2009", "ER_PRS_F_2010")
-    )
-    DBI::dbWriteTable(conn, "user_synonyms", user_synonyms)
-  }
-  conn
-}
-
 #' Création d'une table à partir d'une requête SQL.
 #' @details
 #' La fonction crée une table sous Oracle à partir d'une requête SQL.
@@ -125,7 +93,7 @@ insert_into_table_from_query <- function(
 #'
 #' @examples
 #' \dontrun{
-#' conn <- connect_duckdb()
+#' conn <- connect_oracle()
 #' check_output_table_name("MA_TABLE", conn)  # OK
 #' check_output_table_name("ma_table", conn)  # Erreur : doit être en majuscules
 #' }

@@ -41,7 +41,7 @@ fake_psa_input_no_rng <- data.frame(
 )
 
 test_that("retrieve_all_psa_from_idt works", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   # Set up test data
@@ -68,7 +68,7 @@ test_that("retrieve_all_psa_from_idt works", {
 })
 
 test_that("retrieve_all_psa_from_psa works", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   # Set up test data
