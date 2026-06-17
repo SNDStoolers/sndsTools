@@ -54,7 +54,7 @@ library(sndsTools)
 
 ## Utilisation
 
-Pour les besoins de formation, développement et test, le paquet `sndsTools` inclut une fonction `connect_synthetic_snds()` qui télécharge des données synthétiques du SNDS, les charge dans une base de données DuckDB et retourne une connexion à cette base. 
+Pour les besoins de formation, développement et test, le paquet `sndsTools` inclut une fonction `connect_synthetic_snds()` qui télécharge des données synthétiques du SNDS, les charge dans une base de données DuckDB et retourne une connexion à cette base.
 
 Ces données synthétiques sont basées sur le schéma SNDS 2019 et contiennent des informations pour 50 patients fictifs.
 
@@ -66,7 +66,8 @@ NB: le premier appel de `connect_synthetic_snds()` peut prendre plusieurs second
 # Pour avoir toute la base synthétique, enlever l'argument subset_tables ou le mettre à NULL.
 conn <- connect_synthetic_snds(
   subset_tables = c(
-    "ER_PRS_F"
+    "ER_PRS_F",
+    "T_MCO19B"
   ),
   force_insert = TRUE
 )
