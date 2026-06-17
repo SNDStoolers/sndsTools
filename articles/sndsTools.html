@@ -144,8 +144,8 @@ cache localement.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.</span></span>
 <span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect_synthetic_snds.html">connect_synthetic_snds</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO [2026-06-17 12:28:07] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet</span></span>
-<span><span class="co">#&gt; INFO [2026-06-17 12:28:07] Télécharge la base synthétique du SNDS au chemin /home/runner/.cache/sndsTools/synthetic_snds_parquet.zip</span></span>
+<span><span class="co">#&gt; INFO [2026-06-17 13:18:31] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet</span></span>
+<span><span class="co">#&gt; INFO [2026-06-17 13:18:31] Télécharge la base synthétique du SNDS au chemin /home/runner/.cache/sndsTools/synthetic_snds_parquet.zip</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   [1] "BE_IDE_R"          "CT_DEP_AAAA_GN"    "CT_IDE_AAAA_GN"   </span></span>
 <span><span class="co">#&gt;   [4] "CT_IND_AAAA_GN"    "DA_PRA_R"          "ER_ANO_F"         </span></span>
