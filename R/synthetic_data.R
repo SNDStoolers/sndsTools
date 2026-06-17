@@ -187,45 +187,21 @@ download_synthetic_snds_csv <- function(db_path) {
         stop("Failed to download: ", zip_name, " error: ", e$message)
       }
     )
-    # Décompression robuste sur Windows : certaines archives contiennent des
-    # noms de fichiers non UTF-8, ce qui peut faire échouer utils::unzip().
+    # Décompression robuste multi-OS : certaines archives (ex. "Causes de
+    # décès") stockent les noms de fichiers en Latin-1/CP437 sans le drapeau
+    # UTF-8. Décompresser en préservant l'arborescence échoue alors selon la
+    # plateforme (utils::unzip() sur macOS/Linux ; recours à PowerShell sur
+    # Windows auparavant). On utilise `junkpaths = TRUE` : seuls les noms de
+    # base ASCII des fichiers (ex. KI_CCI_R.csv) sont écrits, directement dans
+    # `expected_dir`, ce qui contourne entièrement le sous-dossier accentué.
+    # En aval, connect_synthetic_snds() liste les CSV récursivement et dérive le
+    # nom de table du basename : l'arborescence interne du zip est sans
+    # importance (et aucun basename n'entre en collision dans ces archives).
     expected_dir <- file.path(db_path, zip_name)
     if (!dir.exists(expected_dir)) {
       dir.create(expected_dir, recursive = TRUE)
     }
-
-    if (.Platform$OS.type == "windows") {
-      ps_zip <- gsub(
-        "'",
-        "''",
-        normalizePath(zip_path, winslash = "\\", mustWork = FALSE)
-      )
-      ps_dir <- gsub(
-        "'",
-        "''",
-        normalizePath(expected_dir, winslash = "\\", mustWork = FALSE)
-      )
-      ps_cmd <- paste0(
-        "Expand-Archive -LiteralPath '",
-        ps_zip,
-        "' -DestinationPath '",
-        ps_dir,
-        "' -Force"
-      )
-      status <- suppressWarnings(
-        system2(
-          "powershell",
-          c("-NoProfile", "-NonInteractive", "-Command", ps_cmd),
-          stdout = FALSE,
-          stderr = FALSE
-        )
-      )
-      if (!identical(status, 0L)) {
-        utils::unzip(zip_path, exdir = expected_dir)
-      }
-    } else {
-      utils::unzip(zip_path, exdir = expected_dir)
-    }
+    utils::unzip(zip_path, exdir = expected_dir, junkpaths = TRUE)
 
     file.remove(zip_path)
   }
