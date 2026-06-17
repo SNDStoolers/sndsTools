@@ -41,9 +41,6 @@ Fonctions utilitaires pour manipuler les données extraites.
 - [`check_output_table_name()`](https://sndstoolers.github.io/sndsTools/reference/check_output_table_name.md)
   : Vérifie la validité du nom de la table de sortie Oracle.
 
-- [`connect_duckdb()`](https://sndstoolers.github.io/sndsTools/reference/connect_duckdb.md)
-  : Initialisation de la connexion à la base de données duckdb.
-
 - [`connect_oracle()`](https://sndstoolers.github.io/sndsTools/reference/connect_oracle.md)
   : Initialisation de la connexion à la base de données.
 
@@ -82,8 +79,8 @@ celles du SNDS.
   : Configurer une base de données DuckDB avec toutes les tables
   factices
 - [`connect_synthetic_snds()`](https://sndstoolers.github.io/sndsTools/reference/connect_synthetic_snds.md)
-  : Télécharge les données synthétiques SNDS et les charge dans une base
-  DuckDB
+  : Fournit une connexion duckdb à une base de donnée synthétique du
+  SNDS
 - [`create_mock_er_ete_f()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_er_ete_f.md)
   : Créer des données factices pour ER_ETE_F (Actes externes)
 - [`create_mock_er_pha_f()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_er_pha_f.md)
@@ -102,9 +99,5 @@ celles du SNDS.
   : Créer des données factices pour les séjours MCO (tables B, C, D, UM)
 - [`create_mock_patients_ids()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_patients_ids.md)
   : Fonctions pour créer des données factices pour le tutoriel sndsTools
-- [`download_synthetic_snds_csv()`](https://sndstoolers.github.io/sndsTools/reference/download_synthetic_snds_csv.md)
-  : Télécharger les fichiers CSV synthétiques SNDS
-- [`get_kwikly_format()`](https://sndstoolers.github.io/sndsTools/reference/get_kwikly_format.md)
-  : Obtenir les formats de colonnes à partir du fichier kwikly
-- [`insert_synthetic_snds_table()`](https://sndstoolers.github.io/sndsTools/reference/insert_synthetic_snds_table.md)
-  : Insérer un fichier CSV dans une table DuckDB
+- [`download_synthetic_snds()`](https://sndstoolers.github.io/sndsTools/reference/download_synthetic_snds.md)
+  : Télécharge la base de données synthétique du SNDS

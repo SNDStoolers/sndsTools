@@ -41,7 +41,6 @@ un message explicatif.
 Other utils:
 [`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md),
 [`IS_PORTAIL`](https://sndstoolers.github.io/sndsTools/reference/IS_PORTAIL.md),
-[`connect_duckdb()`](https://sndstoolers.github.io/sndsTools/reference/connect_duckdb.md),
 [`connect_oracle()`](https://sndstoolers.github.io/sndsTools/reference/connect_oracle.md),
 [`create_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/create_table_from_query.md),
 [`gather_table_stats()`](https://sndstoolers.github.io/sndsTools/reference/gather_table_stats.md),
@@ -55,7 +54,7 @@ Other utils:
 
 ``` r
 if (FALSE) { # \dontrun{
-conn <- connect_duckdb()
+conn <- connect_oracle()
 check_output_table_name("MA_TABLE", conn)  # OK
 check_output_table_name("ma_table", conn)  # Erreur : doit être en majuscules
 } # }

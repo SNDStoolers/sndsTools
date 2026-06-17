@@ -18,7 +18,6 @@ Other utils:
 [`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md),
 [`IS_PORTAIL`](https://sndstoolers.github.io/sndsTools/reference/IS_PORTAIL.md),
 [`check_output_table_name()`](https://sndstoolers.github.io/sndsTools/reference/check_output_table_name.md),
-[`connect_duckdb()`](https://sndstoolers.github.io/sndsTools/reference/connect_duckdb.md),
 [`create_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/create_table_from_query.md),
 [`gather_table_stats()`](https://sndstoolers.github.io/sndsTools/reference/gather_table_stats.md),
 [`get_first_non_archived_year()`](https://sndstoolers.github.io/sndsTools/reference/get_first_non_archived_year.md),

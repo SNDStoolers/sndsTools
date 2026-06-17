@@ -1,22 +1,31 @@
-# Créer des données factices pour IR_BEN_R (référentiel bénéficiaires)
+# Télécharge la base de données synthétique du SNDS
 
-Créer des données factices pour IR_BEN_R (référentiel bénéficiaires)
+Télécharge la base de données synthétique du SNDS
 
 ## Usage
 
 ``` r
-create_mock_ir_ben_r(patients_ids = create_mock_patients_ids())
+download_synthetic_snds(path2zip)
 ```
 
 ## Arguments
 
-- patients_ids:
+- db_path:
 
-  data.frame avec BEN_IDT_ANO et BEN_NIR_PSA
+  Character. Répertoire dans lequel télécharger et extraire les
+  fichiers.
 
 ## Value
 
-data.frame avec toutes les colonnes du référentiel bénéficiaires
+Nothing.
+
+## Details
+
+La base est téléchargée depuis
+https://github.com/SNDStoolers/synthetic_snds/data/synthetic_snds.duckdb.
+C'est une version corrigée de la base fournie par la plateforme de
+données de santé sur data.gouv.fr :
+https://www.data.gouv.fr/datasets/donnees-synthetiques-de-la-base-principales-du-systeme-national-des-donnees-de-sante
 
 ## See also
 
@@ -26,8 +35,8 @@ Other synthetic:
 [`create_mock_er_ete_f()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_er_ete_f.md),
 [`create_mock_er_pha_f()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_er_pha_f.md),
 [`create_mock_er_prs_f()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_er_prs_f.md),
+[`create_mock_ir_ben_r()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_ir_ben_r.md),
 [`create_mock_ir_imb_r()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_ir_imb_r.md),
 [`create_mock_ir_pha_r()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_ir_pha_r.md),
 [`create_mock_mco_tables()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_mco_tables.md),
-[`create_mock_patients_ids()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_patients_ids.md),
-[`download_synthetic_snds()`](https://sndstoolers.github.io/sndsTools/reference/download_synthetic_snds.md)
+[`create_mock_patients_ids()`](https://sndstoolers.github.io/sndsTools/reference/create_mock_patients_ids.md)

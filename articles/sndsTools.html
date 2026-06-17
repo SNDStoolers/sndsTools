@@ -143,20 +143,64 @@ appels suivants seront plus rapides, car les données seront mises en
 cache localement.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.</span></span>
-<span><span class="co"># On se limite à la table ER_PRS_F pour gagner du temps.</span></span>
-<span><span class="co"># Pour avoir toute la base synthétique, enlever l'argument subset_tables ou le mettre à NULL.</span></span>
-<span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect_synthetic_snds.html">connect_synthetic_snds</a></span><span class="op">(</span></span>
-<span>  subset_tables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"ER_PRS_F"</span>,</span>
-<span>    <span class="st">"T_MCO19B"</span></span>
-<span>  <span class="op">)</span>,</span>
-<span>  force_insert <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO [2026-06-16 13:51:37] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds.duckdb</span></span>
-<span><span class="co">#&gt; INFO [2026-06-16 13:51:56] All files downloaded and extracted to: /home/runner/.cache/sndsTools</span></span>
-<span><span class="co">#&gt; INFO [2026-06-16 13:51:58] Successfully loaded 3 tables: ER_PRS_F, T_MCO19B, user_synonyms</span></span>
+<span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/connect_synthetic_snds.html">connect_synthetic_snds</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; INFO [2026-06-17 12:03:05] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet</span></span>
+<span><span class="co">#&gt; INFO [2026-06-17 12:03:05] Télécharge la base synthétique du SNDS au chemin /home/runner/.cache/sndsTools/synthetic_snds_parquet.zip</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "ER_PRS_F"      "T_MCO19B"      "user_synonyms"</span></span></code></pre></div>
+<span><span class="co">#&gt;   [1] "BE_IDE_R"          "CT_DEP_AAAA_GN"    "CT_IDE_AAAA_GN"   </span></span>
+<span><span class="co">#&gt;   [4] "CT_IND_AAAA_GN"    "DA_PRA_R"          "ER_ANO_F"         </span></span>
+<span><span class="co">#&gt;   [7] "ER_ARO_F"          "ER_BIO_F"          "ER_CAM_F"         </span></span>
+<span><span class="co">#&gt;  [10] "ER_CPT_F"          "ER_DCT_F"          "ER_DTR_F"         </span></span>
+<span><span class="co">#&gt;  [13] "ER_ETE_F"          "ER_INV_F"          "ER_LOT_F"         </span></span>
+<span><span class="co">#&gt;  [16] "ER_PHA_F"          "ER_PRS_F"          "ER_RAT_F"         </span></span>
+<span><span class="co">#&gt;  [19] "ER_TIP_F"          "ER_TRS_F"          "ER_UCD_F"         </span></span>
+<span><span class="co">#&gt;  [22] "IR_ACS_R"          "IR_BEN_R"          "IR_ETM_R"         </span></span>
+<span><span class="co">#&gt;  [25] "IR_IBA_R"          "IR_IMB_R"          "IR_MAT_R"         </span></span>
+<span><span class="co">#&gt;  [28] "IR_MTT_R"          "IR_ORC_R"          "KI_CCI_R"         </span></span>
+<span><span class="co">#&gt;  [31] "KI_ECD_R"          "T_HAD19A"          "T_HAD19B"         </span></span>
+<span><span class="co">#&gt;  [34] "T_HAD19C"          "T_HAD19D"          "T_HAD19DMPA"      </span></span>
+<span><span class="co">#&gt;  [37] "T_HAD19DMPP"       "T_HAD19E"          "T_HAD19EHPA"      </span></span>
+<span><span class="co">#&gt;  [40] "T_HAD19FA"         "T_HAD19FB"         "T_HAD19FC"        </span></span>
+<span><span class="co">#&gt;  [43] "T_HAD19FH"         "T_HAD19FI"         "T_HAD19FL"        </span></span>
+<span><span class="co">#&gt;  [46] "T_HAD19FM"         "T_HAD19FP"         "T_HAD19GJ"        </span></span>
+<span><span class="co">#&gt;  [49] "T_HAD19GRE"        "T_HAD19GRP"        "T_HAD19LEG"       </span></span>
+<span><span class="co">#&gt;  [52] "T_HAD19MED"        "T_HAD19MEDATU"     "T_HAD19MEDCHL"    </span></span>
+<span><span class="co">#&gt;  [55] "T_HAD19MON"        "T_HAD19S"          "T_HAD19STC"       </span></span>
+<span><span class="co">#&gt;  [58] "T_MCO19A"          "T_MCO19B"          "T_MCO19BPHN"      </span></span>
+<span><span class="co">#&gt;  [61] "T_MCO19C"          "T_MCO19CSTC"       "T_MCO19D"         </span></span>
+<span><span class="co">#&gt;  [64] "T_MCO19DIALP"      "T_MCO19DMIP"       "T_MCO19E"         </span></span>
+<span><span class="co">#&gt;  [67] "T_MCO19FA"         "T_MCO19FASTC"      "T_MCO19FB"        </span></span>
+<span><span class="co">#&gt;  [70] "T_MCO19FBSTC"      "T_MCO19FC"         "T_MCO19FCSTC"     </span></span>
+<span><span class="co">#&gt;  [73] "T_MCO19FH"         "T_MCO19FHSTC"      "T_MCO19FI"        </span></span>
+<span><span class="co">#&gt;  [76] "T_MCO19FL"         "T_MCO19FLSTC"      "T_MCO19FM"        </span></span>
+<span><span class="co">#&gt;  [79] "T_MCO19FMSTC"      "T_MCO19FP"         "T_MCO19FPSTC"     </span></span>
+<span><span class="co">#&gt;  [82] "T_MCO19GVxx"       "T_MCO19IVG"        "T_MCO19LEG"       </span></span>
+<span><span class="co">#&gt;  [85] "T_MCO19MED"        "T_MCO19MEDATU"     "T_MCO19MEDTHROMBO"</span></span>
+<span><span class="co">#&gt;  [88] "T_MCO19ORP"        "T_MCO19PIE"        "T_MCO19PIP"       </span></span>
+<span><span class="co">#&gt;  [91] "T_MCO19PORG"       "T_MCO19STC"        "T_MCO19SUP_BPHNA" </span></span>
+<span><span class="co">#&gt;  [94] "T_MCO19SUP_BPHNC"  "T_MCO19SUP_BPHNP"  "T_MCO19SUP_CES"   </span></span>
+<span><span class="co">#&gt;  [97] "T_MCO19SUP_FFM"    "T_MCO19SUP_LACT"   "T_MCO19SUP_PPCO"  </span></span>
+<span><span class="co">#&gt; [100] "T_MCO19SUP_SMUR"   "T_MCO19SUP_USMP"   "T_MCO19UM"        </span></span>
+<span><span class="co">#&gt; [103] "T_MCO19UPGV"       "T_MCO19VALO"       "T_MCO19VALOACE"   </span></span>
+<span><span class="co">#&gt; [106] "T_MCO19Z"          "T_RIP19C"          "T_RIP19CCAM"      </span></span>
+<span><span class="co">#&gt; [109] "T_RIP19E"          "T_RIP19FA"         "T_RIP19FB"        </span></span>
+<span><span class="co">#&gt; [112] "T_RIP19FC"         "T_RIP19FH"         "T_RIP19FI"        </span></span>
+<span><span class="co">#&gt; [115] "T_RIP19FL"         "T_RIP19FM"         "T_RIP19FP"        </span></span>
+<span><span class="co">#&gt; [118] "T_RIP19ISOCONT"    "T_RIP19R3A"        "T_RIP19R3AD"      </span></span>
+<span><span class="co">#&gt; [121] "T_RIP19RSA"        "T_RIP19RSAD"       "T_RIP19S"         </span></span>
+<span><span class="co">#&gt; [124] "T_RIP19STC"        "T_SSR19A"          "T_SSR19B"         </span></span>
+<span><span class="co">#&gt; [127] "T_SSR19C"          "T_SSR19CCAM"       "T_SSR19CCAR"      </span></span>
+<span><span class="co">#&gt; [130] "T_SSR19CMC"        "T_SSR19CSARR"      "T_SSR19CSTC"      </span></span>
+<span><span class="co">#&gt; [133] "T_SSR19D"          "T_SSR19E"          "T_SSR19FA"        </span></span>
+<span><span class="co">#&gt; [136] "T_SSR19FASTC"      "T_SSR19FB"         "T_SSR19FBSTC"     </span></span>
+<span><span class="co">#&gt; [139] "T_SSR19FC"         "T_SSR19FCSTC"      "T_SSR19FH"        </span></span>
+<span><span class="co">#&gt; [142] "T_SSR19FI"         "T_SSR19FL"         "T_SSR19FLSTC"     </span></span>
+<span><span class="co">#&gt; [145] "T_SSR19FM"         "T_SSR19FMSTC"      "T_SSR19FP"        </span></span>
+<span><span class="co">#&gt; [148] "T_SSR19GHJ"        "T_SSR19GME"        "T_SSR19LEG"       </span></span>
+<span><span class="co">#&gt; [151] "T_SSR19MED"        "T_SSR19MEDATU"     "T_SSR19S"         </span></span>
+<span><span class="co">#&gt; [154] "T_SSR19STC"        "T_SUP19ALD"        "T_SUP19ATU"       </span></span>
+<span><span class="co">#&gt; [157] "T_SUP19BPHN"       "T_SUP19DMI"        "T_SUP19FFM"       </span></span>
+<span><span class="co">#&gt; [160] "T_SUP19IVG"        "T_SUP19MON"        "user_synonyms"</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="exemple-basique-dextraction-de-données-consultations-de-chirurgie-vasculaire">Exemple basique d’extraction de données (consultations de chirurgie
 vasculaire)<a class="anchor" aria-label="anchor" href="#exemple-basique-dextraction-de-donn%C3%A9es-consultations-de-chirurgie-vasculaire"></a>
