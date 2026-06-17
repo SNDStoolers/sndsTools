@@ -62,15 +62,7 @@ NB: le premier appel de `connect_synthetic_snds()` peut prendre plusieurs second
 
 ```{r}
 # Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.
-# On se limite à la table ER_PRS_F pour gagner du temps.
-# Pour avoir toute la base synthétique, enlever l'argument subset_tables ou le mettre à NULL.
-conn <- connect_synthetic_snds(
-  subset_tables = c(
-    "ER_PRS_F",
-    "T_MCO19B"
-  ),
-  force_insert = TRUE
-)
+conn <- connect_synthetic_snds()
 DBI::dbListTables(conn)
 ```
 
