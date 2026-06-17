@@ -13,3 +13,5 @@ man
 # mode for roo code (open source agentic AI)
 .roomodes
 sndsTools.R
+# macOS Finder metadata
+.DS_Store
