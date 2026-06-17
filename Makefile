@@ -5,14 +5,14 @@ check:
 # Build the package website
 site:
 	Rscript -e 'roxygen2::roxygenise()'
-	Rscript -e 'pkgdown::clean_site();devtools::install(upgrade="never");pkgdown::build_site()'
+	Rscript -e 'pkgdown::clean_site();devtools::install(upgrade=FALSE);pkgdown::build_site()'
 
 site-lazy:
 	Rscript -e 'pkgdown::build_site(lazy = TRUE)'
 
 # install the package
 install:
-	Rscript -e 'devtools::install(upgrade="never")'
+	Rscript -e 'devtools::install(upgrade=FALSE)'
 
 # Build the package documentation
 docs-r:
@@ -20,7 +20,7 @@ docs-r:
 
 # Build the package sources as .tar.gz
 build:
-	Rscript -e 'devtools::install(upgrade="never");devtools::build()'
+	Rscript -e 'devtools::install(upgrade=FALSE);devtools::build()'
 	mv ../sndsTools_* .
 
 # Lint the package

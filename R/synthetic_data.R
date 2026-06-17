@@ -5,7 +5,7 @@
 #' \code{\link{other_function}}, décompresse les archives ZIP, puis lit les
 #' fichiers CSV et les charge dans une base DuckDB locale.
 #'
-#' @param path2b Character. Chemin vers le fichier de la base DuckDB à créer. La
+#' @param path2db Character. Chemin vers le fichier de la base DuckDB à créer. La
 #'   valeur par défaut est `~/.cache/sndsTools/synthetic_snds.duckdb`.
 #' @param force_insert Logical. Si TRUE, force la réinsertion des données même
 #'   si la base existe déjà (FALSE par défaut). Si FALSE et que la base existe,
@@ -23,13 +23,14 @@
 #' synthétiques pour 50 patients fictifs basés sur le schéma SNDS 2019. Les
 #' fichiers sont produits par Health Data Hub et hébergés sur data.gouv.fr.
 #'
-#' @example
+#' @examples
 #' \dontrun{
 #' # Crée une base DuckDB avec les données synthétiques SNDS
 #' conn <- connect_synthetic_snds(
 #'    subset_tables = c("ER_PRS_F", "T_MCO19B"),
 #'    force_insert = TRUE
 #' )
+#' }
 #' @export
 #' @family synthetic
 connect_synthetic_snds <- function(
