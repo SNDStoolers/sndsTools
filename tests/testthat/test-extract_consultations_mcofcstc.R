@@ -1,23 +1,23 @@
 require(dplyr)
 require(tibble)
 
-conn <- connect_duckdb(PATH2TEST_DB)
+conn <- connect_synthetic_snds(PATH2SYNTHETIC_SNDS)
 on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
 patients_ids_filter <- tibble::tribble(
-  ~BEN_IDT_ANO, ~BEN_NIR_PSA,
-             1,           11,
-             2,           12,
-             3,           13,
-             4,           14
+  ~BEN_IDT_ANO , ~BEN_NIR_PSA ,
+             1 ,           11 ,
+             2 ,           12 ,
+             3 ,           13 ,
+             4 ,           14
 )
 
 fake_cstc_table <- tibble::tribble(
-  ~ETA_NUM, ~SEQ_NUM, ~NIR_ANO_17, ~EXE_SOI_DTD,
-        20,       31,          11, "2019-01-10",
-        20,       32,          12, "2019-01-02",
-        20,       33,          13, "2019-01-03",
-        20,       34,          14, "2019-01-04",
+  ~ETA_NUM , ~SEQ_NUM , ~NIR_ANO_17 , ~EXE_SOI_DTD ,
+        20 ,       31 ,          11 , "2019-01-10" ,
+        20 ,       32 ,          12 , "2019-01-02" ,
+        20 ,       33 ,          13 , "2019-01-03" ,
+        20 ,       34 ,          14 , "2019-01-04" ,
 ) |>
   dplyr::mutate(
     EXE_SOI_DTD = as.Date(EXE_SOI_DTD),
@@ -29,18 +29,18 @@ fake_cstc_table <- tibble::tribble(
   )
 
 fake_fcstc_table <- tibble::tribble(
-  ~ETA_NUM, ~SEQ_NUM, ~EXE_SPE, ~ACT_COD,
-        20,       31,  "01",     "C",
-        20,       32,  "22",     "CS",
-        20,       33,  "99",     "C",
-        20,       34,  "01",     "C"
+  ~ETA_NUM , ~SEQ_NUM , ~EXE_SPE , ~ACT_COD ,
+        20 ,       31 , "01"     , "C"      ,
+        20 ,       32 , "22"     , "CS"     ,
+        20 ,       33 , "99"     , "C"      ,
+        20 ,       34 , "01"     , "C"
 )
 
 fake_fmstc_table <- tibble::tribble(
-  ~ETA_NUM, ~SEQ_NUM, ~CCAM_COD,
-        20,       31,  "ACQK001",
-        20,       32,  "ACQH003",
-        20,       33,  "ACQK002"
+  ~ETA_NUM , ~SEQ_NUM , ~CCAM_COD ,
+        20 ,       31 , "ACQK001" ,
+        20 ,       32 , "ACQH003" ,
+        20 ,       33 , "ACQK002"
 )
 
 DBI::dbWriteTable(conn, "T_MCO19CSTC", fake_cstc_table, overwrite = TRUE)
@@ -62,10 +62,10 @@ test_that("extract_consultations_mcofcstc works", {
   )
 
   expected <- tibble::tribble(
-    ~BEN_IDT_ANO, ~NIR_ANO_17, ~EXE_SOI_DTD, ~CCAM_COD, ~ACT_COD, ~EXE_SPE,
-               1,          11, "2019-01-10", "ACQK001", "C",      "01",
-               2,          12, "2019-01-02", "ACQH003", "CS",     "22",
-               4,          14, "2019-01-04", NA,        "C",      "01"
+    ~BEN_IDT_ANO , ~NIR_ANO_17 , ~EXE_SOI_DTD , ~CCAM_COD , ~ACT_COD , ~EXE_SPE ,
+               1 ,          11 , "2019-01-10" , "ACQK001" , "C"      , "01"     ,
+               2 ,          12 , "2019-01-02" , "ACQH003" , "CS"     , "22"     ,
+               4 ,          14 , "2019-01-04" , NA        , "C"      , "01"
   ) |>
     dplyr::mutate(EXE_SOI_DTD = as.Date(EXE_SOI_DTD))
 
@@ -73,7 +73,6 @@ test_that("extract_consultations_mcofcstc works", {
     consultations |> dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD),
     expected
   )
-
 })
 
 test_that("extract_consultations_mcofcstc works with multiple filters", {
@@ -94,8 +93,8 @@ test_that("extract_consultations_mcofcstc works with multiple filters", {
   )
 
   expected <- tibble::tribble(
-    ~BEN_IDT_ANO, ~NIR_ANO_17, ~EXE_SOI_DTD, ~CCAM_COD, ~ACT_COD, ~EXE_SPE,
-               1,          11, "2019-01-10", "ACQK001", "C",      "01"
+    ~BEN_IDT_ANO , ~NIR_ANO_17 , ~EXE_SOI_DTD , ~CCAM_COD , ~ACT_COD , ~EXE_SPE ,
+               1 ,          11 , "2019-01-10" , "ACQK001" , "C"      , "01"
   ) |>
     dplyr::mutate(EXE_SOI_DTD = as.Date(EXE_SOI_DTD))
 
@@ -103,5 +102,4 @@ test_that("extract_consultations_mcofcstc works with multiple filters", {
     consultations |> dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD),
     expected
   )
-
 })
