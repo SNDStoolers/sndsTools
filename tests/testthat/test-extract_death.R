@@ -51,7 +51,7 @@ fake_ki_ecd_r <- function() {
 }
 
 setup_death_tables <- function() {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   DBI::dbWriteTable(conn, "KI_CCI_R", fake_ki_cci_r(), overwrite = TRUE)
   DBI::dbWriteTable(conn, "KI_ECD_R", fake_ki_ecd_r(), overwrite = TRUE)
   conn

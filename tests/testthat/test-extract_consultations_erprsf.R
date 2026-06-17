@@ -1,7 +1,7 @@
 require(dplyr)
 
 test_that("extract_consultations_erprsf_works ", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   fake_patients_ids <- data.frame(
@@ -47,7 +47,7 @@ test_that("extract_consultations_erprsf_works ", {
   )
 
   expect_equal(
-    consultations |> arrange(BEN_IDT_ANO, EXE_SOI_DTD),
+    consultations |> arrange(BEN_IDT_ANO, EXE_SOI_DTD) |> collect(),
     structure(
       list(
         BEN_IDT_ANO = c(

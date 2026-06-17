@@ -1,7 +1,7 @@
 require(dplyr)
 
 test_that("get_first_non_archived_year_works", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   first_non_archived_year <- get_first_non_archived_year(conn)
@@ -9,14 +9,14 @@ test_that("get_first_non_archived_year_works", {
 })
 
 test_that("check_output_table_name accepte un nom valide en majuscules", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   expect_invisible(check_output_table_name("MA_TABLE", conn))
 })
 
 test_that("check_output_table_name échoue si le nom n'est pas une chaîne", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   expect_error(
@@ -26,7 +26,7 @@ test_that("check_output_table_name échoue si le nom n'est pas une chaîne", {
 })
 
 test_that("check_output_table_name échoue si le nom contient des minuscules", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   expect_error(
@@ -40,7 +40,7 @@ test_that("check_output_table_name échoue si le nom contient des minuscules", {
 })
 
 test_that("check_output_table_name échoue si la table existe déjà", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   DBI::dbWriteTable(conn, "TABLE_EXISTANTE", data.frame(x = 1), overwrite = TRUE)
@@ -72,7 +72,7 @@ setup_sor_source <- function(conn) {
 }
 
 test_that("save_or_return_result collecte une tbl_lazy si output_table_name est NULL", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
   src <- setup_sor_source(conn)
   on.exit(
@@ -90,7 +90,7 @@ test_that("save_or_return_result collecte une tbl_lazy si output_table_name est 
 })
 
 test_that("save_or_return_result matérialise une tbl_lazy via CREATE TABLE AS", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
   setup_sor_source(conn)
   on.exit(
@@ -121,7 +121,7 @@ test_that("save_or_return_result matérialise une tbl_lazy via CREATE TABLE AS",
 })
 
 test_that("save_or_return_result renvoie un data.frame tel quel si output_table_name est NULL", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   df <- data.frame(x = 1:2, y = c("a", "b"), stringsAsFactors = FALSE)
@@ -130,7 +130,7 @@ test_that("save_or_return_result renvoie un data.frame tel quel si output_table_
 })
 
 test_that("save_or_return_result écrit un data.frame avec dbWriteTable", {
-  conn <- connect_duckdb(PATH2TEST_DB)
+  conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
   output_table_name <- "TMP_SOR_DF_OUT"

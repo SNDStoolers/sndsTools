@@ -5,7 +5,7 @@ check:
 # Build the package website
 site:
 	Rscript -e 'roxygen2::roxygenise()'
-	Rscript -e 'pkgdown::clean_site();devtools::install(upgrade=FALSE);pkgdown::build_site()'
+	Rscript -e 'pkgdown::clean_site();devtools::load_all();pkgdown::build_site()'
 
 site-lazy:
 	Rscript -e 'pkgdown::build_site(lazy = TRUE)'

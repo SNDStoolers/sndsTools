@@ -1,144 +1,77 @@
-#' Télécharge les données synthétiques SNDS et les charge dans une base DuckDB
+# nolint start
+#' Fournit une connexion duckdb à une base de donnée synthétique du SNDS
 #'
-#' Télécharge les données synthétiques SNDS depuis le compte de
-#' la Plateforme des Données de Santé sur data.gouv.fr avec la fonction
-#' \code{\link{other_function}}, décompresse les archives ZIP, puis lit les
-#' fichiers CSV et les charge dans une base DuckDB locale.
+#' @details Fournit une base de données avec des données synthétiques SNDS.
+#' La base est téléchargée depuis https://github.com/SNDStoolers/synthetic_snds.
+#' Ce projet reprend les données synthétiques produites par [la Plateforme de
+#' Données de Santé](https://www.data.gouv.fr/datasets/donnees-synthetiques-de-la-base-principales-du-systeme-national-des-donnees-de-sante) afin de forcer les types des
+#' données à ceux du portail Cnam et consolider les différents fichiers csv dans
+#' une seule base duckdb.
+#' La base est mis en cache dans le chemin `path2b` à la première utilisation
+#' puis réutilisée aux appels suivants.
 #'
-#' @param path2db Character. Chemin vers le fichier de la base DuckDB à créer. La
+#' @param path2b Character. Chemin vers le fichier de la base DuckDB à créer. La
 #'   valeur par défaut est `~/.cache/sndsTools/synthetic_snds.duckdb`.
-#' @param force_insert Logical. Si TRUE, force la réinsertion des données même
-#'   si la base existe déjà (FALSE par défaut). Si FALSE et que la base existe,
-#' la fonction retourne la connexion à la base existante sans réinsertion.
-#' @param force_download Logical. Si TRUE, retélécharge tous les fichiers même
-#'   si la base existe déjà (FALSE par défaut). Si FALSE et que la base existe,
-#'   la fonction retourne le chemin de la base existante sans retéléchargement.
-#' @param subset_tables Character vector. Si non NULL, ne charge que les tables
-#' dont le nom contient une des chaînes de ce vecteur. Par exemple,
-#' `subset_tables = c("T_MCO", "T_RIM")`. Par défaut, toutes les tables sont
-#' chargées.
+#' @param force_download Logical. Si TRUE, re-télécharge la base si elle existe
+#'   déjà (FALSE par défaut).
 #' @return Connexion DuckDB. Une connexion duckdb vers la base DuckDB créée.
-#'
-#' @details Cette fonction télécharge 9 fichiers zip contenant des données
-#' synthétiques pour 50 patients fictifs basés sur le schéma SNDS 2019. Les
-#' fichiers sont produits par Health Data Hub et hébergés sur data.gouv.fr.
 #'
 #' @examples
 #' \dontrun{
 #' # Crée une base DuckDB avec les données synthétiques SNDS
-#' conn <- connect_synthetic_snds(
-#'    subset_tables = c("ER_PRS_F", "T_MCO19B"),
-#'    force_insert = TRUE
-#' )
+#' conn <- connect_synthetic_snds()
 #' }
 #' @export
 #' @family synthetic
+# nolint end
 connect_synthetic_snds <- function(
   path2db = NULL,
-  force_insert = FALSE,
-  force_download = FALSE,
-  subset_tables = NULL
+  force_download = FALSE
 ) {
   if (is.null(path2db)) {
     path2db <- path.expand(PATH2SYNTHETIC_SNDS)
   }
 
   # If database exists and no force, return the existing db connection
-  if (file.exists(path2db) && !force_insert && !force_download) {
+  if (file.exists(path2db) && !force_download) {
     logger::log_info(paste0("Connection to an existing database at: ", path2db))
-    conn <- connect_duckdb(path2db = path2db)
-    return(invisible(conn))
-  }
-  logger::log_info(
-    paste0("Creating database at: ", path2db)
-  )
-  # Remove old db if exists with force
-  if (file.exists(path2db)) {
-    file.remove(path2db)
-  }
-  # check that files does not exists at the db_path
-  expected_synthetic_dirs <- c(
-    "SSR",
-    "RIM-P",
-    "MCO",
-    "HAD",
-    "DCIR_DCIRS",
-    "DCIR",
-    "Causes_de_Deces",
-    "CARTOGRAPHIE_PATHOLOGIES",
-    "BENEFICIAIRE"
-  )
-  dir2db <- dirname(path2db)
-  # Check if all synthetic directories are already present in the db_dir
-  synthetic_dirs <- list.dirs(dir2db, recursive = FALSE, full.names = TRUE)
-  inter <- intersect(expected_synthetic_dirs, basename(synthetic_dirs))
-
-  if ((length(inter) < length(expected_synthetic_dirs)) || force_download) {
-    # clean existing synthetic dirs if force download
-    if (length(inter) > 0) {
-      for (d in inter) {
-        unlink(file.path(dir2db, d), recursive = TRUE)
-      }
-    }
-    download_synthetic_snds_csv(dir2db)
-  }
-
-  # Connect to DuckDB
-  conn <- connect_duckdb(path2db = path2db)
-  # Insert all CSV files in all extracted subdirectories
-  csv_files <- list.files(
-    dir2db,
-    pattern = "\\.csv$",
-    recursive = TRUE,
-    full.names = TRUE
-  )
-
-  if (!is.null(subset_tables)) {
-    # convert PMSI names into consistent zip names
-    subset_tables <- gsub("^(T_.*)19", "\\1aa", subset_tables)
-
-    csv_files <- csv_files[stringr::str_detect(
-      csv_files,
-      paste0(paste0(subset_tables, ".csv"), collapse = "|")
-    )]
-  }
-  pb <- progress::progress_bar$new(
-    format = "Loading tables [:bar] :percent | :current / :total files",
-    total = length(csv_files),
-    clear = FALSE,
-    width = 60
-  )
-
-  for (csv_file in csv_files) {
-    table_name <- tools::file_path_sans_ext(basename(csv_file))
-
-    kwikly_format <- get_kwikly_format(table_name)
-
-    insert_synthetic_snds_table(
-      conn,
-      csv_file,
-      delim = ";",
-      col_types = kwikly_format
+  } else {
+    logger::log_info(
+      paste0("Creating database at: ", path2db)
     )
-    pb$tick()
+    # Remove old db if exists with force
+    if (file.exists(path2db)) {
+      file.remove(path2db)
+    }
+    path2zip <- file.path(
+      dirname(path2db),
+      "synthetic_snds_parquet.zip"
+    )
+    if (!file.exists(path2zip) || force_download) {
+      if (dir.exists(path2db)) {
+        unlink(path2db, recursive = TRUE)
+      }
+      download_synthetic_snds(path2zip)
+    }
+    utils::unzip(path2zip, exdir = path2db)
   }
-  # List loaded tables
-  tables <- DBI::dbListTables(conn)
-  logger::log_info(
-    "Successfully loaded ",
-    length(tables),
-    " tables: ",
-    paste(tables, collapse = ", ")
-  )
-  invisible(conn)
+
+  conn <- duckdb::dbConnect(duckdb::duckdb())
+  conn |> DBI::dbExecute(glue::glue("IMPORT DATABASE '{path2db}'"))
+  # necessary for archived tables
+  if (!DBI::dbExistsTable(conn, "user_synonyms")) {
+    user_synonyms <- data.frame(
+      SYNONYM_NAME = c("ER_PRS_F_2009", "ER_PRS_F_2010")
+    )
+    DBI::dbWriteTable(conn, "user_synonyms", user_synonyms)
+  }
+  conn
 }
 
 # nolint start
-#' Télécharger les fichiers CSV synthétiques SNDS
-#'
-#' Télécharge les fichiers zip depuis [le dépôt de la Plateforme de Données de
-#' Santé sur
-#' datagouv.fr](https://www.data.gouv.fr/datasets/donnees-synthetiques-de-la-base-principales-du-systeme-national-des-donnees-de-sante) et les décompresse.
+#' Télécharge la base de données synthétique du SNDS
+#' @details La base est téléchargée depuis https://github.com/SNDStoolers/synthetic_snds/data/synthetic_snds.duckdb.
+#' C'est une version corrigée de la base fournie par la plateforme de données de santé sur data.gouv.fr : https://www.data.gouv.fr/datasets/donnees-synthetiques-de-la-base-principales-du-systeme-national-des-donnees-de-sante
 #'
 #' @param db_path Character. Répertoire dans lequel télécharger et extraire les fichiers.
 #'
@@ -147,206 +80,20 @@ connect_synthetic_snds <- function(
 #' @export
 #' @family synthetic
 # nolint end
-download_synthetic_snds_csv <- function(db_path) {
-  synth_resources <- c(
-    "SSR" = "877d3a9f-8ea0-4925-987a-cfb2f53bbc72",
-    "RIM-P" = "2a4fa5d4-245d-4e21-bad2-7b438199e3c8",
-    "MCO" = "832cfa99-5106-4081-be16-520991375e6d",
-    "HAD" = "9dcf3637-ec46-4188-981a-2a28637f6577",
-    "DCIR_DCIRS" = "ab204542-5894-4891-b8e0-af3379677f9e",
-    "DCIR" = "33b5e0ac-cf40-49be-9026-30525f667ca1",
-    "Causes_de_Deces" = "3b9a7898-9bcf-4839-aeb2-ccb3e4990b03",
-    "CARTOGRAPHIE_PATHOLOGIES" = "e75e0fc2-0acf-4f58-8b4f-fcc26b651918",
-    "BENEFICIAIRE" = "a57fcd0f-e63a-48f0-ba73-f8e93a15aec2"
-  )
-  synth_url_base <- "https://www.data.gouv.fr/api/1/datasets/r/"
-  synthetic_urls <- stats::setNames(
-    paste0(synth_url_base, synth_resources),
-    names(synth_resources)
-  )
-  # Create progress bar
-  pb <- progress::progress_bar$new(
-    format = "Downloading [:bar] :percent | :current / :total files",
-    total = length(synthetic_urls),
-    clear = FALSE,
-    width = 60
-  )
-  # Create directory if needed
-  if (!dir.exists(db_path)) {
-    dir.create(db_path, recursive = TRUE)
-  }
-  # Download and process each zip file
-  for (i in seq_along(synthetic_urls)) {
-    url <- synthetic_urls[i]
-    zip_name <- names(synthetic_urls)[i]
-    pb$tick()
-    # Download zip file
-    zip_path <- file.path(db_path, paste0(zip_name, ".zip"))
-    tryCatch(
-      utils::download.file(url, zip_path, mode = "wb", quiet = TRUE),
-      error = function(e) {
-        stop("Failed to download: ", zip_name, " error: ", e$message)
-      }
-    )
-    # Décompression robuste multi-OS : certaines archives (ex. "Causes de
-    # décès") stockent les noms de fichiers en Latin-1/CP437 sans le drapeau
-    # UTF-8. Décompresser en préservant l'arborescence échoue alors selon la
-    # plateforme (utils::unzip() sur macOS/Linux ; recours à PowerShell sur
-    # Windows auparavant). On utilise `junkpaths = TRUE` : seuls les noms de
-    # base ASCII des fichiers (ex. KI_CCI_R.csv) sont écrits, directement dans
-    # `expected_dir`, ce qui contourne entièrement le sous-dossier accentué.
-    # En aval, connect_synthetic_snds() liste les CSV récursivement et dérive le
-    # nom de table du basename : l'arborescence interne du zip est sans
-    # importance (et aucun basename n'entre en collision dans ces archives).
-    expected_dir <- file.path(db_path, zip_name)
-    if (!dir.exists(expected_dir)) {
-      dir.create(expected_dir, recursive = TRUE)
-    }
-    utils::unzip(zip_path, exdir = expected_dir, junkpaths = TRUE)
-
-    file.remove(zip_path)
-  }
-  logger::log_info(paste0(
-    "All files downloaded and extracted to: ",
-    db_path
+download_synthetic_snds <- function(path2zip) {
+  synth_url_db <- "https://github.com/SNDStoolers/synthetic_snds/raw/refs/heads/main/data/synthetic_snds_parquet.zip"
+  logger::log_info(glue::glue(
+    "Télécharge la base synthétique du SNDS au chemin {path_}",
+    path_ = path2zip
   ))
-}
-
-#' Insérer un fichier CSV dans une table DuckDB
-#'
-#' Lit un fichier CSV et l'insère dans une table DuckDB. Le nom de la table est
-#' dérivé du nom du fichier CSV.
-#' @param conn DuckDB connection. Connexion à la base DuckDB.
-#' @param path2csv Character. Chemin vers le fichier CSV à insérer.
-#' @return Invisible. Retourne la connexion DuckDB après insertion.
-#' @export
-#' @family synthetic
-insert_synthetic_snds_table <- function(
-  conn,
-  path2csv,
-  delim = ",",
-  col_types = NULL
-) {
-  table_name <- tools::file_path_sans_ext(basename(path2csv))
-  if (is.null(col_types)) {
-    col_types <- readr::cols(.default = readr::col_guess())
+  # Create directory if needed
+  if (!dir.exists(dirname(path2zip))) {
+    dir.create(dirname(path2zip), recursive = TRUE)
   }
-
-  # Read CSV, change all booleans to numeric (no boolean in SNDS)
-  df <- readr::read_delim(
-    path2csv,
-    col_types = col_types,
-    delim = delim,
-    show_col_types = FALSE
-  ) |>
-    dplyr::mutate(
-      dplyr::across(dplyr::where(is.logical), as.numeric)
-    )
-
-  # Force annee=19 for PMSI data
-  if (stringr::str_starts(table_name, "T_")) {
-    table_name <- stringr::str_replace(table_name, "aa", "19")
-  }
-  # Write table to DuckDB (overwrite if exists)
-  if (DBI::dbExistsTable(conn, table_name)) {
-    DBI::dbRemoveTable(conn, table_name)
-  }
-  DBI::dbWriteTable(
-    conn,
-    table_name,
-    df,
-    overwrite = TRUE,
-    row.names = FALSE
-  )
-  invisible(conn)
-}
-
-#' Obtenir les formats de colonnes à partir du fichier kwikly
-#'
-#' Lit le fichier kwikly pour obtenir les formats de colonnes à utiliser lors de
-#' la lecture des fichiers CSV synthétiques. Le fichier kwikly est téléchargé
-#' depuis le dépôt de la CNAM si nécessaire.
-#' @param table_name Character. Nom de la table pour laquelle obtenir les
-#' formats de colonnes. Par exemple, "T_MCO", "T_RIM_P", etc.
-#' @return Named list. Une liste nommée de formats de colonnes à utiliser avec
-#' readr::cols() lors de la lecture du CSV. Les noms de la liste correspondent
-#' aux noms des colonnes, et les valeurs sont des objets readr::col_* indiquant
-#' le type de chaque colonne.
-#' @export
-#' @family synthetic
-get_kwikly_format <- function(table_name) {
-  dir2kwikly <- system.file(
-    "extdata",
-    "KWIKLY_Katalogue_Sniiram_SNDS_v2026-1.xlsm",
-    package = "sndsTools"
-  )
-  if (identical(dir2kwikly, "")) {
-    stop("KWIKLY file not found in inst/extdata")
-  }
-
-  table_name_ <- toupper(table_name)
-  if (stringr::str_starts(table_name_, "T_")) {
-    table_name_ <- stringr::str_replace(table_name_, "AA", "XX")
-  }
-  # get the sheet names
-  sheet_names <- openxlsx::getSheetNames(dir2kwikly)
-  if (!(table_name_ %in% sheet_names)) {
-    return(NULL)
-  }
-  start_row <- 4
-  if (table_name_ == "IR_BEN_R") {
-    start_row <- 7
-  }
-  if (table_name_ == "IR_IMB_R") {
-    start_row <- 6
-  }
-  kwikly_format <-
-    openxlsx::read.xlsx(
-      dir2kwikly,
-      sheet = table_name_,
-      startRow = start_row,
-      colNames = TRUE
-    )
-  if ("Nom.variable" %in% names(kwikly_format)) {
-    cols <- c("Nom.variable", "Type")
-  } else {
-    cols <- c("Nom.Variable", "Type")
-  }
-  kwikly_format <- kwikly_format |>
-    dplyr::select(dplyr::all_of(cols)) |>
-    dplyr::mutate(
-      Type = dplyr::recode(
-        Type,
-        "Date" = "date",
-        "Num" = "numeric",
-        "Char" = "character"
-      )
-    )
-  # In the synthetic data, some columns are boolean despite being numeric in the real SNDS. # nolint
-  # First read them as boolean (to avoid NA)
-  bool_cols_to_convert <- c(
-    "CPL_MAJ_TOP"
-  )
-  kwikly_format <- kwikly_format |>
-    dplyr::mutate(
-      Type = ifelse(
-        !!dplyr::sym(cols[1]) %in% bool_cols_to_convert,
-        "boolean",
-        Type
-      )
-    )
-
-  setNames(
-    lapply(kwikly_format$Type, function(x) {
-      switch(
-        x,
-        "date" = readr::col_date(format = "%d/%m/%Y"),
-        "numeric" = readr::col_double(),
-        "character" = readr::col_character(),
-        "boolean" = readr::col_logical(),
-        readr::col_guess()
-      )
-    }),
-    kwikly_format$Nom.variable
+  tryCatch(
+    utils::download.file(synth_url_db, path2zip, mode = "wb", quiet = FALSE),
+    error = function(e) {
+      stop("Failed to download from ", synth_url_db, ": ", e$message)
+    }
   )
 }

@@ -25,7 +25,7 @@ consultations_med_g <- extract_consultations_erprsf(
   end_date = end_date,
   pse_spe_filter = pse_spe_filter,
   prestation_filter = prestation_filter,
-)
+) |> collect()
 head(consultations_med_g)
 
 # Same as above but only for a sample of patients
@@ -48,7 +48,7 @@ consultations_med_g_sample_patients <- extract_consultations_erprsf(
   pse_spe_filter = pse_spe_filter,
   prestation_filter = prestation_filter,
   patients_ids_filter = patients_ids_sample
-)
+) |> dplyr::collect()
 head(consultations_med_g_sample_patients)
 
 
