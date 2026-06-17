@@ -96,9 +96,36 @@ print_deaths_pretty <- function(deaths, n = Inf) {
 data_dir <- path.expand("~/.cache/sndsTools")
 path2db <- file.path(data_dir, "synthetic_snds.duckdb")
 
-conn <- connect_synthetic_snds(
-  path2db = path2db,
-  subset_tables = c("KI_ECD_R", "KI_CCI_R")
+# Robustesse (1/2) : si une connexion `conn` d'un run précédent est restée
+# ouverte dans CETTE session, on la referme d'abord. Sinon, en relançant le
+# notebook depuis le début, l'ancienne connexion garderait le fichier verrouillé.
+if (exists("conn") && inherits(conn, "DBIConnection") && DBI::dbIsValid(conn)) {
+  DBI::dbDisconnect(conn, shutdown = TRUE)
+}
+
+# Robustesse (2/2) : DuckDB n'autorise qu'UN SEUL processus à ouvrir un fichier
+# .duckdb à la fois. Si une AUTRE session R (autre terminal, session VS Code
+# laissée ouverte) tient encore la base, la connexion échoue avec « Could not set
+# lock ». On intercepte cette erreur pour afficher la marche à suivre plutôt
+# qu'une longue stacktrace.
+conn <- tryCatch(
+  connect_synthetic_snds(
+    path2db = path2db,
+    subset_tables = c("KI_ECD_R", "KI_CCI_R")
+  ),
+  error = function(e) {
+    if (grepl("lock", conditionMessage(e), ignore.case = TRUE)) {
+      stop(
+        "La base DuckDB est verrouillée par une AUTRE session R.\n",
+        "  -> Ferme ou redémarre cette session, ou exécute-y la cellule [10] :\n",
+        "       DBI::dbDisconnect(conn, shutdown = TRUE)\n",
+        "  Le message DuckDB ci-dessous indique le PID qui tient le verrou.\n\n",
+        conditionMessage(e),
+        call. = FALSE
+      )
+    }
+    stop(e)
+  }
 )
 
 # KI_CCI_R = circonstances et CAUSE INITIALE du décès (colonne DCD_CIM_COD)
