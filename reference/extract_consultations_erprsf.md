@@ -16,7 +16,8 @@ extract_consultations_erprsf(
   dis_dtd_lag_months = 6,
   patients_ids_filter = NULL,
   output_table_name = NULL,
-  conn = NULL
+  conn = NULL,
+  sup_columns = NULL
 )
 ```
 
@@ -72,7 +73,7 @@ extract_consultations_erprsf(
 
   Character (Optionnel). Si fourni, les résultats seront sauvegardés
   dans une table portant ce nom dans la base de données au lieu d'être
-  retournés sous forme de data frame. Si cette table existe déjà, le
+  retournés sous forme de lazy table. Si cette table existe déjà, le
   programme s'arrête avec un message d'erreur. Défaut à `NULL`.
 
 - conn:
@@ -80,9 +81,14 @@ extract_consultations_erprsf(
   DBI connection (Optionnel). Une connexion à la base de données Oracle.
   Par défaut, une connexion est établie avec oracle.
 
+- sup_columns:
+
+  Vecteur de noms de colonnes (Optionnel). Ajoute ces colonnes à la
+  table créée. Défaut à `NULL`.
+
 ## Value
 
-Si `output_table_name` est `NULL`, retourne un data frame contenant les
+Si `output_table_name` est `NULL`, retourne une lazy table contenant les
 consultations. Si `output_table_name` est fourni, sauvegarde les
 résultats dans la table spécifiée dans Oracle et retourne `NULL` de
 manière invisible. Dans les deux cas les colonnes de la table de sortie

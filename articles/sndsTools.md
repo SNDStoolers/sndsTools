@@ -73,8 +73,8 @@ mises en cache localement.
 
 # Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.
 conn <- connect_synthetic_snds()
-#> INFO [2026-06-17 12:03:05] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
-#> INFO [2026-06-17 12:03:05] Télécharge la base synthétique du SNDS au chemin /home/runner/.cache/sndsTools/synthetic_snds_parquet.zip
+#> INFO [2026-06-17 12:28:07] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
+#> INFO [2026-06-17 12:28:07] Télécharge la base synthétique du SNDS au chemin /home/runner/.cache/sndsTools/synthetic_snds_parquet.zip
 DBI::dbListTables(conn)
 #>   [1] "BE_IDE_R"          "CT_DEP_AAAA_GN"    "CT_IDE_AAAA_GN"   
 #>   [4] "CT_IND_AAAA_GN"    "DA_PRA_R"          "ER_ANO_F"         
@@ -141,7 +141,7 @@ consultations_df <- extract_consultations_erprsf(
   start_date = as.Date("2011-01-01"),
   end_date = as.Date("2019-12-31"),
   pse_spe_filter = c(48)
-)
+) |> dplyr::collect()
 #> Extracting consultations
 #> from all specialties among
 #> 48...

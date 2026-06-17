@@ -68,7 +68,8 @@ et <code>end_date</code> (incluses) sont extraites.</p>
 <span>  dis_dtd_lag_months <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  patients_ids_filter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  output_table_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  conn <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  conn <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sup_columns <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -125,7 +126,7 @@ aux BEN_IDT_ANO fournis. Défaut à <code>NULL</code>.</p></dd>
 <dt id="arg-output-table-name">output_table_name<a class="anchor" aria-label="anchor" href="#arg-output-table-name"></a></dt>
 <dd><p>Character (Optionnel). Si fourni, les résultats
 seront sauvegardés dans une table portant ce nom dans la base de données au
-lieu d'être retournés sous forme de data frame. Si cette table existe déjà,
+lieu d'être retournés sous forme de lazy table. Si cette table existe déjà,
 le programme s'arrête avec un message d'erreur. Défaut à <code>NULL</code>.</p></dd>
 
 
@@ -133,10 +134,15 @@ le programme s'arrête avec un message d'erreur. Défaut à <code>NULL</code>.</
 <dd><p>DBI connection (Optionnel). Une connexion à la base de données
 Oracle. Par défaut, une connexion est établie avec oracle.</p></dd>
 
+
+<dt id="arg-sup-columns">sup_columns<a class="anchor" aria-label="anchor" href="#arg-sup-columns"></a></dt>
+<dd><p>Vecteur de noms de colonnes (Optionnel).
+Ajoute ces colonnes à la table créée. Défaut à <code>NULL</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Si <code>output_table_name</code> est <code>NULL</code>, retourne un data frame contenant
+    <p>Si <code>output_table_name</code> est <code>NULL</code>, retourne une lazy table contenant
 les consultations. Si <code>output_table_name</code> est fourni, sauvegarde les
 résultats dans la table spécifiée dans Oracle et retourne <code>NULL</code> de manière
 invisible.
