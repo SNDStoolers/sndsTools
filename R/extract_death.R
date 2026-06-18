@@ -1,3 +1,16 @@
+# Colonnes du SNDS manipulées en évaluation non-standard (dplyr/dbplyr) dans les
+# fonctions d'extraction des décès. On les déclare pour éviter les notes
+# "no visible binding for global variable" de R CMD check.
+utils::globalVariables(c(
+  "BEN_IDT_ANO",
+  "BEN_DCD_DTE",
+  "DCD_CIM_COD",
+  "ECD_CIM_COD",
+  "CIM_COD",
+  "EXE_SOI_DTD",
+  "STATUS"
+))
+
 #' Construit la condition SQL de recherche de codes CIM-10 sur une colonne.
 #'
 #' @description
@@ -253,8 +266,19 @@ extract_idt_from_death_causes <- function(
 #'
 #' @examples
 #' \dontrun{
+#' # Données synthétiques : liste d'identifiants fournie directement.
 #' deaths <- extract_death_causes_from_idt(
 #'   patient_ids = c("ABC123", "DEF456"),
+#'   start_date = as.Date("2010-01-01"),
+#'   end_date = as.Date("2020-12-31")
+#' )
+#'
+#' # Données Oracle du SNDS : identifiants récupérés depuis IR_BEN_R.
+#' pat_list <- dplyr::tbl(conn, "IR_BEN_R") |>
+#'   head(10) |>
+#'   dplyr::pull(BEN_IDT_ANO)
+#' deaths <- extract_death_causes_from_idt(
+#'   patient_ids = pat_list,
 #'   start_date = as.Date("2010-01-01"),
 #'   end_date = as.Date("2020-12-31")
 #' )
