@@ -51,7 +51,7 @@ build_death_diagnosis_conditions <- function(col_name, diagnosis_codes) {
 #' La requête est construite de façon **paresseuse** (lazy) et exécutée
 #' intégralement côté base : aucune des tables de décès n'est chargée en mémoire
 #' R. Lorsque `output_table_name` est fourni, le résultat est matérialisé
-#' directement dans la base (`CREATE TABLE ... AS SELECT`), sans `collect`.
+#' directement dans la base Oracle (`CREATE TABLE ... AS SELECT`), sans `collect`.
 #'
 #' @param start_date Date La date de début de la période de décès à extraire
 #'   (borne incluse).
@@ -61,9 +61,9 @@ build_death_diagnosis_conditions <- function(col_name, diagnosis_codes) {
 #'   diagnostics CIM-10 à rechercher parmi les causes de décès. Si `NULL`, tous
 #'   les décès de la période sont extraits. Défaut à `NULL`.
 #' @param output_table_name character (Optionnel). Si fourni, les résultats sont
-#'   sauvegardés dans une table portant ce nom dans la base de données au lieu
+#'   sauvegardés dans une table portant ce nom dans Oracle au lieu
 #'   d'être retournés sous forme de data frame. Défaut à `NULL`.
-#' @param conn dbConnection (Optionnel). Une connexion à la base de données. Si
+#' @param conn dbConnection (Optionnel). Une connexion à la base Oracle. Si
 #'   `conn` n'est pas fourni, une connexion à Oracle est initialisée. Défaut à
 #'   `NULL`.
 #'
@@ -71,7 +71,7 @@ build_death_diagnosis_conditions <- function(col_name, diagnosis_codes) {
 #'   sauvegarde les résultats dans la table spécifiée et retourne `NULL` de
 #'   manière invisible. Dans les deux cas, **une ligne par code CIM-10 et par
 #'   patient décédé**, avec les colonnes :
-#'   - `BEN_IDT_ANO` : numéro d'inscription au répertoire (NIR) anonymisé.
+#'   - `BEN_IDT_ANO` : identifiant patient pseudonymisé.
 #'   - `EXE_SOI_DTD` : date du décès.
 #'   - `CIM_COD` : un code CIM-10 associé au décès.
 #'   - `STATUS` : origine du code, `"Initial cause"` si c'est la cause initiale
@@ -81,13 +81,13 @@ build_death_diagnosis_conditions <- function(col_name, diagnosis_codes) {
 #' @examples
 #' \dontrun{
 #' # Décès dont une cause est un code commençant par G10 ou G20, entre 2010 et 2020
-#' deaths <- extract_death(
+#' deaths <- extract_idt_from_death_causes(
 #'   start_date = as.Date("2010-01-01"),
 #'   end_date = as.Date("2020-12-31"),
 #'   diagnosis_codes = c("G10", "G20")
 #' )
 #' # Tous les décès de l'année 2019
-#' deaths <- extract_death(
+#' deaths <- extract_idt_from_death_causes(
 #'   start_date = as.Date("2019-01-01"),
 #'   end_date = as.Date("2019-12-31")
 #' )
@@ -95,7 +95,7 @@ build_death_diagnosis_conditions <- function(col_name, diagnosis_codes) {
 #' @export
 #' @family extract
 # nolint end
-extract_death <- function(
+extract_idt_from_death_causes <- function(
   start_date,
   end_date,
   diagnosis_codes = NULL,
@@ -202,7 +202,7 @@ extract_death <- function(
 #' Pour un ensemble d'identifiants patients fourni en entrée, extrait l'ensemble
 #' des codes CIM-10 associés à leur décès survenu entre `start_date` et
 #' `end_date` (bornes incluses), à raison d'**une ligne par code**. C'est la
-#' fonction sœur de [extract_death()] : même sortie, mais la sélection se fait
+#' fonction sœur de [extract_idt_from_death_causes()] : même sortie, mais la sélection se fait
 #' sur une liste d'identifiants plutôt que sur des codes diagnostics.
 #'
 #' @details
@@ -225,7 +225,7 @@ extract_death <- function(
 #' La liste d'identifiants est injectée dans une table temporaire de la base
 #' (supprimée en fin d'exécution) pour réaliser la jointure. La requête reste
 #' **paresseuse** (lazy) et s'exécute côté base ; lorsque `output_table_name` est
-#' fourni, le résultat est matérialisé directement dans la base
+#' fourni, le résultat est matérialisé directement dans la base Oracle
 #' (`CREATE TABLE ... AS SELECT`), sans `collect`.
 #'
 #' @param patient_ids character vector Les identifiants patients
@@ -235,7 +235,7 @@ extract_death <- function(
 #' @param end_date Date La date de fin de la période de décès à extraire (borne
 #'   incluse).
 #' @param output_table_name character (Optionnel). Si fourni, les résultats sont
-#'   sauvegardés dans une table portant ce nom dans la base de données au lieu
+#'   sauvegardés dans une table portant ce nom dans Oracle au lieu
 #'   d'être retournés sous forme de data frame. Défaut à `NULL`.
 #' @param conn dbConnection (Optionnel). Une connexion à la base de données. Si
 #'   `conn` n'est pas fourni, une connexion à Oracle est initialisée. Défaut à
@@ -245,7 +245,7 @@ extract_death <- function(
 #'   sauvegarde les résultats dans la table spécifiée et retourne `NULL` de
 #'   manière invisible. Dans les deux cas, **une ligne par code CIM-10 et par
 #'   patient décédé**, plus une ligne par patient vivant, avec les colonnes :
-#'   - `BEN_IDT_ANO` : numéro d'inscription au répertoire (NIR) anonymisé.
+#'   - `BEN_IDT_ANO` : identifiant patient pseudonymisé.
 #'   - `EXE_SOI_DTD` : date du décès (`NA` pour un patient vivant).
 #'   - `CIM_COD` : un code CIM-10 associé au décès (`NA` pour un patient vivant).
 #'   - `STATUS` : `"Initial cause"` (cause initiale, `KI_CCI_R`), `"Other"`
@@ -253,7 +253,7 @@ extract_death <- function(
 #'
 #' @examples
 #' \dontrun{
-#' deaths <- extract_death_from_ids(
+#' deaths <- extract_death_causes_from_idt(
 #'   patient_ids = c("ABC123", "DEF456"),
 #'   start_date = as.Date("2010-01-01"),
 #'   end_date = as.Date("2020-12-31")
@@ -261,9 +261,9 @@ extract_death <- function(
 #' }
 #' @export
 #' @family extract
-#' @seealso [extract_death()]
+#' @seealso [extract_idt_from_death_causes()]
 # nolint end
-extract_death_from_ids <- function(
+extract_death_causes_from_idt <- function(
   patient_ids,
   start_date,
   end_date,

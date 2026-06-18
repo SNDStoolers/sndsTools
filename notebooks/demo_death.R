@@ -1,5 +1,5 @@
 # =============================================================================
-# Démo locale : extract_death() / extract_death_from_ids() sur DuckDB
+# Démo locale : extract_idt_from_death_causes() / extract_death_causes_from_idt() sur DuckDB
 # =============================================================================
 #
 # COMMENT FONCTIONNE UN "NOTEBOOK" R ?
@@ -21,22 +21,22 @@
 #
 # POURQUOI DES DONNÉES FICTIVES, ET NON LA BASE SYNTHÉTIQUE ?
 # ----------------------------------------------------------
-# extract_death() s'appuie sur la date de décès BEN_DCD_DTE des tables des
+# extract_idt_from_death_causes() s'appuie sur la date de décès BEN_DCD_DTE des tables des
 # causes médicales de décès (KI_CCI_R, KI_ECD_R). Or, dans la base synthétique
 # « corrigée » (parquet de SNDStoolers/synthetic_snds) chargée par
 # connect_synthetic_snds(), la colonne BEN_DCD_DTE est actuellement NULL pour
 # toutes les tables (KI_CCI_R, KI_ECD_R, IR_BEN_R, ER_PRS_F) : les dates de
 # décès, au format SAS dans la source, n'ont pas été parsées lors de la
-# conversion en parquet. Sur ces données, extract_death() ne renverrait donc
+# conversion en parquet. Sur ces données, extract_idt_from_death_causes() ne renverrait donc
 # aucune ligne, quelle que soit la période.
 #
 # Ce notebook se rend par conséquent AUTONOME : il crée une petite base DuckDB
 # EN MÉMOIRE et y écrit des tables de décès FICTIVES (avec de vraies dates) pour
-# démontrer le comportement de extract_death() et extract_death_from_ids().
+# démontrer le comportement de extract_idt_from_death_causes() et extract_death_causes_from_idt().
 # Aucune donnée n'est téléchargée. Dès que BEN_DCD_DTE sera renseignée en amont,
 # on pourra rejouer ces mêmes appels sur connect_synthetic_snds().
 #
-# FORMAT DE SORTIE : extract_death() renvoie UNE LIGNE PAR CODE CIM-10 et par
+# FORMAT DE SORTIE : extract_idt_from_death_causes() renvoie UNE LIGNE PAR CODE CIM-10 et par
 # patient décédé, avec les colonnes BEN_IDT_ANO, EXE_SOI_DTD, CIM_COD et STATUS.
 # STATUS vaut "Initial cause" si le code est la cause initiale du décès
 # (KI_CCI_R), "Other" pour les autres codes de l'ensemble des causes (KI_ECD_R).
@@ -50,7 +50,7 @@ library(dplyr)
 pkgload::load_all(here::here())
 
 # %% [1b] Affichage "joli" du tableau de décès ----------------------------------
-# extract_death() renvoie une ligne par code CIM-10. print_deaths_pretty()
+# extract_idt_from_death_causes() renvoie une ligne par code CIM-10. print_deaths_pretty()
 # affiche ce tableau LIGNE PAR LIGNE, colonnes alignées, pour une lecture
 # rapide en console :
 #   BEN_IDT_ANO  DATE        CIM   STATUS
@@ -137,14 +137,14 @@ DBI::dbWriteTable(conn, "KI_ECD_R", fake_ki_ecd_r, overwrite = TRUE)
 DBI::dbListTables(conn)
 
 # %% [3] Scénario A : tous les décès sur une large période -----------------------
-# Sans diagnosis_codes, extract_death() renvoie tous les décès de la période,
+# Sans diagnosis_codes, extract_idt_from_death_causes() renvoie tous les décès de la période,
 # une ligne par code CIM-10 et par patient, avec :
 #   - CIM_COD : un code CIM-10 associé au décès ;
 #   - STATUS  : "Initial cause" (cause initiale, KI_CCI_R) ou "Other" (autre
 #               code de l'ensemble des causes, KI_ECD_R).
 # Un patient peut donc apparaître sur plusieurs lignes. Un code déjà rapporté
 # comme cause initiale n'est pas dupliqué en "Other".
-all_deaths <- extract_death(
+all_deaths <- extract_idt_from_death_causes(
   start_date = as.Date("1980-01-01"),
   end_date = as.Date("2020-12-31"),
   conn = conn
@@ -164,7 +164,7 @@ print_deaths_pretty(all_deaths)
 # dans l'ensemble des causes (KI_ECD_R) : un patient est retenu dès qu'un de ses
 # codes correspond, et toutes ses lignes (codes principaux et secondaires) sont
 # renvoyées.
-deaths_m <- extract_death(
+deaths_m <- extract_idt_from_death_causes(
   start_date = as.Date("1980-01-01"),
   end_date = as.Date("2020-12-31"),
   diagnosis_codes = c("M"),
@@ -177,13 +177,13 @@ print_deaths_pretty(deaths_m)
 # Mêmes codes ("W" = causes externes / chutes), mais une fenêtre temporelle
 # restreinte : seuls les décès survenus dans la période sont conservés. P2 (2003)
 # disparaît quand on ne garde que 2005-2020.
-deaths_w_all <- extract_death(
+deaths_w_all <- extract_idt_from_death_causes(
   start_date = as.Date("1980-01-01"),
   end_date = as.Date("2020-12-31"),
   diagnosis_codes = c("W"),
   conn = conn
 )
-deaths_w_recent <- extract_death(
+deaths_w_recent <- extract_idt_from_death_causes(
   start_date = as.Date("2005-01-01"),
   end_date = as.Date("2020-12-31"),
   diagnosis_codes = c("W"),
@@ -198,7 +198,7 @@ cat(
 # Avec output_table_name, le résultat est écrit dans une table de la base au
 # lieu d'être renvoyé. La fonction renvoie alors NULL de manière invisible.
 #
-# NB (performance) : extract_death() construit sa requête de façon PARESSEUSE
+# NB (performance) : extract_idt_from_death_causes() construit sa requête de façon PARESSEUSE
 # (lazy) et ne collecte jamais les tables de décès en mémoire R. Lorsque
 # output_table_name est fourni, le résultat est matérialisé directement dans la
 # base via "CREATE TABLE ... AS SELECT" : la donnée ne transite pas par R (pas
@@ -209,7 +209,7 @@ if (DBI::dbExistsTable(conn, output_table_name)) {
   DBI::dbRemoveTable(conn, output_table_name)
 }
 
-extract_death(
+extract_idt_from_death_causes(
   start_date = as.Date("1980-01-01"),
   end_date = as.Date("2020-12-31"),
   diagnosis_codes = c("M"),
@@ -223,7 +223,7 @@ dplyr::tbl(conn, output_table_name) |>
   print_deaths_pretty()
 
 # %% [7] Scénario E : extraction par liste d'identifiants ------------------------
-# extract_death_from_ids() est la fonction sœur de extract_death() : même sortie
+# extract_death_causes_from_idt() est la fonction sœur de extract_idt_from_death_causes() : même sortie
 # (une ligne par code CIM-10), mais l'entrée est une LISTE D'IDENTIFIANTS patients
 # au lieu de codes diagnostics. Les identifiants sans décès dans la période
 # (inconnus, ou décès hors période) sont restitués sur une ligne STATUS ==
@@ -234,7 +234,7 @@ sample_dead_ids <- head(unique(all_deaths$BEN_IDT_ANO), 3)
 # ...et des identifiants fictifs, absents des tables de décès -> "vivants".
 fake_alive_ids <- c("FAKE_ALIVE_001", "FAKE_ALIVE_002")
 
-deaths_by_ids <- extract_death_from_ids(
+deaths_by_ids <- extract_death_causes_from_idt(
   patient_ids = c(sample_dead_ids, fake_alive_ids),
   start_date = as.Date("1980-01-01"),
   end_date = as.Date("2020-12-31"),
