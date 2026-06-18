@@ -16,8 +16,7 @@ Imports:
     duckdb (>= 1.0.0.2),
     openxlsx,
     knitr,
-    readr,
-    stringr
+    readr
 Authors@R: c(
     person(
         "Antoine", "Belloir", ,
@@ -49,7 +48,8 @@ Suggests:
     testthat (>= 3.0.0),
     styler,
     lintr,
-    ggplot2
+    ggplot2,
+    tibble
 VignetteBuilder: knitr
 URL: https://sndstoolers.github.io/sndsTools/index.html/
 Config/roxygen2/version: 8.0.0

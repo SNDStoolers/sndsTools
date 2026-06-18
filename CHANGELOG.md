@@ -9,24 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added death extraction functions (#112):
-  - `extract_idt_from_death_causes()` - extracts, for each death within a date
-    range, the ICD-10 codes associated with the death (one row per code) from the
-    medical cause-of-death tables `KI_CCI_R` (initial cause) and `KI_ECD_R` (other
-    causes). A `STATUS` column distinguishes the initial cause from the other
-    codes. Optional filtering by ICD-10 codes (prefix match).
-  - `extract_death_causes_from_idt()` - from a list of patient identifiers,
-    returns their cause-of-death codes and flags the patients still alive.
-- Added notebook `notebooks/demo_death.R` - self-contained demo of the death
-  extraction functions (in-memory DuckDB + fictitious data).
+- Added `extract_deaths()` (#112) - extracts, for each death within a date
+  range, the ICD-10 codes associated with the death (one row per code) from the
+  medical cause-of-death tables `KI_CCI_R` (initial cause) and `KI_ECD_R` (other
+  causes); a `STATUS` column distinguishes the initial cause (`"Initial cause"`)
+  from the other codes (`"Other"`). Two optional, combinable filters:
+  `diagnosis_codes_filter` (ICD-10 prefix match) and `patient_ids_filter` (a
+  list of patient identifiers). Identifiers without a matching death in the
+  period are returned with `STATUS == "Alive"`.
+- Added notebook `notebooks/demo_death.R` - self-contained demo of
+  `extract_deaths()` (in-memory DuckDB + fictitious data).
 
 ### Changed
 
-- Death extractions are built lazily (`dbplyr`) and materialised only at the
-  output boundary: when `output_table_name` is supplied the result is written
-  directly in Oracle (`CREATE TABLE ... AS SELECT`) without being collected into
-  R memory.
-- Declared `stringr` in `Imports`.
+- `extract_deaths()` now returns a lazy table (`tbl_lazy`) when
+  `output_table_name` is `NULL`, following the convention introduced in #111 and
+  generalised in #120: the query is not evaluated until `dplyr::collect()`, so it
+  can be chained with other functions and let Oracle optimise. When
+  `output_table_name` is supplied the query is materialised directly in Oracle
+  (`CREATE TABLE ... AS SELECT`) without being collected into R memory. The
+  patient-ids filter now goes through a session-temporary table
+  (`temporary = TRUE`), and a `conn` opened internally is left open on the lazy
+  path (the deferred query needs it) — pass your own `conn` when chaining.
+- Declared `tibble` in `Suggests` (used by the `extract_deaths()` tests via
+  `tibble::tribble()`).
 - Documentation generated with roxygen2 8.0.0; removed `quarto` from
   `VignetteBuilder` (unblocks `make check` and `make site`).
 
