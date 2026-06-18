@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Added death extraction functions (#112):
+  - `extract_idt_from_death_causes()` - extracts, for each death within a date
+    range, the ICD-10 codes associated with the death (one row per code) from the
+    medical cause-of-death tables `KI_CCI_R` (initial cause) and `KI_ECD_R` (other
+    causes). A `STATUS` column distinguishes the initial cause from the other
+    codes. Optional filtering by ICD-10 codes (prefix match).
+  - `extract_death_causes_from_idt()` - from a list of patient identifiers,
+    returns their cause-of-death codes and flags the patients still alive.
+- Added notebook `notebooks/demo_death.R` - self-contained demo of the death
+  extraction functions (in-memory DuckDB + fictitious data).
+
+### Changed
+
+- Death extractions are built lazily (`dbplyr`) and materialised only at the
+  output boundary: when `output_table_name` is supplied the result is written
+  directly in Oracle (`CREATE TABLE ... AS SELECT`) without being collected into
+  R memory.
+- Declared `stringr` in `Imports`.
+- Documentation generated with roxygen2 8.0.0; removed `quarto` from
+  `VignetteBuilder` (unblocks `make check` and `make site`).
+
+### Fixed
+
+- `extract_stays_mcob()`: write the temporary patient-ids table with
+  `overwrite = TRUE` and remove it at the end of the function, avoiding
+  collisions and leftover temporary tables on repeated calls.
+
 ## [0.2.2] - 2026-06-03
 
 ### Added

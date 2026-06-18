@@ -80,8 +80,8 @@ insert_into_table_from_query <- function(
 #'
 #' - Si `output_table_name` est `NULL` :
 #'   - un `data.frame` est renvoyé tel quel ;
-#'   - une `tbl_lazy` est collectée (`dplyr::collect()`) puis renvoyée sous forme
-#'     de `data.frame`.
+#'   - une `tbl_lazy` est collectée (`dplyr::collect()`) puis renvoyée sous
+#'     forme de `data.frame`.
 #' - Si `output_table_name` est fourni :
 #'   - une `tbl_lazy` est matérialisée **directement dans la base** via
 #'     `CREATE TABLE ... AS SELECT` ([create_table_from_query()]), sans jamais

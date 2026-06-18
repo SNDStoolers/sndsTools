@@ -6,7 +6,8 @@ require(dplyr)
 # KI_ECD_R : ENSEMBLE DES CAUSES du décès (colonne ECD_CIM_COD)
 #            -> lignes STATUS == "Other".
 #
-# extract_idt_from_death_causes() renvoie désormais UNE LIGNE PAR CODE CIM-10 et par patient.
+# extract_idt_from_death_causes() renvoie désormais UNE LIGNE PAR CODE
+# CIM-10 et par patient.
 # Un code déjà rapporté comme cause initiale n'est pas dupliqué en "Other".
 #
 # Patients :
@@ -57,7 +58,7 @@ setup_death_tables <- function() {
   conn
 }
 
-test_that("extract_idt_from_death_causes renvoie une ligne par code CIM-10 avec son STATUS", {
+test_that("extract_idt_from_death_causes : une ligne par code, avec STATUS", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -69,7 +70,8 @@ test_that("extract_idt_from_death_causes renvoie une ligne par code CIM-10 avec 
   )
 
   # P1 : cause initiale G20 ; autres codes E11/I10 (G20 non dupliqué en Other).
-  # P5 : pas de cause initiale, retrouvé via "G20" -> ses codes G20/X59 en Other.
+  # P5 : pas de cause initiale, retrouvé via "G20" -> ses codes G20/X59
+  # en Other.
   # P3 (G10) est exclu car son décès (2005) est hors période.
   expect_equal(
     result |>
@@ -97,7 +99,7 @@ test_that("extract_idt_from_death_causes renvoie une ligne par code CIM-10 avec 
   )
 })
 
-test_that("extract_idt_from_death_causes ne duplique pas la cause initiale parmi les codes Other", {
+test_that("extract_idt_from_death_causes : cause initiale non dupliquée", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -124,7 +126,7 @@ test_that("extract_idt_from_death_causes ne duplique pas la cause initiale parmi
   expect_setequal(other_codes, c("E11", "I10"))
 })
 
-test_that("extract_idt_from_death_causes ne produit que des lignes Other sans cause initiale", {
+test_that("extract_idt_from_death_causes : Other seuls sans cause initiale", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -142,12 +144,13 @@ test_that("extract_idt_from_death_causes ne produit que des lignes Other sans ca
   expect_setequal(result$CIM_COD, c("G20", "X59"))
 })
 
-test_that("extract_idt_from_death_causes sélectionne la cohorte via la cause initiale OU les autres causes", {
+test_that("extract_idt_from_death_causes : cohorte via initiale OU autres", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
-  # "E11" n'est ni une cause initiale ni un préfixe de cause initiale, mais c'est
-  # un autre code de P1 -> P1 doit être sélectionné via ses codes "Other".
+  # "E11" n'est ni une cause initiale ni un préfixe de cause initiale,
+  # mais c'est un autre code de P1 -> P1 doit être sélectionné via ses
+  # codes "Other".
   result <- extract_idt_from_death_causes(
     start_date = as.Date("2010-01-01"),
     end_date = as.Date("2020-12-31"),
@@ -175,7 +178,7 @@ test_that("extract_idt_from_death_causes sélectionne la cohorte via la cause in
   expect_equal(nrow(result_empty), 0L)
 })
 
-test_that("extract_idt_from_death_causes filtre sur les deux bornes de la période", {
+test_that("extract_idt_from_death_causes : filtre les deux bornes", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -196,7 +199,7 @@ test_that("extract_idt_from_death_causes filtre sur les deux bornes de la pério
   expect_setequal(unique(lower$BEN_IDT_ANO), c("P2", "P5", "P7"))
 })
 
-test_that("extract_idt_from_death_causes sans diagnosis_codes extrait tous les décès de la période", {
+test_that("extract_idt_from_death_causes sans codes : tous les décès", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -223,7 +226,7 @@ test_that("extract_idt_from_death_causes sans diagnosis_codes extrait tous les d
   expect_equal(p2$STATUS, c("Initial cause", "Other"))
 })
 
-test_that("extract_idt_from_death_causes sauvegarde dans une table si output_table_name fourni", {
+test_that("extract_idt_from_death_causes : sauvegarde si output_table_name", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -294,13 +297,14 @@ test_that("extract_idt_from_death_causes valide ses arguments", {
 })
 
 # -----------------------------------------------------------------------------
-# extract_death_causes_from_idt() : même sortie que extract_idt_from_death_causes(), mais en entrée une
+# extract_death_causes_from_idt() : même sortie que
+# extract_idt_from_death_causes(), mais en entrée une
 # liste d'identifiants patients. Les patients vivants (aucun code CIM-10 dans la
 # période) sont restitués sur une ligne STATUS == "Alive" (CIM_COD/EXE_SOI_DTD
 # à NA). P9 n'existe dans aucune table -> patient "vivant".
 # -----------------------------------------------------------------------------
 
-test_that("extract_death_causes_from_idt renvoie les codes des décédés et marque les vivants", {
+test_that("extract_death_causes_from_idt : décédés + vivants marqués", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -341,7 +345,7 @@ test_that("extract_death_causes_from_idt renvoie les codes des décédés et mar
   )
 })
 
-test_that("extract_death_causes_from_idt marque comme Alive un id absent des tables", {
+test_that("extract_death_causes_from_idt : id absent => Alive", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -359,7 +363,7 @@ test_that("extract_death_causes_from_idt marque comme Alive un id absent des tab
   expect_true(is.na(result$EXE_SOI_DTD))
 })
 
-test_that("extract_death_causes_from_idt traite un décès hors période comme Alive", {
+test_that("extract_death_causes_from_idt : décès hors période => Alive", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -385,7 +389,7 @@ test_that("extract_death_causes_from_idt traite un décès hors période comme A
   expect_equal(in_period$STATUS, "Initial cause")
 })
 
-test_that("extract_death_causes_from_idt ne duplique pas la cause initiale parmi les Other", {
+test_that("extract_death_causes_from_idt : cause initiale non dupliquée", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -406,7 +410,7 @@ test_that("extract_death_causes_from_idt ne duplique pas la cause initiale parmi
   expect_setequal(other_codes, c("E11", "I10"))
 })
 
-test_that("extract_death_causes_from_idt dédoublonne les identifiants fournis", {
+test_that("extract_death_causes_from_idt : dédoublonne les identifiants", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
@@ -422,7 +426,7 @@ test_that("extract_death_causes_from_idt dédoublonne les identifiants fournis",
   expect_equal(sum(result$BEN_IDT_ANO == "P9"), 1L)
 })
 
-test_that("extract_death_causes_from_idt sauvegarde dans une table si output_table_name fourni", {
+test_that("extract_death_causes_from_idt : sauvegarde si output_table_name", {
   conn <- setup_death_tables()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 

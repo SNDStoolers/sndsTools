@@ -43,7 +43,9 @@ test_that("check_output_table_name échoue si la table existe déjà", {
   conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
-  DBI::dbWriteTable(conn, "TABLE_EXISTANTE", data.frame(x = 1), overwrite = TRUE)
+  DBI::dbWriteTable(
+    conn, "TABLE_EXISTANTE", data.frame(x = 1), overwrite = TRUE
+  )
   on.exit(
     try(DBI::dbRemoveTable(conn, "TABLE_EXISTANTE"), silent = TRUE),
     add = TRUE,
@@ -71,7 +73,7 @@ setup_sor_source <- function(conn) {
   invisible(src)
 }
 
-test_that("save_or_return_result collecte une tbl_lazy si output_table_name est NULL", {
+test_that("save_or_return_result collecte une tbl_lazy (output NULL)", {
   conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
   src <- setup_sor_source(conn)
@@ -89,7 +91,7 @@ test_that("save_or_return_result collecte une tbl_lazy si output_table_name est 
   expect_setequal(result$BEN_IDT_ANO, src$BEN_IDT_ANO)
 })
 
-test_that("save_or_return_result matérialise une tbl_lazy via CREATE TABLE AS", {
+test_that("save_or_return_result matérialise via CREATE TABLE AS", {
   conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
   setup_sor_source(conn)
@@ -120,7 +122,7 @@ test_that("save_or_return_result matérialise une tbl_lazy via CREATE TABLE AS",
   expect_equal(saved$CIM_COD, "G20")
 })
 
-test_that("save_or_return_result renvoie un data.frame tel quel si output_table_name est NULL", {
+test_that("save_or_return_result renvoie le data.frame (output NULL)", {
   conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 

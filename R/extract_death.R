@@ -26,10 +26,10 @@ utils::globalVariables(c(
 #'
 #' @examples
 #' \dontrun{
-#' build_death_diagnosis_conditions("DCD_CIM_COD", c("G10", "G20"))
+#' build_death_cim_conditions("DCD_CIM_COD", c("G10", "G20"))
 #' }
 #' @keywords internal
-build_death_diagnosis_conditions <- function(col_name, diagnosis_codes) {
+build_death_cim_conditions <- function(col_name, diagnosis_codes) {
   starts_with_conditions <- glue::glue("{col_name} LIKE '{diagnosis_codes}%'")
   paste(starts_with_conditions, collapse = " OR ")
 }
@@ -153,20 +153,22 @@ extract_idt_from_death_causes <- function(
   if (!is.null(diagnosis_codes)) {
     cohort <- dplyr::union(
       initial_cause |>
-        dplyr::filter(dbplyr::sql(build_death_diagnosis_conditions(
+        dplyr::filter(dbplyr::sql(build_death_cim_conditions(
           "DCD_CIM_COD",
           diagnosis_codes
         ))) |>
         dplyr::select(BEN_IDT_ANO),
       all_causes |>
-        dplyr::filter(dbplyr::sql(build_death_diagnosis_conditions(
+        dplyr::filter(dbplyr::sql(build_death_cim_conditions(
           "ECD_CIM_COD",
           diagnosis_codes
         ))) |>
         dplyr::select(BEN_IDT_ANO)
     )
-    initial_cause <- initial_cause |> dplyr::semi_join(cohort, by = "BEN_IDT_ANO")
-    all_causes <- all_causes |> dplyr::semi_join(cohort, by = "BEN_IDT_ANO")
+    initial_cause <- initial_cause |>
+      dplyr::semi_join(cohort, by = "BEN_IDT_ANO")
+    all_causes <- all_causes |>
+      dplyr::semi_join(cohort, by = "BEN_IDT_ANO")
   }
 
   # Une ligne par code de cause initiale. Tout reste paresseux (SQL) : le
@@ -195,7 +197,8 @@ extract_idt_from_death_causes <- function(
       by = c("BEN_IDT_ANO", "CIM_COD")
     )
 
-  # union_all (et non bind_rows) car les opérandes sont des requêtes paresseuses.
+  # union_all (et non bind_rows) car les opérandes sont des requêtes
+  # paresseuses.
   # Les deux branches sont disjointes (anti_join) : pas de doublon introduit.
   result <- dplyr::union_all(
     initial_codes |>
@@ -382,8 +385,8 @@ extract_death_causes_from_idt <- function(
   # Patients vivants : un left_join de la liste d'identifiants sur les décès
   # restitue tous les identifiants fournis. Pour ceux sans code de décès dans la
   # période, EXE_SOI_DTD et CIM_COD sont NULL (typés par les colonnes de
-  # `deceased`, ce qui évite tout souci de typage d'un NA littéral) et STATUS est
-  # mis à "Alive". Les décédés conservent leurs lignes de codes.
+  # `deceased`, ce qui évite tout souci de typage d'un NA littéral) et STATUS
+  # est mis à "Alive". Les décédés conservent leurs lignes de codes.
   result <- ids_db |>
     dplyr::left_join(deceased, by = "BEN_IDT_ANO") |>
     dplyr::mutate(STATUS = dplyr::coalesce(STATUS, "Alive")) |>
