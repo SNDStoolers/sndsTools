@@ -406,7 +406,7 @@ extract_stays_ssr <- function(
         -FHO_RET,
         -PMS_RET
       ) |>
-      dplyr::filter( !(ETA_NUM %in% finess_doublons))
+      dplyr::filter( !(ETA_NUM %in% FINESS_DOUBLONS))
 
 
     if (year >= 2015) {
