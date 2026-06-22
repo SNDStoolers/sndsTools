@@ -70,6 +70,56 @@ insert_into_table_from_query <- function(
   )
 }
 
+#' Retourne le résultat d'une extraction, ou le sauvegarde dans une table.
+#'
+#' @description
+#' Logique de sortie commune aux fonctions d'extraction. La fonction accepte
+#' indifféremment un résultat **déjà collecté** en mémoire (`data.frame`) ou une
+#' **requête paresseuse** (`tbl_lazy`, c.-à-d. une requête `dbplyr` non encore
+#' exécutée), et centralise la décision « collecter / écrire en base » :
+#'
+#' - Si `output_table_name` est `NULL` :
+#'   - un `data.frame` est renvoyé tel quel ;
+#'   - une `tbl_lazy` est collectée (`dplyr::collect()`) puis renvoyée sous
+#'     forme de `data.frame`.
+#' - Si `output_table_name` est fourni :
+#'   - une `tbl_lazy` est matérialisée **directement dans la base** via
+#'     `CREATE TABLE ... AS SELECT` ([create_table_from_query()]), sans jamais
+#'     transiter par la mémoire R (pas de `collect`) ;
+#'   - un `data.frame` est écrit avec `DBI::dbWriteTable()`.
+#'   La fonction renvoie alors `NULL` de manière invisible.
+#'
+#' Accepter une `tbl_lazy` permet aux fonctions d'extraction de rester
+#' paresseuses jusqu'à cette frontière : le seul `collect` éventuel a lieu ici,
+#' et il est totalement évité lorsque le résultat est sauvegardé en base.
+#'
+#' @param result data.frame ou tbl_lazy. Le résultat de l'extraction, collecté
+#'   en mémoire (`data.frame`) ou sous forme de requête paresseuse `dbplyr`.
+#' @param output_table_name character ou `NULL`. Le nom de la table de sortie.
+#'   Lorsqu'il est fourni, la validité du nom doit déjà avoir été vérifiée par
+#'   l'appelant (`check_output_table_name()`).
+#' @param conn dbConnection La connexion à la base de données.
+#' @return Un `data.frame` si `output_table_name` est `NULL`, sinon `NULL`
+#'   invisible (le résultat est écrit dans la table).
+#'
+#' @keywords internal
+save_or_return_result <- function(result, output_table_name, conn) {
+  is_lazy <- inherits(result, "tbl_lazy")
+  if (is.null(output_table_name)) {
+    if (is_lazy) {
+      return(dplyr::collect(result))
+    }
+    return(result)
+  }
+  if (is_lazy) {
+    create_table_from_query(conn, output_table_name, result)
+  } else {
+    DBI::dbWriteTable(conn, output_table_name, result)
+  }
+  message(glue::glue("Results saved to table {output_table_name} in Oracle."))
+  invisible(NULL)
+}
+
 
 #' Vérifie la validité du nom de la table de sortie Oracle.
 #'

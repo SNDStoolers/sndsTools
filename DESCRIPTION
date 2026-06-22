@@ -43,12 +43,13 @@ Description: Code d'extraction de données du SNDS.
 License: EUPL
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Suggests:
     rmarkdown,
     testthat (>= 3.0.0),
     styler,
     lintr,
-    ggplot2
-VignetteBuilder: knitr, quarto
+    ggplot2,
+    tibble
+VignetteBuilder: knitr
 URL: https://sndstoolers.github.io/sndsTools/index.html/
+Config/roxygen2/version: 8.0.0

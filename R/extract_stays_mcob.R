@@ -258,7 +258,12 @@ extract_stays_mcob <- function(
       !anyDuplicated(patients_ids_filter)
     )
     patients_ids_table_name <- glue::glue("TMP_PATIENTS_IDS_{timestamp}")
-    DBI::dbWriteTable(conn, patients_ids_table_name, patients_ids_filter)
+    DBI::dbWriteTable(
+      conn,
+      patients_ids_table_name,
+      patients_ids_filter,
+      overwrite = TRUE
+    )
   }
 
   start_year <- lubridate::year(start_date)
@@ -530,11 +535,11 @@ extract_stays_mcob <- function(
   }
 
   result <- dplyr::bind_rows(hospital_stays_list)
-  if (!is.null(output_table_name)) {
-    DBI::dbWriteTable(conn, output_table_name, result)
-    result <- invisible(NULL)
-    message(glue::glue("Results saved to table {output_table_name} in Oracle."))
+  # nettoyage de la table temporaire des identifiants patients
+  if (!is.null(patients_ids_filter)) {
+    DBI::dbRemoveTable(conn, patients_ids_table_name)
   }
+  result <- save_or_return_result(result, output_table_name, conn)
   if (connection_opened) {
     DBI::dbDisconnect(conn)
   }
