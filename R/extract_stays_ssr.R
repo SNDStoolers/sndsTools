@@ -1,53 +1,3 @@
-# Liste des finess géographiques APHP, APHM et HCL à supprimer pour éviter les
-# doublons
-finess_doublons <- c(
-  "130780521",
-  "130783236",
-  "130783293",
-  "130784234",
-  "130804297",
-  "600100101",
-  "750041543",
-  "750100018",
-  "750100042",
-  "750100075",
-  "750100083",
-  "750100091",
-  "750100109",
-  "750100125",
-  "750100166",
-  "750100208",
-  "750100216",
-  "750100232",
-  "750100273",
-  "750100299",
-  "750801441",
-  "750803447",
-  "750803454",
-  "910100015",
-  "910100023",
-  "920100013",
-  "920100021",
-  "920100039",
-  "920100047",
-  "920100054",
-  "920100062",
-  "930100011",
-  "930100037",
-  "930100045",
-  "940100027",
-  "940100035",
-  "940100043",
-  "940100050",
-  "940100068",
-  "950100016",
-  "690783154",
-  "690784137",
-  "690784152",
-  "690784178",
-  "690787478",
-  "830100558"
-)
 
 #' Construit les conditions pour extraire les diagnostics SSR.
 #' (affection étiologique, manifestation morbide principale et, avant 2023,
@@ -307,7 +257,7 @@ extract_stays_ssr <- function(
     if (is.null(dp_cim10_codes_filter)) {
       eta_num_rsa_num <-
         t_ssr_d |>
-        dplyr::select(ETA_NUM, RHA_NUM) |>
+        dplyr::select(ETA_NUM, RHA_NUM, RHS_NUM) |>
         dplyr::distinct()
     } else {
         
@@ -316,7 +266,7 @@ extract_stays_ssr <- function(
         eta_num_rsa_num <-
         t_ssr_b |>
         dplyr::filter(dbplyr::sql(dp_conditions)) |>
-        dplyr::select(ETA_NUM, RHA_NUM) |>
+        dplyr::select(ETA_NUM, RHA_NUM, RHS_NUM) |>
         dplyr::distinct()
     }
 
@@ -327,7 +277,7 @@ extract_stays_ssr <- function(
         eta_num_rsa_num_da <-
         t_ssr_d |>
         dplyr::filter(dbplyr::sql(da_conditions)) |>
-        dplyr::select(ETA_NUM, RHA_NUM) |>
+        dplyr::select(ETA_NUM, RHA_NUM, RHS_NUM) |>
         dplyr::distinct()
 
         eta_num_rsa_num <- dplyr::union(eta_num_rsa_num, eta_num_rsa_num_da)
@@ -339,16 +289,17 @@ extract_stays_ssr <- function(
         eta_num_rsa_num_da <-
         t_ssr_d |>
         dplyr::filter(dbplyr::sql(da_specific_conditions)) |>
-        dplyr::select(ETA_NUM, RHA_NUM) |>
+        dplyr::select(ETA_NUM, RHA_NUM, RHS_NUM) |>
         dplyr::distinct()
 
         eta_num_rsa_num <- eta_num_rsa_num |>
-            dplyr::inner_join(eta_num_rsa_num_da, by = c("ETA_NUM", "RHA_NUM"))
+            dplyr::inner_join(eta_num_rsa_num_da, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM"))
     }
 
     selected_cols_b <- c(
       "ETA_NUM",
       "RHA_NUM",
+      "RHS_NUM",
       "SEJ_NUM",
       "NBR_DGN",
       "ENT_MOD",
@@ -398,9 +349,9 @@ extract_stays_ssr <- function(
 
     t_ssr_b_d <-
       t_ssr_b |>
-      dplyr::left_join(t_ssr_c, by = c("ETA_NUM", "RHA_NUM")) |>
-        dplyr::left_join(t_ssr_d, by = c("ETA_NUM", "RHA_NUM")) |>
-      dplyr::inner_join(eta_num_rsa_num, by = c("ETA_NUM", "RHA_NUM")) |>
+      dplyr::left_join(t_ssr_c, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")) |>
+        dplyr::left_join(t_ssr_d, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")) |>
+      dplyr::inner_join(eta_num_rsa_num, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")) |>
       dplyr::select(dplyr::all_of(selected_cols))
 
 
@@ -480,14 +431,17 @@ extract_stays_ssr <- function(
 
     ssr_stays_list <- append(
       ssr_stays_list,
-      list(t_ssr_b_d_quality_filtered |> distinct() |> collect())
+      list(t_ssr_b_d_quality_filtered |> distinct())
     )
   }
 
-  result <- dplyr::bind_rows(ssr_stays_list)
+  result <- purrr::reduce(ssr_stays_list, dplyr::union_all)
+
 
   if (!is.null(output_table_name)) {
-    DBI::dbWriteTable(conn, output_table_name, result)
+    query <- result |> dbplyr::sql_render()
+
+    DBI::dbExecute(conn,glue::glue("CREATE TABLE {output_table_name} AS {query}"))
     result <- invisible(NULL)
     message(glue::glue("Results saved to table {output_table_name} in Oracle."))
   }
