@@ -77,6 +77,8 @@ build_ssr_da_conditions <- function(cim10_codes = NULL) {
 #' @description Cette fonction permet d'extraire les diagnostics des séjours
 #' de soins de réadaptation. Les diagnostics dont les dates `EXE_SOI_DTD` sont
 #' comprises entre `start_date` et `end_date` sont extraits.
+#' Les séjours extraits sont à l'échelle de la semaine de séjour, avec une ligne par semaine de séjour. 
+#' Les séjours sont extraits à partir des tables T_SSR*B, T_SSR*C et T_SSR*D.
 #'
 #' @details La sélection des séjours se fait à l'aide de filtres sur les
 #' diagnostics:
