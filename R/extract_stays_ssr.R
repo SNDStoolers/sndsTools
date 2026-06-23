@@ -293,7 +293,7 @@ extract_stays_ssr <- function(
         dplyr::distinct()
 
         eta_num_rsa_num <- eta_num_rsa_num |>
-            dplyr::inner_join(eta_num_rsa_num_da, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM"))
+            dplyr::inner_join(eta_num_rsa_num_da, by = c("ETA_NUM", "RHA_NUM"))
     }
 
     selected_cols_b <- c(
@@ -349,7 +349,7 @@ extract_stays_ssr <- function(
 
     t_ssr_b_d <-
       t_ssr_b |>
-      dplyr::left_join(t_ssr_c, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")) |>
+      dplyr::left_join(t_ssr_c, by = c("ETA_NUM", "RHA_NUM")) |>
         dplyr::left_join(t_ssr_d, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")) |>
       dplyr::inner_join(eta_num_rsa_num, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")) |>
       dplyr::select(dplyr::all_of(selected_cols))
