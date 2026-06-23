@@ -51,21 +51,32 @@ authors:
     href: https://github.com/ThomasSoeiro
   Marc Dibling:
     href: https://github.com/MarcDibling
+
 reference:
+
 - title: Extraction SNDS
   desc: Fonctions pour extraire les données de soins individuelles à partir du SNDS.
-- contents: 
+- contents:
   - has_concept("extract")
+
 - title: Extraction SNDS en SQL
   desc: Fonctions pour extraire les données de soins individuelles à partir du SNDS en pur SQL.
 - contents: starts_with("sql_extract")
+
 - title: Utilitaires
   desc: Fonctions utilitaires pour manipuler les données extraites.
 - contents: has_concept("utils")
+
+- title: Constantes
+  desc: Constantes utilisées dans le package.
+- contents: has_concept("constants")
+
 - title: Données synthétiques
   desc: Fonctions utilisées pour générer des données synthétiques similaires à celles du SNDS.
 - contents: has_concept("synthetic")
+
 articles:
+
 - title: "Vignettes"
   navbar: ~
   contents:

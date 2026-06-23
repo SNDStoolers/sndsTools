@@ -1,27 +1,5 @@
 # Fichier pour stocker les constantes du paquet sndsTools
 
-# Constantes exportées ie. accessibles par les utilisateurs du paquet
-
-#' @title Est-ce que le code tourne sur le portail de la CNAM ?
-#' @export
-#' @family utils
-IS_PORTAIL <- dir.exists("~/sasdata1")
-
-#' @title Clés de jointure des tables DCIR
-#' @export
-#' @family utils
-COLS_DCIR_JOIN_KEY <- c(
-  "DCT_ORD_NUM",
-  "FLX_DIS_DTD",
-  "FLX_EMT_ORD",
-  "FLX_EMT_NUM",
-  "FLX_EMT_TYP",
-  "FLX_TRT_DTD",
-  "ORG_CLE_NUM",
-  "PRS_ORD_NUM",
-  "REM_TYP_AFF"
-)
-
 # Constantes non exportées ie. utilisées uniquement en interne dans le paquet
 
 DIR2SNDS_CACHE <- file.path("~", ".cache", "sndsTools")
@@ -34,8 +12,32 @@ PATH2SYNTHETIC_SNDS <- file.path(
   "synthetic_snds_parquet"
 )
 
+# Constantes exportées ie. accessibles par les utilisateurs du paquet
+
+#' @title Est-ce que le code tourne sur le portail de la CNAM ?
+#' @export
+#' @family constants
+IS_PORTAIL <- dir.exists("~/sasdata1")
+
+#' @title Clés de jointure des tables DCIR
+#' @export
+#' @family constants
+COLS_DCIR_JOIN_KEY <- c(
+  "DCT_ORD_NUM",
+  "FLX_DIS_DTD",
+  "FLX_EMT_ORD",
+  "FLX_EMT_NUM",
+  "FLX_EMT_TYP",
+  "FLX_TRT_DTD",
+  "ORG_CLE_NUM",
+  "PRS_ORD_NUM",
+  "REM_TYP_AFF"
+)
+
 # Liste des finess géographiques APHP, APHM et HCL à supprimer pour éviter les
 # doublons
+#' @export
+#' @family constants
 FINESS_DOUBLONS <- c(
   "130780521",
   "130783236",
@@ -84,4 +86,3 @@ FINESS_DOUBLONS <- c(
   "690787478",
   "830100558"
 )
-

@@ -1,8 +1,7 @@
-
 #' Construit les conditions pour extraire les diagnostics SSR.
 #' (affection étiologique, manifestation morbide principale et, avant 2023,
 #' finalité principale de prise en charge).
-#' 
+#'
 #' @description
 #' Cette fonction génère une chaîne de conditions SQL (clauses `LIKE`) portant
 #' sur les colonnes `ETL_AFF` (affection étiologique) et `MOR_PRP`
@@ -13,38 +12,35 @@
 #' @param cim10_codes character vector Les codes CIM10 cibles des
 #' diagnostics à extraire.
 #' @param index_year integer L'année d'indexation des séjours ssr.
-#' @return character Les conditions pour extraire les diagnostics 
+#' @return character Les conditions pour extraire les diagnostics
 #'
 #' @examples
 #' \dontrun{
 #' build_ssr_dp_conditions(c("A00", "B00"), index_year = 2023)
 #' }
 #' @keywords internal
-build_ssr_dp_conditions <- function(cim10_codes = NULL,
-index_year = NULL) {
+build_ssr_dp_conditions <- function(cim10_codes = NULL, index_year = NULL) {
+  # Affection étiologique
+  starts_with_conditions_e <- glue::glue("ETL_AFF LIKE '{cim10_codes}%'")
 
-    
-    # Affection étiologique
-    starts_with_conditions_e <- glue::glue("ETL_AFF LIKE '{cim10_codes}%'") 
+  # Manifestation morbide principale
+  starts_with_conditions_mp <- glue::glue("MOR_PRP LIKE '{cim10_codes}%'")
 
-    # Manifestation morbide principale
-    starts_with_conditions_mp <- glue::glue("MOR_PRP LIKE '{cim10_codes}%'")
-
-    starts_with_conditions <- c(
+  starts_with_conditions <- c(
     starts_with_conditions_e,
     starts_with_conditions_mp
+  )
+
+  if (index_year < 2023) {
+    # Finalité principale de prise en charge
+    starts_with_conditions_fp <- glue::glue("FP_PEC LIKE '{cim10_codes}%'")
+
+    starts_with_conditions <- c(
+      starts_with_conditions_e,
+      starts_with_conditions_mp,
+      starts_with_conditions_fp
     )
-
-    if (index_year < 2023) {
-        # Finalité principale de prise en charge
-        starts_with_conditions_fp <- glue::glue("FP_PEC LIKE '{cim10_codes}%'")
-
-        starts_with_conditions <- c(
-            starts_with_conditions_e,
-            starts_with_conditions_mp,
-            starts_with_conditions_fp
-        )
-    }
+  }
 
   collapsed_conditions <- paste(starts_with_conditions, collapse = " OR ")
   collapsed_conditions
@@ -77,6 +73,8 @@ build_ssr_da_conditions <- function(cim10_codes = NULL) {
 #' @description Cette fonction permet d'extraire les diagnostics des séjours
 #' de soins de réadaptation. Les diagnostics dont les dates `EXE_SOI_DTD` sont
 #' comprises entre `start_date` et `end_date` sont extraits.
+#' Les séjours extraits sont à l'échelle de la semaine de séjour, avec une ligne par semaine de séjour.
+#' Les séjours sont extraits à partir des tables T_SSR*B, T_SSR*C et T_SSR*D.
 #'
 #' @details La sélection des séjours se fait à l'aide de filtres sur les
 #' diagnostics:
@@ -101,8 +99,8 @@ build_ssr_da_conditions <- function(cim10_codes = NULL) {
 #' successivement à cette table "séjour" les tables T_SSR*D.
 #' Finalement, les deux tables obtenues sont concaténées horizontalement. Il est
 #' donc fréquent d'avoir des doublons concernant les colonnes des tables B et D
-#' dans les lignes de la table résultante. 
-#' 
+#' dans les lignes de la table résultante.
+#'
 #' @param start_date Date La date de début de la période sur laquelle extraire
 #' les séjours.
 #' @param end_date Date La date de fin de la période sur laquelle
@@ -168,16 +166,16 @@ build_ssr_da_conditions <- function(cim10_codes = NULL) {
 #'   de 2013).
 #' - `FP_PEC` : Finalité principale de prise en charge SSR
 #'   (présent avant 2023 uniquement).
-#' 
+#'
 #' @examples \dontrun{
 #' # Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
-#' extract_stays_mcob(
+#' extract_stays_ssr(
 #'  start_date = as.Date("2019-01-01"),
 #'  end_date = as.Date("2019-12-31"),
 #'  dp_cim10_codes = c("A", "B")
 #' )
 #' # Extrait tous les séjours en 2019
-#' extract_stays_mcob(
+#' extract_stays_ssr(
 #'  start_date = as.Date("2019-01-01"),
 #'  end_date = as.Date("2019-12-31")
 #' )
@@ -260,10 +258,12 @@ extract_stays_ssr <- function(
         dplyr::select(ETA_NUM, RHA_NUM, RHS_NUM) |>
         dplyr::distinct()
     } else {
-        
-        dp_conditions <- build_ssr_dp_conditions(cim10_codes = dp_cim10_codes_filter, index_year = year)
+      dp_conditions <- build_ssr_dp_conditions(
+        cim10_codes = dp_cim10_codes_filter,
+        index_year = year
+      )
 
-        eta_num_rsa_num <-
+      eta_num_rsa_num <-
         t_ssr_b |>
         dplyr::filter(dbplyr::sql(dp_conditions)) |>
         dplyr::select(ETA_NUM, RHA_NUM, RHS_NUM) |>
@@ -271,29 +271,30 @@ extract_stays_ssr <- function(
     }
 
     if (or_da_with_same_codes_filter) {
+      da_conditions <- build_ssr_da_conditions(
+        cim10_codes = dp_cim10_codes_filter
+      )
 
-        da_conditions <- build_ssr_da_conditions(cim10_codes = dp_cim10_codes_filter)
-
-        eta_num_rsa_num_da <-
+      eta_num_rsa_num_da <-
         t_ssr_d |>
         dplyr::filter(dbplyr::sql(da_conditions)) |>
         dplyr::select(ETA_NUM, RHA_NUM, RHS_NUM) |>
         dplyr::distinct()
 
-        eta_num_rsa_num <- dplyr::union(eta_num_rsa_num, eta_num_rsa_num_da)
-
+      eta_num_rsa_num <- dplyr::union(eta_num_rsa_num, eta_num_rsa_num_da)
     } else if (and_da_with_other_codes_filter) {
+      da_specific_conditions <- build_ssr_da_conditions(
+        cim10_codes = da_cim10_codes_filter
+      )
 
-        da_specific_conditions <- build_ssr_da_conditions(cim10_codes = da_cim10_codes_filter)
-
-        eta_num_rsa_num_da <-
+      eta_num_rsa_num_da <-
         t_ssr_d |>
         dplyr::filter(dbplyr::sql(da_specific_conditions)) |>
         dplyr::select(ETA_NUM, RHA_NUM, RHS_NUM) |>
         dplyr::distinct()
 
-        eta_num_rsa_num <- eta_num_rsa_num |>
-            dplyr::inner_join(eta_num_rsa_num_da, by = c("ETA_NUM", "RHA_NUM"))
+      eta_num_rsa_num <- eta_num_rsa_num |>
+        dplyr::inner_join(eta_num_rsa_num_da, by = c("ETA_NUM", "RHA_NUM"))
     }
 
     selected_cols_b <- c(
@@ -307,13 +308,13 @@ extract_stays_ssr <- function(
       "SOR_MOD",
       "SOR_DES",
       "MOR_PRP",
-        "ETL_AFF",
+      "ETL_AFF",
       "DGN_COD",
       "BDI_DEP",
       "BDI_COD",
       "COD_SEX",
       "AGE_ANN",
-      "MOI_ANN"        
+      "MOI_ANN"
     )
 
     selected_cols_c <- c(
@@ -335,12 +336,12 @@ extract_stays_ssr <- function(
         "DAT_RET",
         "COH_NAI_RET",
         "COH_SEX_RET",
-        "GRG_GME" 
+        "GRG_GME"
       )
     }
 
     if (year < 2023) {
-        selected_cols <- c(selected_cols, "FP_PEC")
+      selected_cols <- c(selected_cols, "FP_PEC")
     }
 
     if (year >= 2015) {
@@ -350,17 +351,19 @@ extract_stays_ssr <- function(
     t_ssr_b_d <-
       t_ssr_b |>
       dplyr::left_join(t_ssr_c, by = c("ETA_NUM", "RHA_NUM")) |>
-        dplyr::left_join(t_ssr_d, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")) |>
-      dplyr::inner_join(eta_num_rsa_num, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")) |>
+      dplyr::left_join(t_ssr_d, by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")) |>
+      dplyr::inner_join(
+        eta_num_rsa_num,
+        by = c("ETA_NUM", "RHA_NUM", "RHS_NUM")
+      ) |>
       dplyr::select(dplyr::all_of(selected_cols))
-
 
     exe_soi_dtd_condition <- glue::glue(
       "EXE_SOI_DTD >= DATE '{formatted_start_date}'
       AND EXE_SOI_DTD <= DATE '{formatted_end_date}'"
     )
 
-     # Quality filters
+    # Quality filters
     t_ssr_b_d_quality_filtered <-
       t_ssr_b_d |>
       dplyr::filter(dbplyr::sql(exe_soi_dtd_condition)) |>
@@ -406,8 +409,7 @@ extract_stays_ssr <- function(
         -FHO_RET,
         -PMS_RET
       ) |>
-      dplyr::filter( !(ETA_NUM %in% FINESS_DOUBLONS))
-
+      dplyr::filter(!(ETA_NUM %in% FINESS_DOUBLONS))
 
     if (year >= 2015) {
       t_ssr_b_d_quality_filtered <-
@@ -415,10 +417,9 @@ extract_stays_ssr <- function(
         dplyr::select(-TYP_GEN_RHA)
     }
 
-
     # Optional patient filter
     if (!is.null(patients_ids_filter)) {
-      patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
+      patients_ids_table <- tbl(conn, patients_ids_table_name)
       t_ssr_b_d_quality_filtered <-
         t_ssr_b_d_quality_filtered |>
         dplyr::inner_join(
@@ -428,24 +429,25 @@ extract_stays_ssr <- function(
         dplyr::select(-NIR_ANO_17)
     }
 
-
     ssr_stays_list <- append(
       ssr_stays_list,
-      list(t_ssr_b_d_quality_filtered |> distinct())
+      list(t_ssr_b_d_quality_filtered |> dplyr::distinct())
     )
   }
 
   result <- purrr::reduce(ssr_stays_list, dplyr::union_all)
 
-
   if (!is.null(output_table_name)) {
     query <- result |> dbplyr::sql_render()
 
-    DBI::dbExecute(conn,glue::glue("CREATE TABLE {output_table_name} AS {query}"))
+    DBI::dbExecute(
+      conn,
+      glue::glue("CREATE TABLE {output_table_name} AS {query}")
+    )
     result <- invisible(NULL)
     message(glue::glue("Results saved to table {output_table_name} in Oracle."))
   }
-  if (connection_opened) {
+  if (connection_opened && is.null(output_table_name)) {
     DBI::dbDisconnect(conn)
   }
   result

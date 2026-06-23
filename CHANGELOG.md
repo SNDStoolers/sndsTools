@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   period are returned with `STATUS == "Alive"`.
 - Added notebook `notebooks/demo_death.R` - self-contained demo of
   `extract_deaths()` (in-memory DuckDB + fictitious data).
+- Added `extract_stays_ssr()` - extracts SSR (soins de réadaptation) stays diagnostics.
 
 ### Changed
 
