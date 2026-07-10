@@ -22,6 +22,7 @@
 #' les patients dont les identifiants sont dans patients_ids_filter sont
 #' extraites.
 #'
+#' @param conn DBI connection. Une connexion à la base de données Oracle.
 #' @param start_date Date La date de début de la période sur laquelle extraire
 #' les consultations.
 #' @param end_date Date La date de fin de la période sur laquelle extraire les
@@ -39,25 +40,16 @@
 #' médicaux des consultations à extraire. Si `ccam_codes_filter` n'est pas fourni, les
 #' consultations de tous les actes sont extraites. Les codes des actes médicaux
 #' d'après la CCAM est disponible sur [le site de cette dernière](https://www.ameli.fr/accueil-de-la-ccam/index.php).
-#' @param patient_ids_filter data.frame Optionnel. Un data.frame contenant les
+#' @param patients_ids_filter data.frame Optionnel. Un data.frame contenant les
 #' paires d'identifiants des patients pour lesquels les consultations doivent
 #' être extraites. Les colonnes de ce data.frame doivent être `BEN_IDT_ANO` et
 #' `BEN_NIR_PSA` (en majuscules). Les `BEN_NIR_PSA` doivent être tous les
-#' `BEN_NIR_PSA` associés aux `BEN_IDT_ANO` fournis. Si `patient_ids_filter`
+#' `BEN_NIR_PSA` associés aux `BEN_IDT_ANO` fournis. Si `patients_ids_filter`
 #' n'est pas fourni, les consultations de tous les patients sont extraites.
-#' @param output_table_name character Optionnel. Le nom de la table de sortie
-#' dans la base de données. Si `output_table_name` n'est pas fourni, une table
-#' de sortie intermédiaire est créée en R. Si `output_table_name` est fourni
-#' mais que cette table existe déjà dans oracle, le programme s'arrête avec un
-#' message d'erreur.
-#' @param conn dbConnection La connexion à la base de données. Si `conn` n'est
-#' pas fourni, une connexion à la base de données est initialisée. Par défaut,
-#' une connexion est établie avec oracle.
 #'
-#' @return Un data.frame contenant les consultations. Les colonnes sont les
-#' suivantes :
+#' @return Retourne une lazy table contenant les consultations. Les colonnes sont les suivantes :
 #' - `BEN_IDT_ANO` : Identifiant bénéficiaire anonymisé (seulement si
-#' patient_ids_filter non nul)
+#' patients_ids_filter non nul)
 #' - `NIR_ANO_17` : NIR anonymisé
 #' - `EXE_SOI_DTD` : Date de la délivrance
 #' - `ACT_COD` : Code prestation de l'acte
@@ -66,90 +58,77 @@
 #'
 #' @examples
 #' \dontrun{
+#' conn <- connect_oracle()
 #' # Extraction des consultations à l'hôpital en 2019 pour les spécialités 01 et 02
 #' extract_consultations_mcofcstc(
+#'   conn = conn,
 #'   start_date = as.Date("2019-01-01"),
 #'   end_date = as.Date("2019-12-31"),
 #'   spe_codes_filter = c("01", "02")
 #' )
 #' # Extraction de consultations à l'hôpital à partir de code CCAM
 #' extract_consultations_mcofcstc(
+#'   conn = conn,
 #'   start_date = as.Date("2019-01-01"),
 #'   end_date = as.Date("2019-12-31"),
 #'   ccam_codes_filter = c("ACQK001", "ACQH003")
 #' )
 #' # Extraction de consultations à l'hôpital à partir de code CCAM et de spécialités
 #' extract_consultations_mcofcstc(
+#'   conn = conn,
 #'   start_date = as.Date("2019-01-01"),
 #'   end_date = as.Date("2019-12-31"),
 #'   ccam_codes_filter = c("ACQK001", "ACQH003"),
 #'   spe_codes_filter = c("01", "02")
-#'
 #' )
 #' }
 #' @export
 #' @family extract
 # nolint end
 extract_consultations_mcofcstc <- function(
+  conn,
   start_date,
   end_date,
   spe_codes_filter = NULL,
   prestation_codes_filter = NULL,
   ccam_codes_filter = NULL,
-  patient_ids_filter = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  patients_ids_filter = NULL
 ) {
   stopifnot(
+    inherits(conn, "DBIConnection"),
     !is.null(start_date),
     !is.null(end_date),
     inherits(start_date, "Date"),
     inherits(end_date, "Date"),
     start_date <= end_date
   )
-  connection_opened <- FALSE
-  if (is.null((conn))) {
-    conn <- connect_oracle()
-    connection_opened <- TRUE
-  }
 
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  if (!is.null(output_table_name)) {
-    output_table_name_is_temp <- FALSE
-    check_output_table_name(output_table_name, conn)
-  } else {
-    output_table_name_is_temp <- TRUE
-    output_table_name <- glue::glue("TMP_DISP_{timestamp}")
-  }
-
   start_year <- lubridate::year(start_date)
   end_year <- lubridate::year(end_date)
   formatted_start_date <- format(start_date, "%Y-%m-%d")
   formatted_end_date <- format(end_date, "%Y-%m-%d")
 
-  if (!is.null(patient_ids_filter)) {
-    patient_ids_table_name <- "TMP_PATIENT_IDS"
-    try(DBI::dbRemoveTable(conn, patient_ids_table_name), silent = TRUE)
-    DBI::dbWriteTable(conn, patient_ids_table_name, patient_ids_filter)
+  # no ben_rng_gem in PMSI
+  if (!is.null(patients_ids_filter)) {
+    stopifnot(
+      identical(
+        names(patients_ids_filter),
+        c("BEN_IDT_ANO", "BEN_NIR_PSA")
+      ),
+      !anyDuplicated(patients_ids_filter)
+    )
+    patients_ids_table_name <- glue::glue("TMP_PATIENTS_IDS_{timestamp}")
+    DBI::dbWriteTable(
+      conn,
+      patients_ids_table_name,
+      patients_ids_filter,
+      temporary = TRUE,
+      overwrite = TRUE
+    )
   }
 
-  pb <- progress::progress_bar$new(
-    format = "Extracting :year1 (going from :year2 to :year3) \
-    [:bar] :percent in :elapsed (eta: :eta)",
-    total = (end_year - start_year + 1),
-    clear = FALSE,
-    width = 80
-  )
-  pb$tick(0)
-  for (year in start_year:end_year) {
-    pb$tick(
-      tokens = list(
-        year1 = year,
-        year2 = start_year,
-        year3 = end_year
-      )
-    )
-
+  consultations_by_year <- purrr::map(start_year:end_year, function(year) {
     formatted_year <- sprintf("%02d", year %% 100)
 
     date_condition <- glue::glue(
@@ -206,9 +185,9 @@ extract_consultations_mcofcstc <- function(
         dplyr::distinct()
     }
 
-    if (!is.null(patient_ids_filter)) {
-      patient_ids_table <- dplyr::tbl(conn, patient_ids_table_name)
-      query <- patient_ids_table |>
+    if (!is.null(patients_ids_filter)) {
+      patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
+      consultations_of_year <- patients_ids_table |>
         dplyr::inner_join(
           ace,
           by = c("BEN_NIR_PSA" = "NIR_ANO_17"),
@@ -224,43 +203,15 @@ extract_consultations_mcofcstc <- function(
           "EXE_SPE"
         )
     } else {
-      query <- ace
+      consultations_of_year <- ace
       selected_columns <-
         c("NIR_ANO_17", "EXE_SOI_DTD", "CCAM_COD", "ACT_COD", "EXE_SPE")
     }
-    query <- query |>
+    consultations_of_year |>
       dplyr::select(dplyr::all_of(selected_columns)) |>
       dplyr::distinct()
-
-    if (DBI::dbExistsTable(conn, output_table_name)) {
-      query <- dbplyr::sql_render(query)
-      DBI::dbExecute(
-        conn,
-        glue::glue("INSERT INTO {output_table_name} {query}")
-      )
-    } else {
-      query <- dbplyr::sql_render(query)
-      DBI::dbExecute(
-        conn,
-        glue::glue("CREATE TABLE {output_table_name} AS {query}")
-      )
-    }
-  }
-
-  if (output_table_name_is_temp) {
-    query <- dplyr::tbl(conn, output_table_name)
-    result <- dplyr::collect(query)
-    DBI::dbRemoveTable(conn, output_table_name)
-  } else {
-    result <- invisible(NULL)
-    message(
-      glue::glue("Results saved to table {output_table_name} in Oracle.")
-    )
-  }
-
-  if (connection_opened) {
-    DBI::dbDisconnect(conn)
-  }
+  })
+  result <- purrr::reduce(consultations_by_year, dplyr::union_all)
 
   result
 }

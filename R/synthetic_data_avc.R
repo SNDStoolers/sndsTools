@@ -16,7 +16,8 @@ create_mock_patients_ids <- function(n_patients = 100) {
 
   data.frame(
     BEN_IDT_ANO = seq_len(n_patients),
-    BEN_NIR_PSA = seq(from = 10000, length.out = n_patients)
+    BEN_NIR_PSA = seq(from = 10000, length.out = n_patients),
+    BEN_RNG_GEM = rep(1, n_patients)
   )
 }
 
@@ -300,6 +301,7 @@ create_mock_ir_imb_r <- function(
     ) |>
     dplyr::select(
       BEN_NIR_PSA,
+      BEN_RNG_GEM,
       IMB_ALD_DTD,
       IMB_ALD_DTF,
       IMB_ALD_NUM,

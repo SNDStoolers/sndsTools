@@ -70,8 +70,8 @@ DBI::dbListTables(conn)
 
 ```{r}
 consultations_df <- extract_consultations_erprsf(
-  conn = conn,
-  start_date = as.Date("2011-01-01"),
+  conn,
+  start_date = as.Date("2012-01-01"),
   end_date = as.Date("2019-12-31"),
   pse_spe_filter = c(48)
 ) |> dplyr::collect()

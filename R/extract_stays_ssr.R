@@ -101,6 +101,7 @@ build_ssr_da_conditions <- function(cim10_codes = NULL) {
 #' donc fréquent d'avoir des doublons concernant les colonnes des tables B et D
 #' dans les lignes de la table résultante.
 #'
+#' @param conn DBI connection. Une connexion à la base de données Oracle.
 #' @param start_date Date La date de début de la période sur laquelle extraire
 #' les séjours.
 #' @param end_date Date La date de fin de la période sur laquelle
@@ -128,14 +129,13 @@ build_ssr_da_conditions <- function(cim10_codes = NULL) {
 #' être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis. Si
 #' `patients_ids` n'est pas fourni, les consultations de tous les patients sont
 #' extraites. Défaut à `NULL`.
-#' @param output_table_name character Le nom de la table de sortie dans la base
-#' de données. Si `output_table_name` n'est pas fourni, une table de sortie
-#' intermédiaire est créée. Défaut à `NULL`.
-#' @param conn dbConnection La connexion à la base de données. Si `conn` n'est
-#' pas fourni, une connexion à la base de données est initialisée. Défaut à
-#' `NULL`.
+#' @param sup_columns character vector (Optionnel). Colonnes supplémentaires à
+#'   inclure dans le résultat. Défaut à `NULL`.
 #'
-#' @return Un data.frame contenant les séjours de soins de réadaptation. Les colonnes sont les
+#' @return Retourne une lazy table contenant les séjours de soins de réadaptation.
+#'   les séjours de soins de réadaptation. Si `output_table_name` est fourni, sauvegarde les
+#'   résultats dans la table spécifiée dans Oracle et retourne `NULL` de manière
+#'   invisible. Les colonnes sont les
 #' suivantes :
 #- `BEN_IDT_ANO` : Identifiant bénéficiaire anonymisé (présent
 #'   uniquement si `patients_ids_filter` est renseigné ; remplace
@@ -168,22 +168,26 @@ build_ssr_da_conditions <- function(cim10_codes = NULL) {
 #'   (présent avant 2023 uniquement).
 #'
 #' @examples \dontrun{
-#' # Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
-#' extract_stays_ssr(
-#'  start_date = as.Date("2019-01-01"),
-#'  end_date = as.Date("2019-12-31"),
-#'  dp_cim10_codes = c("A", "B")
-#' )
-#' # Extrait tous les séjours en 2019
-#' extract_stays_ssr(
-#'  start_date = as.Date("2019-01-01"),
-#'  end_date = as.Date("2019-12-31")
-#' )
-#' }
+ #' conn <- connect_oracle()
+ #' # Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
+ #' extract_stays_ssr(
+ #'  conn = conn,
+ #'  start_date = as.Date("2019-01-01"),
+ #'  end_date = as.Date("2019-12-31"),
+ #'  dp_cim10_codes_filter = c("A", "B")
+ #' )
+ #' # Extrait tous les séjours en 2019
+ #' extract_stays_ssr(
+ #'  conn = conn,
+ #'  start_date = as.Date("2019-01-01"),
+ #'  end_date = as.Date("2019-12-31")
+ #' )
+ #' }
 #' @export
 #' @family extract
 # nolint end
 extract_stays_ssr <- function(
+  conn,
   start_date,
   end_date,
   dp_cim10_codes_filter = NULL,
@@ -191,10 +195,10 @@ extract_stays_ssr <- function(
   and_da_with_other_codes_filter = FALSE,
   da_cim10_codes_filter = NULL,
   patients_ids_filter = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  sup_columns = NULL
 ) {
   stopifnot(
+    inherits(conn, "DBIConnection"),
     !is.null(start_date),
     !is.null(end_date),
     inherits(start_date, "Date"),
@@ -202,16 +206,7 @@ extract_stays_ssr <- function(
     start_date <= end_date
   )
 
-  connection_opened <- FALSE
-  if (is.null((conn))) {
-    conn <- connect_oracle()
-    connection_opened <- TRUE
-  }
-
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  if (!is.null(output_table_name)) {
-    check_output_table_name(output_table_name, conn)
-  }
 
   if (!is.null(patients_ids_filter)) {
     stopifnot(
@@ -219,7 +214,13 @@ extract_stays_ssr <- function(
       !anyDuplicated(patients_ids_filter)
     )
     patients_ids_table_name <- glue::glue("TMP_PATIENTS_IDS_{timestamp}")
-    DBI::dbWriteTable(conn, patients_ids_table_name, patients_ids_filter)
+    DBI::dbWriteTable(
+      conn,
+      patients_ids_table_name,
+      patients_ids_filter,
+      temporary = TRUE,
+      overwrite = TRUE
+    )
   }
 
   start_year <- lubridate::year(start_date)
@@ -227,25 +228,7 @@ extract_stays_ssr <- function(
   formatted_start_date <- format(start_date, "%Y-%m-%d")
   formatted_end_date <- format(end_date, "%Y-%m-%d")
 
-  ssr_stays_list <- list()
-
-  pb <- progress::progress_bar$new(
-    format = "Extracting :year1 (going from :year2 to :year3) \
-    [:bar] :percent in :elapsed (eta: :eta)",
-    total = (end_year - start_year + 1),
-    clear = FALSE,
-    width = 80
-  )
-  pb$tick(0)
-  for (year in start_year:end_year) {
-    pb$tick(
-      tokens = list(
-        year1 = year,
-        year2 = start_year,
-        year3 = end_year
-      )
-    )
-
+  ssr_stays_by_year <- purrr::map(start_year:end_year, function(year) {
     formatted_year <- sprintf("%02d", year %% 100)
 
     t_ssr_b <- dplyr::tbl(conn, glue::glue("T_SSR{formatted_year}B"))
@@ -429,26 +412,10 @@ extract_stays_ssr <- function(
         dplyr::select(-NIR_ANO_17)
     }
 
-    ssr_stays_list <- append(
-      ssr_stays_list,
-      list(t_ssr_b_d_quality_filtered |> dplyr::distinct())
-    )
-  }
+    t_ssr_b_d_quality_filtered |> dplyr::distinct()
+  })
 
-  result <- purrr::reduce(ssr_stays_list, dplyr::union_all)
+  result <- purrr::reduce(ssr_stays_by_year, dplyr::union_all)
 
-  if (!is.null(output_table_name)) {
-    query <- result |> dbplyr::sql_render()
-
-    DBI::dbExecute(
-      conn,
-      glue::glue("CREATE TABLE {output_table_name} AS {query}")
-    )
-    result <- invisible(NULL)
-    message(glue::glue("Results saved to table {output_table_name} in Oracle."))
-  }
-  if (connection_opened && is.null(output_table_name)) {
-    DBI::dbDisconnect(conn)
-  }
   result
 }

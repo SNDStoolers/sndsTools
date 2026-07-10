@@ -67,102 +67,41 @@ test_that("check_output_table_name échoue si la table existe déjà", {
   )
 })
 
-# -----------------------------------------------------------------------------
-# save_or_return_result() accepte indifféremment un data.frame (déjà collecté)
-# ou une tbl_lazy (requête dbplyr non exécutée), et centralise le collect /
-# l'écriture en base.
-# -----------------------------------------------------------------------------
-
-setup_sor_source <- function(conn) {
-  src <- data.frame(
-    BEN_IDT_ANO = c("A", "B"),
-    CIM_COD = c("G20", "I50"),
-    stringsAsFactors = FALSE
-  )
-  DBI::dbWriteTable(conn, "TMP_SOR_SRC", src, overwrite = TRUE)
-  invisible(src)
-}
-
-test_that("save_or_return_result collecte une tbl_lazy (output NULL)", {
-  conn <- connect_synthetic_snds()
-  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
-  src <- setup_sor_source(conn)
-  on.exit(
-    try(DBI::dbRemoveTable(conn, "TMP_SOR_SRC"), silent = TRUE),
-    add = TRUE,
-    after = FALSE
-  )
-
-  lazy <- dplyr::tbl(conn, "TMP_SOR_SRC")
-  result <- save_or_return_result(lazy, output_table_name = NULL, conn = conn)
-
-  expect_s3_class(result, "data.frame")
-  expect_false(inherits(result, "tbl_lazy"))
-  expect_setequal(result$BEN_IDT_ANO, src$BEN_IDT_ANO)
-})
-
-test_that("save_or_return_result matérialise via CREATE TABLE AS", {
-  conn <- connect_synthetic_snds()
-  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
-  setup_sor_source(conn)
-  on.exit(
-    try(DBI::dbRemoveTable(conn, "TMP_SOR_SRC"), silent = TRUE),
-    add = TRUE,
-    after = FALSE
-  )
-
-  output_table_name <- "TMP_SOR_OUT"
-  if (DBI::dbExistsTable(conn, output_table_name)) {
-    DBI::dbRemoveTable(conn, output_table_name)
-  }
-  on.exit(
-    try(DBI::dbRemoveTable(conn, output_table_name), silent = TRUE),
-    add = TRUE,
-    after = FALSE
-  )
-
-  lazy <- dplyr::tbl(conn, "TMP_SOR_SRC") |>
-    dplyr::filter(BEN_IDT_ANO == "A")
-  result <- save_or_return_result(lazy, output_table_name, conn)
-
-  expect_null(result)
-  expect_true(DBI::dbExistsTable(conn, output_table_name))
-  saved <- dplyr::tbl(conn, output_table_name) |> dplyr::collect()
-  expect_equal(saved$BEN_IDT_ANO, "A")
-  expect_equal(saved$CIM_COD, "G20")
-})
-
-test_that("save_or_return_result renvoie le data.frame (output NULL)", {
+test_that("write_oracle_by_batch écrit correctement les données par batch", {
   conn <- connect_synthetic_snds()
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
-  df <- data.frame(x = 1:2, y = c("a", "b"), stringsAsFactors = FALSE)
-  result <- save_or_return_result(df, output_table_name = NULL, conn = conn)
-  expect_identical(result, df)
-})
+  df <- dplyr::tibble(
+    FLX_DIS_DTD = seq.Date(
+      from = as.Date("2020-01-01"),
+      to = as.Date("2020-12-31"),
+      by = "month"
+    ),
+    value = 1:12
+  ) |>
+    dplyr::mutate(FLX_DIS_DTD = as.Date(FLX_DIS_DTD))
+  conn |>
+    dplyr::copy_to(
+      df,
+      "TEMP_LAZY_TABLE",
+      temporary = TRUE,
+      overwrite = TRUE
+    )
+  lazy_df <- dplyr::tbl(conn, "TEMP_LAZY_TABLE")
 
-test_that("save_or_return_result écrit un data.frame avec dbWriteTable", {
-  conn <- connect_synthetic_snds()
-  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
+  output_table_name <- "TEST_BATCH_TABLE"
 
-  output_table_name <- "TMP_SOR_DF_OUT"
-  if (DBI::dbExistsTable(conn, output_table_name)) {
-    DBI::dbRemoveTable(conn, output_table_name)
-  }
-  on.exit(
-    try(DBI::dbRemoveTable(conn, output_table_name), silent = TRUE),
-    add = TRUE,
-    after = FALSE
+  write_oracle_table_by_batch(
+    conn,
+    lazy_df,
+    output_table_name,
+    start_date = as.Date("2020-01-01"),
+    end_date = as.Date("2020-12-31"),
+    batch_colname = "FLX_DIS_DTD",
+    batch_by = "month"
   )
 
-  df <- data.frame(x = 1:2, y = c("a", "b"), stringsAsFactors = FALSE)
-  result <- save_or_return_result(df, output_table_name, conn)
-
-  expect_null(result)
-  expect_true(DBI::dbExistsTable(conn, output_table_name))
-  saved <- dplyr::tbl(conn, output_table_name) |>
-    dplyr::collect() |>
-    dplyr::arrange(x)
-  expect_equal(saved$x, df$x)
-  expect_equal(saved$y, df$y)
+  result <- DBI::dbReadTable(conn, output_table_name)
+  expect_equal(nrow(result), nrow(lazy_df |> collect()))
+  expect_equal(result |> dplyr::pull(value), lazy_df |> dplyr::pull(value))
 })

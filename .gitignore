@@ -1,17 +1,19 @@
+# R package stuff
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 docs
 man
-
 *.tar.gz
 # github https token
 .github_token
+# editor files
 .vscode/
 .idea/
-# mode for roo code (open source agentic AI)
-.roomodes
+# AI files
+AGENTS.md
+# concatenated file for use on portail CNAM 
 sndsTools.R
 # macOS Finder metadata
 .DS_Store

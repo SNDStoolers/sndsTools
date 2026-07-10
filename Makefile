@@ -1,40 +1,36 @@
 # check package
 check:
 	Rscript -e 'devtools::check(error_on="error")'
-
 # Build the package website
 site:
 	Rscript -e 'roxygen2::roxygenise()'
 	Rscript -e 'pkgdown::clean_site();devtools::load_all();pkgdown::build_site()'
-
+# Build the package website (only modified files are rebuilt)
 site-lazy:
 	Rscript -e 'pkgdown::build_site(lazy = TRUE)'
-
+# Build one vignette: usage make vignette FILE=vignettes/01-setup.Rmd
+vignette:
+	Rscript -e 'devtools::load_all();devtools::build_rmd("${FILE}")'
 # install the package
 install:
 	Rscript -e 'devtools::install(upgrade=FALSE)'
-
 # Build the package documentation
 docs-r:
 	Rscript -e 'pkgload::load_all();devtools::document()'
-
 # Build the package sources as .tar.gz
 build:
 	Rscript -e 'devtools::install(upgrade=FALSE);devtools::build()'
 	mv ../sndsTools_* .
-
 # Lint the package
 lint:
 	Rscript -e 'lintr::lint_package()'
-
-# Lint a file : usage make lint-file FILE=R/01-setup.R
+# Lint a file: usage make lint-file FILE=R/01-setup.R
 lint-file:
 	Rscript -e 'lintr::lint("${FILE}")'
-
 # Style the package
 style:
 	air format .
-# Style a file : usage make style-file FILE=R/01-setup.R
+# Style a file: usage make style-file FILE=R/01-setup.R
 style-file:
 	air format ${FILE}
 # Test the package
@@ -50,6 +46,5 @@ test-file:
 mv-binary:
 	Rscript -e 'file.copy(from="~/Citrix_documents/IMPORT/sndsTools_0.0.0.1.tar.gz", to="~/sasdata1/prg/", overwrite = TRUE)'
 # Concatenate all R functions into a single file to move into the CNAM server
-# Should only be used in the CI
-concat-r-files:
+concat:
 	cat R/* > sndsTools.R

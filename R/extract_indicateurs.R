@@ -3,7 +3,7 @@
 #' Produit les listes de codes pour extraire des données SNDS
 #'
 #' @export
-#' @family ij
+#' @family extract
 snds_codes <- function() {
   all_codes <- list()
   # Codes prestations
@@ -66,14 +66,14 @@ snds_codes <- function() {
   colnames(df_filtre_regime_general) <- c("RGM_COD", "RGM_GRG_COD")
   all_codes$main_regime_codes <- df_filtre_regime_general
 
-  df_filtre_regime_alsace_moselle <- stack(list(
+  df_filtre_regime_alsace <- stack(list(
     "10" = c(
       206, # SALARIE DU REGIME ALSACE-MOSELLE POUR COMPLEMENT CRPCEN
       207 # RETRAITE DU REGIME ALSACE MOSELLE POUR PS  )
     )
   ))
-  colnames(df_filtre_regime_alsace_moselle) <- c("RGM_COD", "RGM_GRG_COD")
-  all_codes$alsace_moselle_regime_codes <- df_filtre_regime_alsace_moselle
+  colnames(df_filtre_regime_alsace) <- c("RGM_COD", "RGM_GRG_COD")
+  all_codes$alsace_moselle_regime_codes <- df_filtre_regime_alsace
 
   all_codes
 }
@@ -94,6 +94,8 @@ snds_codes <- function() {
 #'
 #' Les données extraites sont sauvegardées dans une table Oracle temporaire.
 #'
+#' @param conn DBI connection. Une connexion à la base de données
+#' Oracle.
 #' @param start_date Date. La date de début de la période des IJ à extraire.
 #' @param end_date Date. La date de fin de la période des IJ à extraire.
 #' @param exe_dtd_lag_months Integer (Optionnel). Le nombre maximum de mois de
@@ -105,12 +107,6 @@ snds_codes <- function() {
 #' `BEN_IDT_ANO`, `BEN_NIR_PSA` et `BEN_RNG_GEM`. Les BEN_NIR_PSA doivent être
 #' tous les BEN_NIR_PSA associés
 #' aux BEN_IDT_ANO fournis. Défaut à `NULL`.
-#' @param output_table_name Character (Optionnel). Si fourni, les résultats
-#' seront sauvegardés dans une table portant ce nom dans la base de données au
-#' lieu d'être retournés sous forme de lazy table. Si cette table existe déjà,
-#' le programme s'arrête avec un message d'erreur. Défaut à `NULL`.
-#' @param conn DBI connection (Optionnel). Une connexion à la base de données
-#' Oracle. Par défaut, une connexion est établie automatiquement.
 #' @param sup_columns Vecteur de noms de colonnes (Optionnel).
 #' Ajoute ces colonnes à la table créée. Défaut à `NULL`.
 #'
@@ -128,7 +124,9 @@ snds_codes <- function() {
 #' @examples
 #' \dontrun{
 #' # Extraction des IJ pour l'année 2020
+#' conn <- connect_oracle()
 #' extract_ij_erprsf(
+#'   conn = conn,
 #'   start_date = as.Date("2020-01-01"),
 #'   end_date = as.Date("2020-12-31")
 #' )
@@ -141,14 +139,14 @@ snds_codes <- function() {
 #' [`extract_consultations_erprsf()`] pour la fonction sous-jacente d'extraction
 #'
 #' @export
+#' @family extract
 # nolint end
 extract_ij_erprsf <- function(
+  conn,
   start_date,
   end_date,
   exe_dtd_lag_months = 6,
   patients_ids_filter = NULL,
-  output_table_name = NULL,
-  conn = NULL,
   sup_columns = NULL
 ) {
   all_codes <- snds_codes()
@@ -178,13 +176,13 @@ extract_ij_erprsf <- function(
   logger::log_info("Extracting RAW IJ from ER_PRSRF.")
 
   extracted_consultation_query <- extract_consultations_erprsf(
+    conn = conn,
     start_date = start_date,
     end_date = end_date,
     pse_spe_filter = NULL,
     prestation_filter = ij_atmp_prs_nat_ref_codes,
     sup_columns = c(ij_sup_columns, required_filter_columns),
-    patients_ids_filter = patients_ids_filter,
-    conn = conn
+    patients_ids_filter = patients_ids_filter
   )
 
   # Régime général uniquement
@@ -237,20 +235,5 @@ extract_ij_erprsf <- function(
       ))
     )
 
-  if (!is.null(output_table_name)) {
-    extracted_consultation_query |>
-      dplyr::compute(name = output_table_name)
-
-    logger::log_info(glue::glue(
-      "Filtered table on main regimes saved as {output_table_name}. End of raw IJ extraction." # nolint
-    ))
-
-    output_table_name
-  } else {
-    logger::log_info(glue::glue(
-      "Filtered table on main regimes returned as a tbl lazy. End of raw IJ extraction." # nolint
-    ))
-
-    extracted_consultation_query
-  }
+  extracted_consultation_query
 }

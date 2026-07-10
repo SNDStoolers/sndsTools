@@ -1,91 +1,55 @@
 require(dplyr)
 
-fake_dcir_join_keys <- data.frame(
-  DCT_ORD_NUM = c(1, 2, 3, 4, 5, 6),
-  FLX_DIS_DTD = as.Date(
-    c(
-      "2019-02-10",
-      "2019-02-02",
-      "2019-02-03",
-      "2019-02-04",
-      "2019-03-01",
-      "2019-03-02"
-    )
-  ),
-  FLX_EMT_ORD = c(1, 1, 1, 1, 1, 2),
-  FLX_EMT_NUM = c(1, 1, 1, 1, 1, 2),
-  FLX_EMT_TYP = c(1, 1, 1, 1, 1, 2),
-  FLX_TRT_DTD = as.Date(
-    c(
-      "2019-02-10",
-      "2019-02-02",
-      "2019-02-03",
-      "2019-02-04",
-      "2019-03-01",
-      "2019-03-02"
-    )
-  ),
-  ORG_CLE_NUM = c(1, 1, 1, 1, 1, 2),
-  PRS_ORD_NUM = c(1, 1, 1, 1, 1, 2),
-  REM_TYP_AFF = c(1, 1, 1, 1, 1, 2)
-)
-
-fake_er_prs_f <- data.frame(
-  BEN_NIR_PSA = c(11, 12, 13, 15, 13, 16),
-  EXE_SOI_DTD = as.Date(
-    c(
-      "2019-01-10",
-      "2019-01-02",
-      "2019-01-03",
-      "2019-01-04",
-      "2019-02-01",
-      "2019-02-02"
-    )
-  ),
-  EXE_SOI_DTF = as.Date(
-    c(
-      "2019-01-10",
-      "2019-01-02",
-      "2019-01-03",
-      "2019-01-04",
-      "2019-02-01",
-      "2019-02-02"
-    )
-  ),
-  PSP_SPE_COD = c("01", "02", "03", "04", "05", "06"),
-  DPN_QLF = c(0, 0, 0, 0, 0, 0),
-  CPL_MAJ_TOP = c(0, 0, 0, 1, 2, 0),
-  BEN_CDI_NIR = c("00", "03", "04", "00", "03", "00"),
-  PRS_NAT_REF = c(
-    "3336",
-    "3336",
-    "3317",
-    "3336",
-    "3351",
-    "3317"
+# nolint start
+fake_dcir_join_keys <- tibble::tribble(
+  ~DCT_ORD_NUM , ~FLX_EMT_ORD , ~FLX_EMT_NUM , ~FLX_EMT_TYP , ~ORG_CLE_NUM , ~PRS_ORD_NUM , ~REM_TYP_AFF , ~FLX_DIS_DTD , ~FLX_TRT_DTD ,
+             1 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2019-02-10" , "2019-02-10" ,
+             2 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2019-02-02" , "2019-02-02" ,
+             3 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2019-02-03" , "2019-02-03" ,
+             4 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2019-02-04" , "2019-02-04" ,
+             5 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2019-03-01" , "2019-03-01" ,
+             6 ,            2 ,            2 ,            2 ,            2 ,            2 ,            2 , "2019-03-02" , "2019-03-02"
+) |>
+  dplyr::mutate(
+    across(c(FLX_DIS_DTD, FLX_TRT_DTD), as.Date)
   )
-) |>
-  cbind(fake_dcir_join_keys)
 
-fake_er_ucd_f <- data.frame(
-  UCD_TOP_UCD = c(0, 1, 9, 2, 3, 4),
-  UCD_UCD_COD = c(
-    "9231824",
-    "9231825",
-    "9231824",
-    "9231824",
-    "9231827",
-    "9231827"
-  ),
-  UCD_DLV_NBR = c(1, 1, 1, 1, 1, 1)
+fake_er_prs_f <- tibble::tribble(
+  ~BEN_NIR_PSA , ~BEN_RNG_GEM , ~EXE_SOI_DTD , ~EXE_SOI_DTF , ~PSP_SPE_COD , ~DPN_QLF , ~CPL_MAJ_TOP , ~BEN_CDI_NIR , ~PRS_NAT_REF ,
+            11 ,            1 , "2019-01-10" , "2019-01-10" , "01"         ,        0 ,            0 , "00"         , "3336"       ,
+            12 ,            1 , "2019-01-02" , "2019-01-02" , "02"         ,        0 ,            0 , "03"         , "3336"       ,
+            13 ,            1 , "2019-01-03" , "2019-01-03" , "03"         ,        0 ,            0 , "04"         , "3317"       ,
+            15 ,            1 , "2019-01-04" , "2019-01-04" , "04"         ,        0 ,            1 , "00"         , "3336"       ,
+            13 ,            1 , "2019-02-01" , "2019-02-01" , "05"         ,        0 ,            2 , "03"         , "3351"       ,
+            16 ,            1 , "2019-02-02" , "2019-02-02" , "06"         ,        0 ,            0 , "00"         , "3317"
 ) |>
-  cbind(fake_dcir_join_keys)
+  dplyr::bind_cols(fake_dcir_join_keys) |>
+  dplyr::mutate(
+    across(c(EXE_SOI_DTD, EXE_SOI_DTF), as.Date)
+  )
 
-fake_er_ete_f <- data.frame(
-  ETE_NUM = c(11, 12, 13, 14, 15, 15),
-  ETE_IND_TAA = c(10, 10, 10, 1, 1, 10)
+fake_er_ucd_f <- tibble::tribble(
+  ~UCD_TOP_UCD , ~UCD_UCD_COD , ~UCD_DLV_NBR ,
+             0 , "9231824"    ,            1 ,
+             1 , "9231825"    ,            1 ,
+             9 , "9231824"    ,            1 ,
+             2 , "9231824"    ,            1 ,
+             3 , "9231827"    ,            1 ,
+             4 , "9231827"    ,            1
 ) |>
-  cbind(fake_dcir_join_keys)
+  dplyr::bind_cols(fake_dcir_join_keys)
+
+fake_er_ete_f <- tibble::tribble(
+  ~ETE_NUM , ~ETE_IND_TAA ,
+        11 ,           10 ,
+        12 ,           10 ,
+        13 ,           10 ,
+        14 ,            1 ,
+        15 ,            1 ,
+        15 ,           10
+) |>
+  dplyr::bind_cols(fake_dcir_join_keys)
+# nolint end
 
 conn <- connect_synthetic_snds()
 on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
@@ -99,22 +63,20 @@ test_that("extract_drugs_erucdf respects UCD filter", {
 
   # Test with specific UCD filter (only J05 codes)
   result_with_filter <- extract_drugs_erucdf(
+    conn,
     start_date = start_date,
     end_date = end_date,
     ucd_codes_filter = c("9231824"),
-    output_table_name = "RESULT_WITH_FILTER",
-    dis_dtd_lag_months = 1,
-    conn = conn
-  )
-
-  result_data_with_filter <- dplyr::tbl(conn, "RESULT_WITH_FILTER") |>
+    dis_dtd_lag_months = 1
+  ) |>
     dplyr::collect()
 
   # test structure of the result
   expect_equal(
-    colnames(result_data_with_filter),
+    colnames(result_with_filter),
     c(
       "BEN_NIR_PSA",
+      "BEN_RNG_GEM",
       "EXE_SOI_DTD",
       "EXE_SOI_DTF",
       "PRS_NAT_REF",
@@ -123,6 +85,6 @@ test_that("extract_drugs_erucdf respects UCD filter", {
       "UCD_DLV_NBR"
     )
   )
-  # test that only two rows are present
-  expect_equal(nrow(result_data_with_filter), 2)
+  # test that only three rows are present (three matching UCD codes in synthetic data)
+  expect_equal(nrow(result_with_filter), 3)
 })
