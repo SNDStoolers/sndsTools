@@ -22,9 +22,7 @@ extract_consultations_mcofcstc(
 
 - conn:
 
-  dbConnection La connexion à la base de données. Si `conn` n'est pas
-  fourni, une connexion à la base de données est initialisée. Par
-  défaut, une connexion est établie avec oracle.
+  DBI connection. Une connexion à la base de données Oracle.
 
 - start_date:
 
@@ -119,20 +117,24 @@ Other extract:
 
 ``` r
 if (FALSE) { # \dontrun{
+conn <- connect_oracle()
 # Extraction des consultations à l'hôpital en 2019 pour les spécialités 01 et 02
 extract_consultations_mcofcstc(
+  conn = conn,
   start_date = as.Date("2019-01-01"),
   end_date = as.Date("2019-12-31"),
   spe_codes_filter = c("01", "02")
 )
 # Extraction de consultations à l'hôpital à partir de code CCAM
 extract_consultations_mcofcstc(
+  conn = conn,
   start_date = as.Date("2019-01-01"),
   end_date = as.Date("2019-12-31"),
   ccam_codes_filter = c("ACQK001", "ACQH003")
 )
 # Extraction de consultations à l'hôpital à partir de code CCAM et de spécialités
 extract_consultations_mcofcstc(
+  conn = conn,
   start_date = as.Date("2019-01-01"),
   end_date = as.Date("2019-12-31"),
   ccam_codes_filter = c("ACQK001", "ACQH003"),

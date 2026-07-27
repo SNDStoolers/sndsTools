@@ -139,8 +139,10 @@ if (FALSE) { # \dontrun{
 start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-01-03")
 atc_cod_starts_with <- c("N04A")
+conn <- connect_oracle()
 
 dispenses <- extract_drugs_erphaf(
+  conn = conn,
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with = atc_cod_starts_with

@@ -182,8 +182,10 @@ c'est-à-dire pour dis_dtd_lag_months = 6.</p>
 <span class="r-in"><span><span class="va">start_date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2010-01-01"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">end_date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2010-01-03"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">atc_cod_starts_with</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"N04A"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="connect_oracle.html">connect_oracle</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">dispenses</span> <span class="op">&lt;-</span> <span class="fu">extract_drugs_erphaf</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  conn <span class="op">=</span> <span class="va">conn</span>,</span></span>
 <span class="r-in"><span>  start_date <span class="op">=</span> <span class="va">start_date</span>,</span></span>
 <span class="r-in"><span>  end_date <span class="op">=</span> <span class="va">end_date</span>,</span></span>
 <span class="r-in"><span>  atc_cod_starts_with <span class="op">=</span> <span class="va">atc_cod_starts_with</span></span></span>

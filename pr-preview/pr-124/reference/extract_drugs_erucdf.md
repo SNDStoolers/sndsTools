@@ -120,8 +120,10 @@ if (FALSE) { # \dontrun{
 start_date <- as.Date("2019-01-01")
 end_date <- as.Date("2019-12-31")
 ucd_codes <- c("0000009419723")
+conn <- connect_oracle()
 
 result <- extract_drugs_erucdf(
+  conn = conn,
   start_date = start_date,
   end_date = end_date,
   ucd_codes_filter = ucd_codes

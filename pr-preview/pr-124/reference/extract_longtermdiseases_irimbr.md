@@ -27,6 +27,10 @@ extract_longtermdiseases_irimbr(
 
 ## Arguments
 
+- conn:
+
+  DBI connection. Une connexion à la base de données Oracle.
+
 - start_date:
 
   Date La date de début de la période sur laquelle extraire les ALD
@@ -116,9 +120,10 @@ if (FALSE) { # \dontrun{
 start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-01-03")
 icd_cod_starts_with <- c("G20")
+conn <- connect_oracle()
 
 long_term_disease <- extract_longtermdiseases_irimbr(
-  conn,
+  conn = conn,
   start_date = start_date,
   end_date = end_date,
   icd_cod_starts_with = icd_cod_starts_with

@@ -23,6 +23,10 @@ extract_stays_mcob(
 
 ## Arguments
 
+- conn:
+
+  DBI connection. Une connexion à la base de données Oracle.
+
 - start_date:
 
   Date La date de début de la période sur laquelle extraire les séjours.
@@ -185,16 +189,17 @@ Other extract:
 
 ``` r
 if (FALSE) { # \dontrun{
+conn <- connect_oracle()
 # Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
 extract_stays_mcob(
- conn,
+ conn = conn,
  start_date = as.Date("2019-01-01"),
  end_date = as.Date("2019-12-31"),
  dp_cim10_codes_filter = c("A", "B")
 )
 # Extrait tous les séjours en 2019
 extract_stays_mcob(
- conn,
+ conn = conn,
  start_date = as.Date("2019-01-01"),
  end_date = as.Date("2019-12-31")
 )
