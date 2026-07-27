@@ -74,13 +74,12 @@ for (i in seq_along(start_dates)) {
   dplyr_table_name <- glue::glue("dplyr_{formatted_study_dates}")
   time_0_dplyr <- Sys.time()
   extract_drugs_erphaf(
+    conn,
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = atc_vitamine_d_7,
     cip13_cod_filter = cip_vitamine_d_b,
-    output_table_name = dplyr_table_name,
-    sup_columns = sup_columns,
-    conn = conn
+    sup_columns = sup_columns
   )
   time_taken_dplyr <- as.numeric(lubridate::as.duration(Sys.time() - time_0_dplyr), "seconds")
   n_rows_dplyr <- DBI::dbGetQuery(conn, glue::glue("select count(*) from {dplyr_table_name}"))
@@ -94,12 +93,11 @@ for (i in seq_along(start_dates)) {
   sql_table_name <- glue::glue("sql_{formatted_study_dates}")
   time_0_sql <- Sys.time()
   sql_extract_drugs_erphaf(
+    conn,
     start_date = start_date,
     end_date = end_date,
     atc_cod_starts_with_filter = atc_vitamine_d_7,
-    cip13_cod_filter = cip_vitamine_d_b,
-    output_table_name = sql_table_name,
-    conn = conn
+    cip13_cod_filter = cip_vitamine_d_b
   )
   time_taken_sql <- as.numeric(lubridate::as.duration(Sys.time() - time_0_sql), "seconds")
   n_rows_sql <- DBI::dbGetQuery(conn, glue::glue("select count(*) from {sql_table_name}"))
@@ -188,13 +186,12 @@ for (i in seq_along(start_dates)) {
     dplyr_table_name <- glue::glue("dplyr_{formatted_study_dates}")
     time_0_dplyr <- Sys.time()
     extract_drugs_erphaf(
+      conn,
       start_date = start_date,
       end_date = end_date,
       atc_cod_starts_with_filter = atc_vitamine_d_7,
       cip13_cod_filter = cip_vitamine_d_b,
-      output_table_name = dplyr_table_name,
-      sup_columns = sup_columns,
-      conn = conn
+      sup_columns = sup_columns
     )
     time_taken_dplyr <- as.numeric(lubridate::as.duration(Sys.time() - time_0_dplyr), "seconds")
     df_dplyr <- DBI::dbGetQuery(conn, glue::glue("select * from {dplyr_table_name}"))
@@ -232,7 +229,7 @@ for (i in seq_along(start_dates)) {
 library(sndsTools)
 ```
 
-    ## INFO [2026-07-10 15:26:00] Charge le package sndsTools.
+    ## INFO [2026-07-27 12:32:48] Charge le package sndsTools.
     ## Variables d'environment TZ et ORA_SDTZ fixées à 'Europe/Paris.'
 
 ``` r

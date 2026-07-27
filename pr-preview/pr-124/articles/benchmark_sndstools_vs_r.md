@@ -30,11 +30,11 @@ conn <- connect_oracle()
 
 t0 = Sys.time()
 output_quetiapine_sndstools <- extract_drugs_erphaf(
+  conn,
   start_date = as.Date(date_deb),
   end_date = as.Date(date_fin),
   atc_cod_starts_with_filter = atc_quetiapine,
-  dis_dtd_lag_months = 6, # pour requêter les liquidations arrivant après la date de soin.
-  conn = conn
+  dis_dtd_lag_months = 6 # pour requêter les liquidations arrivant après la date de soin.
 )
 
 timed_sndsTool = difftime(Sys.time(), t0, units = "secs")

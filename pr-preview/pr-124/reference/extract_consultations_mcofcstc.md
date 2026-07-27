@@ -8,18 +8,23 @@ start_date et end_date sont extraites.
 
 ``` r
 extract_consultations_mcofcstc(
+  conn,
   start_date,
   end_date,
   spe_codes_filter = NULL,
   prestation_codes_filter = NULL,
   ccam_codes_filter = NULL,
-  patients_ids_filter = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  patients_ids_filter = NULL
 )
 ```
 
 ## Arguments
+
+- conn:
+
+  dbConnection La connexion à la base de données. Si `conn` n'est pas
+  fourni, une connexion à la base de données est initialisée. Par
+  défaut, une connexion est établie avec oracle.
 
 - start_date:
 
@@ -64,24 +69,10 @@ extract_consultations_mcofcstc(
   fournis. Si `patients_ids_filter` n'est pas fourni, les consultations
   de tous les patients sont extraites.
 
-- output_table_name:
-
-  character Optionnel. Si fourni, les résultats seront sauvegardés dans
-  une table portant ce nom dans la base de données au lieu d'être
-  retournés sous forme de lazy table. Défaut à `NULL`.
-
-- conn:
-
-  dbConnection La connexion à la base de données. Si `conn` n'est pas
-  fourni, une connexion à la base de données est initialisée. Par
-  défaut, une connexion est établie avec oracle.
-
 ## Value
 
-Si `output_table_name` est `NULL`, retourne une lazy table contenant les
-consultations. Si `output_table_name` est fourni, sauvegarde les
-résultats dans la table spécifiée dans Oracle et retourne `NULL` de
-manière invisible. Dans les deux cas, les colonnes sont les suivantes :
+Retourne une lazy table contenant les consultations. Les colonnes sont
+les suivantes :
 
 - `BEN_IDT_ANO` : Identifiant bénéficiaire anonymisé (seulement si
   patients_ids_filter non nul)

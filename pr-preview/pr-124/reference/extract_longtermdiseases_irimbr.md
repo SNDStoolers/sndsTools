@@ -14,14 +14,14 @@ patients sont extraites.
 
 ``` r
 extract_longtermdiseases_irimbr(
-  start_date = NULL,
-  end_date = NULL,
+  conn,
+  start_date,
+  end_date,
   icd_cod_starts_with = NULL,
   ald_numbers = NULL,
   excl_etm_nat = c("11", "12", "13"),
-  patients_ids = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  patients_ids_filter = NULL,
+  sup_columns = NULL
 )
 ```
 
@@ -60,41 +60,33 @@ extract_longtermdiseases_irimbr(
   SNDS](https://documentation-snds.health-data-hub.fr/snds/fiches/beneficiaires_ald.html).
   et notamment le Programme \#1 pour la référence de ce filtre.
 
-- patients_ids:
+- patients_ids_filter:
 
   data.frame Optionnel. Un data.frame contenant les paires
-  d'identifiants des patients pour lesquels les délivrances de
-  médicaments doivent être extraites. Les colonnes de ce data.frame
-  doivent être "BEN_IDT_ANO", "BEN_NIR_PSA" et "BEN_RNG_GEM". Les
-  "BEN_NIR_PSA" doivent être tous les "BEN_NIR_PSA" associés aux
-  "BEN_IDT_ANO" fournis.
+  d'identifiants des patients pour lesquels les ALD doivent être
+  extraites. Les colonnes de ce data.frame doivent être "BEN_IDT_ANO",
+  "BEN_NIR_PSA" et "BEN_RNG_GEM". Les "BEN_NIR_PSA" doivent être tous
+  les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.
 
-- output_table_name:
+- sup_columns:
 
-  Character Optionnel. Si fourni, les résultats seront sauvegardés dans
-  une table portant ce nom dans la base de données au lieu d'être
-  retournés sous forme de lazy table.
-
-- conn:
-
-  DBI connection Une connexion à la base de données Oracle. Si non
-  fournie, une connexion est établie par défaut.
+  character vector (Optionnel). Colonnes supplémentaires à inclure dans
+  le résultat. Défaut à `NULL`.
 
 ## Value
 
-Si output_table_name est NULL, retourne une lazy table contenant les les
-ALDs actives sur la période. Si output_table_name est fourni, sauvegarde
-les résultats dans la table spécifiée dans Oracle et retourne NULL de
-manière invisible. Dans les deux cas les colonnes de la table de sortie
-sont :
+Retourne une lazy table contenant les les ALDs actives sur la période.
+Si output_table_name est fourni, sauvegarde les résultats dans la table
+spécifiée dans Oracle et retourne NULL de manière invisible. Dans les
+deux cas les colonnes de la table de sortie sont :
 
 - BEN_NIR_PSA : Colonne présente uniquement si les identifiants patients
-  (`patients_ids`) ne sont pas fournis. Identifiant SNDS, ausi appelé
-  pseudo-NIR.
+  (`patients_ids_filter`) ne sont pas fournis. Identifiant SNDS, ausi
+  appelé pseudo-NIR.
 
 - BEN_IDT_ANO : Colonne présente uniquement si les identifiants patients
-  (`patients_ids`) sont fournis. Numéro d’inscription au répertoire
-  (NIR) anonymisé.
+  (`patients_ids_filter`) sont fournis. Numéro d'inscription au
+  répertoire (NIR) anonymisé.
 
 - IMB_ALD_NUM : Le numéro de l'ALD
 
@@ -126,6 +118,7 @@ end_date <- as.Date("2010-01-03")
 icd_cod_starts_with <- c("G20")
 
 long_term_disease <- extract_longtermdiseases_irimbr(
+  conn,
   start_date = start_date,
   end_date = end_date,
   icd_cod_starts_with = icd_cod_starts_with

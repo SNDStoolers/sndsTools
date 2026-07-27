@@ -8,6 +8,7 @@ comprises entre `start_date` et `end_date` sont extraits.
 
 ``` r
 extract_stays_mcob(
+  conn,
   start_date,
   end_date,
   dp_cim10_codes_filter = NULL,
@@ -16,8 +17,7 @@ extract_stays_mcob(
   and_da_with_other_codes_filter = FALSE,
   da_cim10_codes_filter = NULL,
   patients_ids_filter = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  sup_columns = NULL
 )
 ```
 
@@ -62,17 +62,10 @@ extract_stays_mcob(
   fournis. Si `patients_ids` n'est pas fourni, les consultations de tous
   les patients sont extraites. Défaut à `NULL`.
 
-- output_table_name:
+- sup_columns:
 
-  character Optionnel. Si fourni, les résultats seront sauvegardés dans
-  une table portant ce nom dans la base de données au lieu d'être
-  retournés sous forme de lazy table. Défaut à `NULL`.
-
-- conn:
-
-  dbConnection La connexion à la base de données. Si `conn` n'est pas
-  fourni, une connexion à la base de données est initialisée. Défaut à
-  `NULL`.
+  character vector (Optionnel). Colonnes supplémentaires à inclure dans
+  le résultat. Défaut à `NULL`.
 
 - or_dr_with_same_codes:
 
@@ -90,11 +83,9 @@ extract_stays_mcob(
 
 ## Value
 
-Si `output_table_name` est `NULL`, retourne une lazy table contenant les
-séjours hospitaliers. Si `output_table_name` est fourni, sauvegarde les
-résultats dans la table spécifiée dans Oracle et retourne `NULL` de
-manière invisible. Attention: Les lignes des tables MCO B et C peuvent
-être dupliquées. Les colonnes sont les suivantes :
+Retourne une lazy table contenant les séjours hospitaliers. Attention:
+Les lignes des tables MCO B et C peuvent être dupliquées. Les colonnes
+sont les suivantes :
 
 - `BEN_IDT_ANO` : Identifiant bénéficiaire anonymisé (seulement si
   patient_ids non nul)
@@ -196,12 +187,14 @@ Other extract:
 if (FALSE) { # \dontrun{
 # Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
 extract_stays_mcob(
+ conn,
  start_date = as.Date("2019-01-01"),
  end_date = as.Date("2019-12-31"),
- dp_cim10_codes = c("A", "B")
+ dp_cim10_codes_filter = c("A", "B")
 )
 # Extrait tous les séjours en 2019
 extract_stays_mcob(
+ conn,
  start_date = as.Date("2019-01-01"),
  end_date = as.Date("2019-12-31")
 )

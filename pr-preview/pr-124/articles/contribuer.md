@@ -86,6 +86,8 @@ essayons de suivre. L’argumentaire est discuté dans [l’issue
 
 Dans cet ordre de priorité :
 
+- `conn` : Objet de connexion à la base de données Oracle.
+
 - Dates de début `start_date`, `end_date`
 
 - Filtres : suffixé par `_filter`, par exemple `pse_spe_filter`.
@@ -96,17 +98,11 @@ Dans cet ordre de priorité :
 - `patients_ids_filter` (Optionnel) : Filtrer sur une liste
   d’identifiants de patients si non NULL.
 
-- autres paramètres optionnels éventuels.
-
-- `output_table_name` : Nom de la table de sortie Oracle si non NULL,
-  sinon la fonction retourne un data.frame.
-
-- `conn` : Objet de connexion à la base de données Oracle. Si NULL, la
-  fonction retourne un data.frame.
-
 - `sup_columns` : Liste de colonnes supplémentaires à ajouter à la table
   de sortie. Ces colonnes doivent être présentes dans les tables
   sources.
+
+- autres paramètres optionnels éventuels.
 
 ### Valeur de retour
 

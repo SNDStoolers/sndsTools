@@ -1,108 +1,106 @@
 # Extrait les dispensations de médicaments en accès précoces depuis le DCIR.
 
-Extrait les dispensations de médicaments en accès précoces réalisés en
-hospitalisation privée (ex-OQN) ou en rétrocession hospitalière privée
-et publique (ex-OQN et ex-DGF) pour une année donnée et une liste de
-codes UCD donnée.
+Cette fonction permet d'extraire les dispensations de médicaments en
+accès précoces réalisés en hospitalisation privée (ex-OQN) ou en
+rétrocession hospitalière privée et publique (ex-OQN et ex-DGF). Les
+dispensations dont les dates `EXE_SOI_DTD` sont comprises entre
+`start_date` et `end_date` (incluses) sont extraites.
 
 ## Usage
 
 ``` r
 extract_drugs_erucdf(
+  conn,
   start_date,
   end_date,
   ucd_codes_filter = NULL,
   patients_ids_filter = NULL,
   dis_dtd_lag_months = 6,
-  output_table_name = NULL,
-  conn = NULL,
   sup_columns = NULL
 )
 ```
 
 ## Arguments
 
+- conn:
+
+  DBI connection. Une connexion à la base de données Oracle.
+
 - start_date:
 
-  Début d'extraction (date de soin)
+  Date. La date de début de la période des dispensations à extraire.
 
 - end_date:
 
-  Fin d'extraction (date de soin)
+  Date. La date de fin de la période des dispensations à extraire.
 
 - ucd_codes_filter:
 
-  Liste de codes ucd à extraire. Attention, les codes UCD doivent être
-  fournis au format UCD 7 caractères préfixé de 6 zéros :
-  "0000009419723". Ce format est celui utilisé dans la base de données.
-  Si NULL, extrait tous les codes.
+  Character vector (Optionnel). Les codes UCD des dispensations de
+  médicaments à extraire. Attention, les codes UCD doivent être fournis
+  au format UCD 7 caractères préfixé de 6 zéros : "0000009419723". Ce
+  format est celui utilisé dans la base de données. Si NULL, extrait
+  tous les codes.
 
 - patients_ids_filter:
 
   data.frame (Optionnel). Un data.frame contenant les paires
   d'identifiants des patients pour lesquels les délivrances de
   médicaments doivent être extraites. Les colonnes de ce data.frame
-  doivent être "BEN_IDT_ANO" et "BEN_NIR_PSA". Les "BEN_NIR_PSA" doivent
-  être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis. Défaut
-  à NULL.
+  doivent être "BEN_IDT_ANO", "BEN_NIR_PSA" et "BEN_RNG_GEM". Les
+  "BEN_NIR_PSA" doivent être tous les "BEN_NIR_PSA" associés aux
+  "BEN_IDT_ANO" fournis. Défaut à NULL.
 
 - dis_dtd_lag_months:
 
   Integer (Optionnel). Le nombre maximum de mois de décalage de
-  FLX_DIS_DTD par rapport à EXE_SOI DTD pris en compte pour récupérer
-  les délivrances de médicaments. Défaut à 6 mois.
-
-- output_table_name:
-
-  Character (Optionnel). Si fourni, les résultats seront sauvegardés
-  dans une table portant ce nom dans la base de données au lieu d'être
-  retournés sous forme de lazy table. Si la table existe déjà dans la
-  base oracle, alors le programme s'arrête en retournant une erreur.
-  Défaut à NULL.
-
-- conn:
-
-  DBI connection (Optionnel). Une connexion à la base de données Oracle.
-  Si non fournie, une connexion est établie par défaut. Défaut à NULL.
+  FLX_DIS_DTD par rapport à EXE_SOI_DTD pris en compte pour récupérer
+  les dispensations de médicaments. Défaut à 6 mois.
 
 - sup_columns:
 
   Character vector (Optionnel). Les colonnes supplémentaires à ajouter à
   la table de sortie. Défaut à NULL, donc aucune colonne ajoutée.
 
-- show_sql_query:
-
-  Boolean (Optionnel). Affiche la requête SQL du premier mois. Défaut à
-  FALSE.
-
 ## Value
 
-Si `output_table_name` est `NULL`, retourne une lazy table contenant les
-consommations individuelles d'accès précoces pour l'hospitalisation
-privée et les rétrocessions hospitalières. Si `output_table_name` est
-fourni, sauvegarde les résultats dans la table spécifiée dans Oracle et
-retourne `NULL` de manière invisible.
+Retourne une lazy table contenant les dispensations de médicaments en
+accès précoces. Les colonnes de la table de sortie sont :
 
-@examples \*
+- BEN_NIR_PSA : Colonne présente uniquement si les identifiants patients
+  (`patients_ids_filter`) ne sont pas fournis. Identifiant SNDS, aussi
+  appelé pseudo-NIR.
+
+- BEN_IDT_ANO : Colonne présente uniquement si les identifiants patients
+  (`patients_ids_filter`) sont fournis. Numéro d'inscription au
+  répertoire (NIR) anonymisé.
+
+- BEN_RNG_GEM : Colonne présente uniquement si les identifiants patients
+  (`patients_ids_filter`) ne sont pas fournis. Rang GEM.
+
+- EXE_SOI_DTD : Date de la prestation
+
+- EXE_SOI_DTF : Heure de la prestation
+
+- PRS_NAT_REF : Code de la nature de la prestation
+
+- UCD_TOP_UCD : Circuit de délivrance
+
+- UCD_UCD_COD : Code UCD du médicament
+
+- UCD_DLV_NBR : Nombre de délivrances
+
+- Les colonnes supplémentaires spécifiées dans `sup_columns` si
+  fournies.
 
 ## Details
 
-Les données sont filtrées par date de prestation (`EXE_SOI_DTD`), et par
-date de flux (`FLX_DIS_DTD`) en regardant 7 mois au delà de la date de
-fin d'étude `end_date` pour prendre en compte la durée de remontée de
-l'information. Les données sont filtrées en ne conservant que les
-PRS_NAT_REF d'accès précoces ("3336", "3317", "3351", "3421").
-
-NB: Les données sont extraites par date de flux, puis filtrées par date
-de soin. Elles sont extraites d'un bloc sur la période d'intérêt par
-contraste avec les recommandations de la CNAM qui préconise d'extraire
-mois par mois pour des raisons d'optimisation technique (éviter la
-saturation d'un temporary space partagé entre utilisateurs).
-L'alternative serait de code une fonction extrayant mois par mois (ie.
-"magic loop").
+Le décalage de remontée des données est pris en compte en récupérant
+également les dispensations dont les dates `FLX_DIS_DTD` sont comprises
+dans les `dis_dtd_lag_months` mois suivant end_date.
 
 NB: La jointure avec la table établissement est faite avec un
-inner_join. On ne garde que les AP préscrites en établissement.
+inner_join. On ne garde que les AP prescrites en établissement.
 
 ## See also
 
@@ -114,3 +112,19 @@ Other extract:
 [`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md),
 [`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md),
 [`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md)
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+start_date <- as.Date("2019-01-01")
+end_date <- as.Date("2019-12-31")
+ucd_codes <- c("0000009419723")
+
+result <- extract_drugs_erucdf(
+  start_date = start_date,
+  end_date = end_date,
+  ucd_codes_filter = ucd_codes
+)
+} # }
+```

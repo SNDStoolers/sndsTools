@@ -19,12 +19,12 @@ Deux filtres optionnels et combinables restreignent l'extraction :
 
 ``` r
 extract_deaths(
+  conn,
   start_date,
   end_date,
   diagnosis_codes_filter = NULL,
   patient_ids_filter = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  sup_columns = NULL
 )
 ```
 
@@ -50,28 +50,15 @@ extract_deaths(
   extraire ; les doublons sont ignorés. Si `NULL`, aucune restriction
   sur les patients. Défaut à `NULL`.
 
-- output_table_name:
+- sup_columns:
 
-  character (Optionnel). Si fourni, les résultats sont sauvegardés dans
-  une table portant ce nom dans Oracle au lieu d'être retournés sous
-  forme de lazy table. Défaut à `NULL`.
-
-- conn:
-
-  dbConnection (Optionnel). Une connexion à la base Oracle. Si `conn`
-  n'est pas fourni, une connexion à Oracle est initialisée. Pour
-  enchaîner d'autres traitements sur la lazy table retournée, fournissez
-  votre propre `conn` : la connexion ouverte en interne reste alors
-  ouverte (la requête paresseuse en a besoin) et c'est à l'appelant de
-  la fermer. Défaut à `NULL`.
+  character vector (Optionnel). Colonnes supplémentaires à inclure dans
+  le résultat. Défaut à `NULL`.
 
 ## Value
 
-Si `output_table_name` est `NULL`, retourne une lazy table dbplyr
-(`tbl_lazy`). Si `output_table_name` est fourni, la requête est
-matérialisée directement dans Oracle et la fonction retourne `NULL` de
-manière invisible. Dans les deux cas, une ligne par code CIM-10 et par
-patient décédé (plus une ligne par patient `"Alive"` si
+Retourne une lazy table dbplyr (`tbl_lazy`). Une ligne par code CIM-10
+et par patient décédé (plus une ligne par patient `"Alive"` si
 `patient_ids_filter` est fourni), avec les colonnes :
 
 - `BEN_IDT_ANO` : identifiant patient pseudonymisé.
@@ -99,12 +86,6 @@ décès correspondant dans la période » : selon les filtres, le patient
 peut être vivant, décédé hors période, ou décédé d'une cause non retenue
 par `diagnosis_codes_filter`.
 
-À noter : le chargement des tables associées au décès (`KI_CCI_R`,
-`KI_ECD_R`) en mode paresseux est long. Un enregistrement sur Oracle
-(via `output_table_name`) est donc recommandé pour éviter de dupliquer
-le chargement des tables paresseuses à chaque réévaluation de la
-requête.
-
 ## See also
 
 Other extract:
@@ -121,29 +102,30 @@ Other extract:
 ``` r
 if (FALSE) { # \dontrun{
 # Décès dont une cause commence par G10 ou G20, entre 2010 et 2020.
-deaths <- extract_deaths(
+extract_deaths(
+  conn,
   start_date = as.Date("2010-01-01"),
   end_date = as.Date("2020-12-31"),
   diagnosis_codes_filter = c("G10", "G20")
 )
 
 # Statut vital et causes de décès d'une liste d'identifiants.
-deaths <- extract_deaths(
+extract_deaths(
+  conn,
   start_date = as.Date("2010-01-01"),
   end_date = as.Date("2020-12-31"),
   patient_ids_filter = c("ABC123", "DEF456")
 )
 
 # Sur le SNDS (Oracle) : cohorte issue d'IR_BEN_R, écrite dans Oracle.
-conn <- connect_oracle()
 pat_list <- dplyr::tbl(conn, "IR_BEN_R") |>
   head(10) |>
   dplyr::pull(BEN_IDT_ANO)
 extract_deaths(
+  conn,
   start_date = as.Date("2010-01-01"),
   end_date = as.Date("2020-12-31"),
-  patient_ids_filter = pat_list,
-  output_table_name = "DEATHS_OUTPUT_2"
+  patient_ids_filter = pat_list
 )
 } # }
 ```

@@ -8,19 +8,22 @@ comprises entre `start_date` et `end_date` (incluses) sont extraites.
 
 ``` r
 extract_drugs_erphaf(
+  conn,
   start_date,
   end_date,
   atc_cod_starts_with_filter = NULL,
   cip13_cod_filter = NULL,
   patients_ids_filter = NULL,
   dis_dtd_lag_months = 6,
-  output_table_name = NULL,
-  conn = NULL,
   sup_columns = NULL
 )
 ```
 
 ## Arguments
+
+- conn:
+
+  DBI connection. Une connexion à la base de données Oracle.
 
 - start_date:
 
@@ -58,19 +61,6 @@ extract_drugs_erphaf(
   FLX_DIS_DTD par rapport à EXE_SOI DTD pris en compte pour récupérer
   les délivrances de médicaments. Défaut à 6 mois.
 
-- output_table_name:
-
-  Character (Optionnel). Si fourni, les résultats seront sauvegardés
-  dans une table portant ce nom dans la base de données au lieu d'être
-  retournés sous forme de lazy table. Si la table existe déjà dans la
-  base oracle, alors le programme s'arrête en retournant une erreur.
-  Défault à NULL.
-
-- conn:
-
-  DBI connection (Optionnel). Une connexion à la base de données Oracle.
-  Si non fournie, une connexion est établie par défaut. Défaut à NULL.
-
 - sup_columns:
 
   Character vector (Optionnel). Les colonnes supplémentaires à ajouter à
@@ -78,11 +68,8 @@ extract_drugs_erphaf(
 
 ## Value
 
-Si output_table_name est NULL, retourne une lazy table contenant les
-délivrances de médicaments. Si output_table_name est fourni, sauvegarde
-les résultats dans la table spécifiée dans Oracle et retourne NULL de
-manière invisible. Dans les deux cas les colonnes de la table de sortie
-sont :
+Retourne une lazy table contenant les délivrances de médicaments. Les
+colonnes de la table de sortie sont :
 
 - BEN_NIR_PSA : Colonne présente uniquement si les identifiants patients
   (`patients_ids_filter`) ne sont pas fournis. Identifiant SNDS, aussi
@@ -93,6 +80,8 @@ sont :
   répertoire (NIR) anonymisé.
 
 - EXE_SOI_DTD : Date de la délivrance
+
+- FLX_DIS_DTD : Date de flux
 
 - PHA_ACT_QSN : Quantité délivrée
 
