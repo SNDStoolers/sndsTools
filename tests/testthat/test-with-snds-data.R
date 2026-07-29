@@ -74,7 +74,15 @@ test_that("extract and retrieve functions work with real SNDS data", {
   )
   expect_true(is.data.frame(result_long_term_disease))
   expect_true(nrow(result_long_term_disease) >= 0)
-
+  # Test: extract_ij_erprsf
+  result_ij_erprsf <- extract_ij_erprsf(
+    start_date = start_date,
+    end_date = end_date,
+    patients_ids_filter = NULL,
+    conn = conn
+  )
+  expect_true(is.data.frame(result_ij_erprsf))
+  expect_true(nrow(result_ij_erprsf) > 0)
   # Test : retrieve_all_psa_from_idt
   # Small test table with patient IDs from referentiel beneficiaires
   if (nrow(result_hospital_stays) > 0) {
