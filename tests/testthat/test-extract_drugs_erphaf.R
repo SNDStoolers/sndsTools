@@ -117,3 +117,49 @@ test_that("extract_drugs_erphaf works for CIP13", {
     expected_drug_dispenses
   )
 })
+
+test_that("une prestation portant une ligne ER_ETE_F en T2A est exclue", {
+  # ER_ETE_F peut porter plusieurs lignes par prestation. Dès que l'une d'elles
+  # est en T2A (ETE_IND_TAA == 1), la délivrance est déjà comptée dans le PMSI
+  # et doit être exclue, même si une autre ligne de la même prestation ne l'est
+  # pas.
+  eretef_with_taa <- fake_eretef |>
+    dplyr::bind_rows(
+      fake_eretef |>
+        dplyr::filter(DCT_ORD_NUM == 3) |>
+        dplyr::mutate(ETE_NUM = 99, ETE_IND_TAA = 1)
+    )
+  DBI::dbWriteTable(conn, "ER_ETE_F", eretef_with_taa, overwrite = TRUE)
+  on.exit(DBI::dbWriteTable(conn, "ER_ETE_F", fake_eretef, overwrite = TRUE))
+
+  drug_dispenses <- extract_drugs_erphaf(
+    start_date = as.Date("2019-01-01"),
+    end_date = as.Date("2019-12-31"),
+    atc_cod_starts_with_filter = c("J05"),
+    conn = conn
+  ) |>
+    dplyr::collect()
+
+  expect_equal(nrow(drug_dispenses), 0)
+})
+
+test_that("le référentiel médicament filtré est unique par CIP13", {
+  # IR_PHA_R contient plusieurs lignes par CIP13. Sans dédoublonnage, la
+  # jointure avec ER_PHA_F multiplie les lignes, et le distinct final ne
+  # rattrape le tir qu'après les trois jointures.
+  extract_drugs_erphaf(
+    start_date = as.Date("2019-01-01"),
+    end_date = as.Date("2019-12-31"),
+    atc_cod_starts_with_filter = c("J05"),
+    conn = conn
+  )
+
+  # La table temporaire au timestamp le plus récent est celle qu'on vient de créer.
+  tmp_ir_pha_r <- DBI::dbListTables(conn) |>
+    grep(pattern = "^TMP_IR_PHA_R_", value = TRUE) |>
+    sort() |>
+    utils::tail(1)
+  filtered_ref <- dplyr::tbl(conn, tmp_ir_pha_r) |> dplyr::collect()
+
+  expect_equal(nrow(filtered_ref), dplyr::n_distinct(filtered_ref$PHA_CIP_C13))
+})

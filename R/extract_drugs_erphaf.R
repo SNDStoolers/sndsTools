@@ -204,6 +204,7 @@ extract_drugs_erphaf <- function(
   } else {
     drug_filter <- NULL
   }
+  logger::log_info(glue::glue("Filtre codes médicaments :\n{drug_filter}"))
 
   ir_pha_cols <- colnames(ir_pha_r)
   ir_pha_needed_cols <- c("PHA_CIP_C13", "PHA_ATC_CLA")
@@ -216,31 +217,15 @@ extract_drugs_erphaf <- function(
     dplyr::select(
       dplyr::all_of(ir_pha_needed_cols)
     )
-  if (!is.null(drug_filter)) {
-    ir_pha_filtered_query <- ir_pha_filtered |>
-      dplyr::filter(dbplyr::sql(drug_filter)) |>
-      dplyr::select(
-        dplyr::all_of(ir_pha_needed_cols)
-      ) |>
-      dbplyr::sql_render()
 
-    ir_pha_r_filtered_name <- glue::glue("TMP_IR_PHA_R_{timestamp}")
-    if (DBI::dbExistsTable(conn, ir_pha_r_filtered_name)) {
-      DBI::dbRemoveTable(conn, ir_pha_r_filtered_name)
-    }
-    DBI::dbExecute(
-      conn,
-      glue::glue(
-        "CREATE TABLE {ir_pha_r_filtered_name} AS {ir_pha_filtered_query}"
-      )
-    )
-    ir_pha_filtered_table <- dplyr::tbl(conn, ir_pha_r_filtered_name)
+  if (!is.null(drug_filter)) {
+    ir_pha_filtered_table <- ir_pha_filtered |>
+      dplyr::filter(dbplyr::sql(drug_filter)) |>
+      dplyr::distinct()
   } else {
     # we still need PHA_ATC_CLA for the final extraction
-    ir_pha_filtered_table <- ir_pha_r |>
-      dplyr::select(
-        dplyr::all_of(ir_pha_needed_cols)
-      )
+    ir_pha_filtered_table <- ir_pha_filtered |>
+      dplyr::distinct()
   }
 
   # concatenate all archived years
@@ -282,6 +267,30 @@ extract_drugs_erphaf <- function(
     er_pha_f <- tbl_oracle(conn, "ER_PHA_F")
     er_ete_f <- tbl_oracle(conn, "ER_ETE_F")
   }
+  # TODO: might not be useful (to test on portal).
+  # Projection avant les jointures : sinon Oracle traîne les ~50 colonnes de
+  # chaque table du DCIR à travers les trois jointures puis le DISTINCT final.
+  keep_cols <- function(tbl, needed) {
+    dplyr::select(tbl, dplyr::any_of(c(needed, sup_columns)))
+  }
+
+  er_prs_f <- keep_cols(
+    er_prs_f,
+    c(
+      COLS_DCIR_JOIN_KEY,
+      "BEN_NIR_PSA",
+      "BEN_RNG_GEM",
+      "EXE_SOI_DTD",
+      "PSP_SPE_COD",
+      "DPN_QLF"
+    )
+  )
+  er_pha_f <- keep_cols(
+    er_pha_f,
+    c(COLS_DCIR_JOIN_KEY, "PHA_PRS_C13", "PHA_ACT_QSN")
+  )
+  er_ete_f <- keep_cols(er_ete_f, c(COLS_DCIR_JOIN_KEY, "ETE_IND_TAA"))
+
   # Flux date filters (FLX_DIS_DTD is an index in DCIR tables)
   dis_dtd_condition <- glue::glue(
     "FLX_DIS_DTD >= DATE '{formatted_start_date}' AND FLX_DIS_DTD <= DATE '{formatted_dis_dtd_end_date}'" # nolint
@@ -314,11 +323,17 @@ extract_drugs_erphaf <- function(
   prs_pha_joined <- er_prs_f_dtd_filtered |>
     dplyr::inner_join(er_pha_drug_filtered, by = COLS_DCIR_JOIN_KEY)
 
+  # ER_ETE_F porte plusieurs lignes par prestation : un left_join dupliquerait
+  # les délivrances et imposerait un DISTINCT bloquant sur le résultat des trois
+  # jointures. L'anti_join sur les seules clés en T2A, déjà comptées dans le
+  # PMSI, donne le même filtre sans fan-out.
+  er_ete_f_taa <- er_ete_f_flx_filtered |>
+    dplyr::filter(ETE_IND_TAA == 1L) |>
+    dplyr::select(dplyr::all_of(COLS_DCIR_JOIN_KEY)) |>
+    dplyr::distinct()
+
   query <- prs_pha_joined |>
-    dplyr::left_join(er_ete_f_flx_filtered, by = COLS_DCIR_JOIN_KEY) |>
-    dplyr::filter(
-      (ETE_IND_TAA != 1L) | is.na(ETE_IND_TAA)
-    )
+    dplyr::anti_join(er_ete_f_taa, by = COLS_DCIR_JOIN_KEY)
 
   cols_to_select <- c(
     "EXE_SOI_DTD",
@@ -350,7 +365,7 @@ extract_drugs_erphaf <- function(
         by = c("BEN_NIR_PSA", "BEN_RNG_GEM")
       ) |>
       dplyr::select(BEN_IDT_ANO, dplyr::all_of(cols_to_select)) |>
-      dplyr::distinct()
+      distinct()
   }
 
   result
