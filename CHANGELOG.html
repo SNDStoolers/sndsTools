@@ -51,25 +51,27 @@
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/" class="external-link">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html" class="external-link">Semantic Versioning</a>.</p>
 <div class="section level2">
-<h2 id="unreleased">[Unreleased]<a class="anchor" aria-label="anchor" href="#unreleased"></a></h2>
-<p>Contributors : Léa Aguilhon, Léopold Maurice, Marc Dibbling, Louisicm, Ben Fournier, Matthieu Doutreligne</p>
+<h2 id="id_030---2026-09-02">[0.3.0] - 2026-09-02<a class="anchor" aria-label="anchor" href="#id_030---2026-09-02"></a></h2>
+<p>Contributors : Léa Aguilhon, Léopold Maurice, Marc Dibbling, Louisicm, Ben Fournier, Victor Bret, Matthieu Doutreligne</p>
 <div class="section level3">
 <h3 id="added">Added<a class="anchor" aria-label="anchor" href="#added"></a></h3>
 <ul><li>Added <code><a href="reference/extract_deaths.html">extract_deaths()</a></code> (#112) - extracts, for each death within a date range, the ICD-10 codes associated with the death (one row per code) from the medical cause-of-death tables <code>KI_CCI_R</code> (initial cause) and <code>KI_ECD_R</code> (other causes); a <code>STATUS</code> column distinguishes the initial cause (<code>"Initial cause"</code>) from the other codes (<code>"Other"</code>).</li>
 <li>Added notebook <code>notebooks/demo_death.R</code> - self-contained demo of <code><a href="reference/extract_deaths.html">extract_deaths()</a></code> (in-memory DuckDB + fictitious data).</li>
 <li>Added <code><a href="reference/extract_stays_ssr.html">extract_stays_ssr()</a></code> - extracts SSR (soins de réadaptation) stays diagnostics.</li>
+<li>Added <code>extract_ij_erprfs()</code> - extracts daily indemnity (Indemnité Journalières) data from the <code>er_prfs</code> table. Built as an indicator (<code>extract_indicateurs</code>) function on top of <code>extract_consultations_erprsf</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changed">Changed<a class="anchor" aria-label="anchor" href="#changed"></a></h3>
-<ul><li>Declared <code>tibble</code> in <code>Suggests</code> (used by the <code><a href="reference/extract_deaths.html">extract_deaths()</a></code> tests via <code><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tibble::tribble()</a></code>).</li>
+<ul><li>
+<strong>MAJOR</strong> Every extract function now returns either a lazy table or save it to oracle table, depending on output_table_name parameter. If output_table_name is NULL, the function returns a lazy table, otherwise it saves the result to oracle table and returns NULL. (#124)</li>
+<li>Declared <code>tibble</code> in <code>Suggests</code> (used by the <code><a href="reference/extract_deaths.html">extract_deaths()</a></code> tests via <code><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tibble::tribble()</a></code>).</li>
 <li>Documentation generated with roxygen2 8.0.0; removed <code>quarto</code> from <code>VignetteBuilder</code> (unblocks <code>make check</code> and <code>make site</code>).</li>
-<li>Every extract function now returns either a lazy table or save it to oracle table, depending on output_table_name parameter. If output_table_name is NULL, the function returns a lazy table, otherwise it saves the result to oracle table and returns NULL.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixed">Fixed<a class="anchor" aria-label="anchor" href="#fixed"></a></h3>
 <ul><li>
 <code><a href="reference/extract_stays_mcob.html">extract_stays_mcob()</a></code>: write the temporary patient-ids table with <code>overwrite = TRUE</code> and remove it at the end of the function, avoiding collisions and leftover temporary tables on repeated calls.</li>
-<li>Les tables du SNDS sont lues via <code><a href="reference/tbl_oracle.html">tbl_oracle()</a></code> (#126), qui qualifie le nom de la table par le schéma du profil de l’utilisateur (<code>PROFIL_XXX</code>), déduit de son identifiant Oracle. Les connexions ne déclarant pas le schéma sont cassées par les mises à jour du portail.</li>
+<li>The oracle SNDS tables are read with <code><a href="reference/tbl_oracle.html">tbl_oracle()</a></code> (#126), which add to the table names the user profile (<code>PROFIL_XXX</code>), guessed from its Oracle ID. The table connexion (after 2025) without the schema declaration ware broken due to an update on the servers (“modifications ADGP”).</li>
 </ul></div>
 </div>
 <div class="section level2">

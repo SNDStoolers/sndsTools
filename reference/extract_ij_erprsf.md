@@ -55,11 +55,10 @@ extract_ij_erprsf(
 
 ## Value
 
-@return Si `output_table_name` est `NULL`, retourne une lazy table
-contenant les consultations. Si `output_table_name` est fourni,
-sauvegarde les résultats dans la table spécifiée dans Oracle et retourne
-le nom de la table. Dans les deux cas les colonnes de la table de sortie
-sont :
+Si `output_table_name` est `NULL`, retourne une lazy table contenant les
+consultations. Si `output_table_name` est fourni, sauvegarde les
+résultats dans la table spécifiée dans Oracle et retourne le nom de la
+table. Dans les deux cas les colonnes de la table de sortie sont :
 
 - Toutes les colonnes standard de
   [`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md)

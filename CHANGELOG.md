@@ -6,10 +6,10 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## \[Unreleased\]
+## \[0.3.0\] - 2026-09-02
 
 Contributors : Léa Aguilhon, Léopold Maurice, Marc Dibbling, Louisicm,
-Ben Fournier, Matthieu Doutreligne
+Ben Fournier, Victor Bret, Matthieu Doutreligne
 
 ### Added
 
@@ -26,19 +26,23 @@ Ben Fournier, Matthieu Doutreligne
 - Added
   [`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md) -
   extracts SSR (soins de réadaptation) stays diagnostics.
+- Added `extract_ij_erprfs()` - extracts daily indemnity (Indemnité
+  Journalières) data from the `er_prfs` table. Built as an indicator
+  (`extract_indicateurs`) function on top of
+  `extract_consultations_erprsf`.
 
 ### Changed
 
+- **MAJOR** Every extract function now returns either a lazy table or
+  save it to oracle table, depending on output_table_name parameter. If
+  output_table_name is NULL, the function returns a lazy table,
+  otherwise it saves the result to oracle table and returns NULL. (#124)
 - Declared `tibble` in `Suggests` (used by the
   [`extract_deaths()`](https://sndstoolers.github.io/sndsTools/reference/extract_deaths.md)
   tests via
   [`tibble::tribble()`](https://tibble.tidyverse.org/reference/tribble.html)).
 - Documentation generated with roxygen2 8.0.0; removed `quarto` from
   `VignetteBuilder` (unblocks `make check` and `make site`).
-- Every extract function now returns either a lazy table or save it to
-  oracle table, depending on output_table_name parameter. If
-  output_table_name is NULL, the function returns a lazy table,
-  otherwise it saves the result to oracle table and returns NULL.
 
 ### Fixed
 
@@ -46,12 +50,12 @@ Ben Fournier, Matthieu Doutreligne
   write the temporary patient-ids table with `overwrite = TRUE` and
   remove it at the end of the function, avoiding collisions and leftover
   temporary tables on repeated calls.
-- Les tables du SNDS sont lues via
+- The oracle SNDS tables are read with
   [`tbl_oracle()`](https://sndstoolers.github.io/sndsTools/reference/tbl_oracle.md)
-  (#126), qui qualifie le nom de la table par le schéma du profil de
-  l’utilisateur (`PROFIL_XXX`), déduit de son identifiant Oracle. Les
-  connexions ne déclarant pas le schéma sont cassées par les mises à
-  jour du portail.
+  (#126), which add to the table names the user profile (`PROFIL_XXX`),
+  guessed from its Oracle ID. The table connexion (after 2025) without
+  the schema declaration ware broken due to an update on the servers
+  (“modifications ADGP”).
 
 ## \[0.2.2\] - 2026-06-03
 
