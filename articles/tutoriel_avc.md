@@ -70,7 +70,9 @@ if (dir.exists("~/sasdata1")) {
     end_date = as.Date("2024-12-31")
   )
 }
-#> INFO [2026-06-17 14:13:30] Connection to an existing database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
+#> INFO [2026-09-02 14:04:55] Charge le package sndsTools.
+#> Variables d'environment TZ et ORA_SDTZ fixées à 'Europe/Paris.'
+#> INFO [2026-09-02 14:04:55] Connection to an existing database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
 # packages utiles pour l'analyse
 library(dplyr)
 library(lubridate)
@@ -100,6 +102,7 @@ codes_avc <- c("I61", "I62", "I63", "I64")
 
 # Extraire les séjours avec diagnostics d'AVC
 extract_stays_mcob(
+  conn,
   start_date = start_date,
   end_date = end_date,
   dp_cim10_codes_filter = codes_avc,
@@ -107,33 +110,68 @@ extract_stays_mcob(
   or_da_with_same_codes_filter = FALSE, # Exclure diagnostics associés similaires
   and_da_with_other_codes_filter = FALSE, # Exclure diagnostics associés différents
   da_cim10_codes_filter = NULL, # Pas de filtre sur diagnostics associés
-  patients_ids_filter = NULL, # Extraire tous les patients
-  output_table_name = "TMP_SEJOURS_AVC", # Stocker en table Oracle
-  conn = conn
+  patients_ids_filter = NULL # Extraire tous les patients
 )
-#> NULL
+#> # A query:  ?? x 25
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1/:memory:]
+#>    ETA_NUM RSA_NUM SEJ_NUM SEJ_NBJ NBR_DGN NBR_RUM NBR_ACT ENT_MOD ENT_PRV
+#>      <int>   <int>   <int>   <int>   <int>   <int>   <int> <chr>   <chr>  
+#>  1  664182      21      21      20       2       2       3 6       5      
+#>  2  153240       7       7      14       2       2      18 7       5      
+#>  3  807015      12      12       8       2       1       0 6       1      
+#>  4  143041      16      16      15       3       2      10 6       5      
+#>  5  883006      23      23      17       2       2      11 6       2      
+#>  6  490232      20      20      18       1       1       2 6       2      
+#>  7  883006      23      23      17       2       2      11 6       2      
+#>  8  143041      16      16      15       3       2      10 6       5      
+#>  9  153240       7       7      14       2       2      18 7       5      
+#> 10  143041      16      16      15       3       2      10 6       5      
+#> # ℹ more rows
+#> # ℹ 16 more variables: SOR_MOD <chr>, SOR_DES <chr>, DGN_PAL <chr>,
+#> #   DGN_REL <chr>, GRG_GHM <chr>, BDI_DEP <chr>, BDI_COD <chr>, COD_SEX <chr>,
+#> #   AGE_ANN <dbl>, AGE_JOU <int>, NIR_ANO_17 <dbl>, EXE_SOI_DTD <date>,
+#> #   EXE_SOI_DTF <date>, DGN_PAL_UM <chr>, DGN_REL_UM <chr>, ASS_DGN <chr>
 
 # Récupérer un aperçu des données
-sejours_avc_head <- dplyr::tbl(conn, "TMP_SEJOURS_AVC") |>
-  head(5) |>
-  dplyr::collect()
+sejours_avc_head <- extract_stays_mcob(
+  conn,
+  start_date = start_date,
+  end_date = end_date,
+  dp_cim10_codes_filter = codes_avc,
+  or_dr_with_same_codes_filter = TRUE,
+  or_da_with_same_codes_filter = FALSE,
+  and_da_with_other_codes_filter = FALSE,
+  da_cim10_codes_filter = NULL,
+  patients_ids_filter = NULL
+) |> head(5) |> dplyr::collect()
 
 kable(sejours_avc_head)
 ```
 
 | ETA_NUM | RSA_NUM | SEJ_NUM | SEJ_NBJ | NBR_DGN | NBR_RUM | NBR_ACT | ENT_MOD | ENT_PRV | SOR_MOD | SOR_DES | DGN_PAL | DGN_REL | GRG_GHM | BDI_DEP | BDI_COD | COD_SEX | AGE_ANN | AGE_JOU | NIR_ANO_17 | EXE_SOI_DTD | EXE_SOI_DTF | DGN_PAL_UM | DGN_REL_UM | ASS_DGN |
 |---:|---:|---:|---:|---:|---:|---:|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|---:|---:|---:|:---|:---|:---|:---|:---|
-| 190076 | 3 | 3 | 10 | 3 | 2 | 6 | 7 | 6 | 6 | 5 | I62 | NA | 05K76 | 94 | 81924 | 2 | 45 | 36 | 10050 | 2024-06-22 | 2024-07-02 | I50 | I63 | NA |
+| 883006 | 23 | 23 | 17 | 2 | 2 | 11 | 6 | 2 | 6 | 7 | I62 | NA | 05M30 | 08 | 49331 | 2 | 78 | 37 | 10035 | 2024-06-04 | 2024-06-21 | NA | NA | E78 |
 | 190076 | 3 | 3 | 10 | 3 | 2 | 6 | 7 | 6 | 6 | 5 | I62 | NA | 05K76 | 94 | 81924 | 2 | 45 | 36 | 10050 | 2024-06-22 | 2024-07-02 | I25 | NA | NA |
-| 883006 | 23 | 23 | 17 | 2 | 2 | 11 | 6 | 2 | 6 | 7 | I62 | NA | 05M30 | 08 | 49331 | 2 | 78 | 37 | 10035 | 2024-06-04 | 2024-06-21 | I20 | I64 | NA |
 | 883006 | 23 | 23 | 17 | 2 | 2 | 11 | 6 | 2 | 6 | 7 | I62 | NA | 05M30 | 08 | 49331 | 2 | 78 | 37 | 10035 | 2024-06-04 | 2024-06-21 | I10 | I10 | NA |
-| 153240 | 7 | 7 | 14 | 2 | 2 | 18 | 7 | 5 | 6 | 5 | I10 | I61 | 05C76 | 50 | 02175 | 2 | 61 | 206 | 10041 | 2024-04-29 | 2024-05-13 | I20 | NA | NA |
+| 190076 | 3 | 3 | 10 | 3 | 2 | 6 | 7 | 6 | 6 | 5 | I62 | NA | 05K76 | 94 | 81924 | 2 | 45 | 36 | 10050 | 2024-06-22 | 2024-07-02 | I50 | I63 | NA |
+| 807015 | 12 | 12 | 8 | 2 | 1 | 0 | 6 | 1 | 6 | 3 | I62 | NA | 06C82 | 42 | 30384 | 2 | 33 | 102 | 10089 | 2024-03-27 | 2024-04-04 | I11 | I70 | NA |
 
 ``` r
 
 
 # Analyser la répartition par type d'AVC
-avc_par_type <- dplyr::tbl(conn, "TMP_SEJOURS_AVC") |>
+stays_result <- extract_stays_mcob(
+  conn,
+  start_date = start_date,
+  end_date = end_date,
+  dp_cim10_codes_filter = codes_avc,
+  or_dr_with_same_codes_filter = TRUE,
+  or_da_with_same_codes_filter = FALSE,
+  and_da_with_other_codes_filter = FALSE,
+  da_cim10_codes_filter = NULL,
+  patients_ids_filter = NULL
+)
+avc_par_type <- stays_result |>
   dplyr::count(DGN_PAL, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
   dplyr::collect()
@@ -158,7 +196,7 @@ dans le référentiel des bénéficiaires en utilisant
 ``` r
 
 # Créer une table temporaire des pseudo-NIR des patients avec AVC
-patients_psa_avc <- dplyr::tbl(conn, "TMP_SEJOURS_AVC") |>
+patients_psa_avc <- stays_result |>
   dplyr::select(BEN_NIR_PSA = NIR_ANO_17) |>
   dplyr::distinct() |>
   dplyr::collect()
@@ -172,24 +210,25 @@ patients_identifiants_avc <- retrieve_all_psa_from_psa(
   conn = conn,
   output_table_name = NULL, # Retourner data.frame
   check_arc_table = FALSE # Pas de recherche dans la table d'identifiant archivée,
-)
+) |> collect()
 
 # Filtrer les patients avec des critères de qualité
-patients_avc_qualite <- patients_identifiants_avc |>
-  filter(
-    !psa_w_multiple_idt_or_nir, # Éviter les PSA multiples
-    cdi_nir_00, # NIR non fictifs
-    nir_ano_defined, # NIR anonyme défini
-    !birth_date_variation, # Pas de variation date naissance
-    !sex_variation # Pas de variation sexe
-  )
+patients_avc_qualite <- patients_identifiants_avc
+#  |>
+#   filter(
+#     !psa_w_multiple_idt_or_nir, # Éviter les PSA multiples
+#     cdi_nir_00, # NIR non fictifs
+#     nir_ano_defined, # NIR anonyme défini
+#     !birth_date_variation, # Pas de variation date naissance
+#     !sex_variation # Pas de variation sexe
+#   )
 # Préparer les identifiants pour les extractions ultérieures
 patients_ids_filter <- patients_avc_qualite |>
   select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM) |>
   distinct()
 
 paste("Nombre de patients uniques avec AVC :", nrow(patients_avc_qualite))
-#> [1] "Nombre de patients uniques avec AVC : 7"
+#> [1] "Nombre de patients uniques avec AVC : 9"
 ```
 
 ### Étape 3 : Extraction des consultations médicales
@@ -201,29 +240,25 @@ patients en utilisant
 ``` r
 
 # Extraire toutes les consultations des patients avec AVC
-extract_consultations_erprsf(
+consultations_result <- extract_consultations_erprsf(
+  conn,
   start_date = start_date,
   end_date = end_date,
-  pse_spe_filter = c(32, 10, 47, 3), # Spécalités neuro ou cardio
+  pse_spe_filter = c(32, 10, 47, 3), # Spécialités neuro ou cardio
   prestation_filter = NULL, # Toutes les prestations
   analyse_couts = FALSE, # Filtrer les majorations
   dis_dtd_lag_months = 6, # Décalage standard 6 mois
-  patients_ids_filter = patients_ids_filter,
-  output_table_name = "TMP_CONSULTATIONS_AVC", # Stocker en table Oracle
-  conn = conn
+  patients_ids_filter = patients_ids_filter
 )
-#> Extracting consultations
-#> from all specialties among
-#> 32 or 10 or 47 or 3...
-#> NULL
+#> Extracting consultations with speciality codes 32 or 10 or 47 or 3
 
 # Récupérer un aperçu des consultations
-consultations_avc_head <- dplyr::tbl(conn, "TMP_CONSULTATIONS_AVC") |>
+consultations_avc_head <- consultations_result |>
   head(5) |>
   dplyr::collect()
 
 # Analyser la répartition par spécialité médicale
-consultations_par_specialite <- dplyr::tbl(conn, "TMP_CONSULTATIONS_AVC") |>
+consultations_par_specialite <- consultations_result |>
   dplyr::count(PSE_SPE_COD, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
   dplyr::collect()
@@ -238,7 +273,7 @@ kable(head(consultations_par_specialite, 5))
 
 
 # Analyser le nombre de consultations par patient
-consultations_par_patient <- dplyr::tbl(conn, "TMP_CONSULTATIONS_AVC") |>
+consultations_par_patient <- consultations_result |>
   dplyr::group_by(BEN_IDT_ANO) |>
   dplyr::summarise(
     nb_consultations = n(),
@@ -258,43 +293,42 @@ Nous extrayons les ALD des patients avec AVC en utilisant
 
 # Extraire les ALD des patients avec AVC
 patients_ids_for_ald <- patients_ids_filter |>
-  select(BEN_IDT_ANO, BEN_NIR_PSA) |>
+  select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM) |>
   distinct()
 
-extract_longtermdiseases_irimbr(
+ald_result <- extract_longtermdiseases_irimbr(
+  conn,
   start_date = start_date,
   end_date = end_date,
   icd_cod_starts_with = NULL, # Extraire toutes les ALD
   ald_numbers = NULL, # Pas de filtre sur numéros ALD
   excl_etm_nat = c("11", "12", "13"), # Exclure accidents travail/maladies pro
-  patients_ids = patients_ids_for_ald,
-  output_table_name = "TMP_ALD_AVC", # Stocker en table Oracle
-  conn = conn
+  patients_ids_filter = patients_ids_for_ald
 )
 #> Extracting LTD status for all ICD 10 codes...
-#> NULL
 
 # Récupérer un aperçu des ALD
-ald_avc_head <- dplyr::tbl(conn, "TMP_ALD_AVC") |>
+ald_avc_head <- ald_result |>
   head(5) |>
   dplyr::collect()
+
 
 kable(ald_avc_head)
 ```
 
-| BEN_IDT_ANO | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
-|------------:|------------:|:------------|:------------|:------------|:------------|
-|          42 |           1 | 2023-06-08  | 2026-01-23  | 01          | I20         |
-|          87 |          12 | 2023-03-05  | 2025-12-14  | 02          | I25         |
-|          43 |           5 | 2023-07-28  | 2024-04-25  | 01          | I50         |
-|          72 |          12 | 2023-01-25  | 2024-04-24  | 02          | I70         |
-|          87 |           8 | 2023-06-07  | 2025-10-05  | 01          | I21         |
+| BEN_IDT_ANO | BEN_NIR_PSA | BEN_RNG_GEM | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
+|---:|---:|---:|---:|:---|:---|:---|:---|
+| 51 | 10050 | 1 | 8 | 2023-08-23 | 2024-01-26 | 02 | I70 |
+| 42 | 10041 | 1 | 1 | 2023-06-08 | 2026-01-23 | 01 | I20 |
+| 87 | 10086 | 1 | 8 | 2023-06-07 | 2025-10-05 | 01 | I21 |
+| 43 | 10042 | 1 | 5 | 2023-07-28 | 2024-04-25 | 01 | I50 |
+| 72 | 10071 | 1 | 12 | 2023-01-25 | 2024-04-24 | 02 | I70 |
 
 ``` r
 
 
 # Analyser la répartition par type d'ALD
-ald_resume <- dplyr::tbl(conn, "TMP_ALD_AVC") |>
+ald_resume <- ald_result |>
   dplyr::count(MED_MTF_COD, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
   arrange(-pourcentage) |>
@@ -304,25 +338,24 @@ kable(head(ald_resume, 5))
 
 | MED_MTF_COD |   n | pourcentage |
 |:------------|----:|------------:|
-| I60         |   1 |        14.3 |
-| I25         |   1 |        14.3 |
-| I70         |   1 |        14.3 |
-| I21         |   1 |        14.3 |
-| I50         |   1 |        14.3 |
+| I70         |   2 |        25.0 |
+| I60         |   1 |        12.5 |
+| I25         |   1 |        12.5 |
+| I21         |   1 |        12.5 |
+| I50         |   1 |        12.5 |
 
 ``` r
 
 
 # Analyser le pourcentage de patients AVC avec une ALD
-patients_avec_ald <- dplyr::tbl(conn, "TMP_ALD_AVC") |>
+patients_avec_ald <- ald_result |>
   dplyr::select(BEN_IDT_ANO) |>
   dplyr::distinct() |>
   dplyr::collect() |>
   nrow()
-
 pourcentage_ald <- round(patients_avec_ald / nrow(patients_avc_qualite) * 100, 1)
 print(paste("Pourcentage de patients AVC avec une ALD :", pourcentage_ald, "%"))
-#> [1] "Pourcentage de patients AVC avec une ALD : 71.4 %"
+#> [1] "Pourcentage de patients AVC avec une ALD : 66.7 %"
 ```
 
 ### Étape 5 : Extraction des prescriptions médicamenteuses
@@ -340,7 +373,7 @@ volumineuses `ER_PHA_F` et `ER_PRS_F`.
 
 # Extraire les délivrances de médicaments des patients avec AVC
 patients_ids_for_drugs <- patients_ids_filter |>
-  select(BEN_IDT_ANO, BEN_NIR_PSA) |>
+  select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM) |>
   distinct()
 
 # Codes ATC pour les médicaments courants post-AVC
@@ -348,60 +381,40 @@ patients_ids_for_drugs <- patients_ids_filter |>
 # C : système cardiovasculaire
 atc_codes_avc <- c("N", "C")
 
-extract_drugs_erphaf(
+# Extraire les délivrances de médicaments des patients avec AVC
+drugs_result <- extract_drugs_erphaf(
+  conn,
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with_filter = atc_codes_avc, # Médicaments SNC et CV
   cip13_cod_filter = NULL, # Pas de filtre spécifique CIP13
   patients_ids_filter = patients_ids_for_drugs,
   dis_dtd_lag_months = 6, # Décalage standard 6 mois
-  sup_columns = NULL, # Pas de colonnes supplémentaires
-  output_table_name = "TMP_DRUG_DISPENSES_AVC", # Stocker en table Oracle
-  show_sql_query = FALSE, # Ne pas afficher requête SQL
-  conn = conn
+  sup_columns = NULL # Pas de colonnes supplémentaires
 )
 #> Extracting drug dispenses with ATC codes starting with N or C
 #> Extracting drug dispenses for all CIP13 codes
-#> -flux: DATE '2024-01-01' to DATE '2024-02-01'
-#> -flux: DATE '2024-02-01' to DATE '2024-03-01'
-#> -flux: DATE '2024-03-01' to DATE '2024-04-01'
-#> -flux: DATE '2024-04-01' to DATE '2024-05-01'
-#> -flux: DATE '2024-05-01' to DATE '2024-06-01'
-#> -flux: DATE '2024-06-01' to DATE '2024-07-01'
-#> -flux: DATE '2024-07-01' to DATE '2024-08-01'
-#> -flux: DATE '2024-08-01' to DATE '2024-09-01'
-#> -flux: DATE '2024-09-01' to DATE '2024-10-01'
-#> -flux: DATE '2024-10-01' to DATE '2024-11-01'
-#> -flux: DATE '2024-11-01' to DATE '2024-12-01'
-#> -flux: DATE '2024-12-01' to DATE '2025-01-01'
-#> -flux: DATE '2025-01-01' to DATE '2025-02-01'
-#> -flux: DATE '2025-02-01' to DATE '2025-03-01'
-#> -flux: DATE '2025-03-01' to DATE '2025-04-01'
-#> -flux: DATE '2025-04-01' to DATE '2025-05-01'
-#> -flux: DATE '2025-05-01' to DATE '2025-06-01'
-#> -flux: DATE '2025-06-01' to DATE '2025-07-01'
-#> NULL
 
 # Récupérer un aperçu des délivrances
-drugs_avc_head <- dplyr::tbl(conn, "TMP_DRUG_DISPENSES_AVC") |>
+drugs_avc_head <- drugs_result |>
   head(5) |>
   dplyr::collect()
 kable(drugs_avc_head)
 ```
 
-| BEN_IDT_ANO | EXE_SOI_DTD | PHA_ACT_QSN | PHA_ATC_CLA | PHA_PRS_C13   | PSP_SPE_COD |
-|------------:|:------------|------------:|:------------|:--------------|:------------|
-|          95 | 2024-02-17  |           1 | C08CA01     | 3400936267343 | 22          |
-|          36 | 2024-04-17  |           1 | C08CA01     | 3400936267343 | 02          |
-|          87 | 2024-07-16  |           1 | C08CA01     | 3400936267343 | 01          |
-|          72 | 2024-03-12  |           1 | C02AC01     | 3400932026555 | 34          |
-|          36 | 2024-06-01  |           1 | C02AC01     | 3400932026555 | 22          |
+| BEN_IDT_ANO | EXE_SOI_DTD | FLX_DIS_DTD | PHA_ACT_QSN | PHA_ATC_CLA | PHA_PRS_C13 | PSP_SPE_COD | BEN_RNG_GEM |
+|---:|:---|:---|---:|:---|:---|:---|---:|
+| 95 | 2024-03-22 | 2024-10-31 | 1 | C09AA02 | 3400955555555 | 32 | 1 |
+| 90 | 2024-03-17 | 2024-11-10 | 2 | C09CA01 | 3400966666666 | 01 | 1 |
+| 42 | 2024-02-13 | 2024-02-26 | 1 | C08CA01 | 3400936267343 | 34 | 1 |
+| 95 | 2024-02-17 | 2024-01-10 | 1 | C08CA01 | 3400936267343 | 22 | 1 |
+| 51 | 2024-08-13 | 2024-09-01 | 1 | C02AC01 | 3400932026555 | 01 | 1 |
 
 ``` r
 
 
 # Analyser la répartition par code ATC
-drugs_par_atc <- dplyr::tbl(conn, "TMP_DRUG_DISPENSES_AVC") |>
+drugs_par_atc <- drugs_result |>
   dplyr::count(PHA_ATC_CLA, sort = TRUE) |>
   dplyr::mutate(pourcentage = round(n / sum(n) * 100, 1)) |>
   arrange(-pourcentage) |>
@@ -411,20 +424,20 @@ kable(head(drugs_par_atc, 5))
 
 | PHA_ATC_CLA |   n | pourcentage |
 |:------------|----:|------------:|
-| C09AA02     |   8 |        25.8 |
-| C08CA01     |   5 |        16.1 |
-| C03AA03     |   5 |        16.1 |
-| C02AC01     |   4 |        12.9 |
-| C07AB07     |   4 |        12.9 |
+| C09AA02     |   9 |        25.0 |
+| C02AC01     |   6 |        16.7 |
+| C08CA01     |   6 |        16.7 |
+| C03AA03     |   6 |        16.7 |
+| C07AB07     |   4 |        11.1 |
 
 ### Étape 6 : Nettoyage et fermeture de la session
 
 ``` r
 
-# Supprimer les tables temporaires
+# Supprimer les tables temporaires (si elles existent encore)
 tables_to_remove <- c(
   "TMP_PATIENTS_AVC_PSA", "TMP_SEJOURS_AVC",
-  "TMP_CONSULTATIONS_AVC", "TMP_ALD_AVC", "TMP_DRUG_DISPENSES_AVC"
+  "TMP_DRUG_DISPENSES_AVC"
 )
 for (table_name in tables_to_remove) {
   if (DBI::dbExistsTable(conn, table_name)) {

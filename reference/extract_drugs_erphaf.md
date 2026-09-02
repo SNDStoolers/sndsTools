@@ -8,20 +8,22 @@ comprises entre `start_date` et `end_date` (incluses) sont extraites.
 
 ``` r
 extract_drugs_erphaf(
+  conn,
   start_date,
   end_date,
   atc_cod_starts_with_filter = NULL,
   cip13_cod_filter = NULL,
   patients_ids_filter = NULL,
   dis_dtd_lag_months = 6,
-  sup_columns = NULL,
-  output_table_name = NULL,
-  conn = NULL,
-  show_sql_query = TRUE
+  sup_columns = NULL
 )
 ```
 
 ## Arguments
+
+- conn:
+
+  DBI connection. Une connexion à la base de données Oracle.
 
 - start_date:
 
@@ -64,26 +66,10 @@ extract_drugs_erphaf(
   Character vector (Optionnel). Les colonnes supplémentaires à ajouter à
   la table de sortie. Défaut à NULL, donc aucune colonne ajoutée.
 
-- output_table_name:
-
-  Character (Optionnel). Si fourni, les résultats seront sauvegardés
-  dans une table portant ce nom dans la base de données au lieu d'être
-  retournés sous forme de data frame. Si la table existe déjà dans la
-  base oracle, alors le programme s'arrête en retournant une erreur.
-  Défault à NULL.
-
-- conn:
-
-  DBI connection (Optionnel). Une connexion à la base de données Oracle.
-  Si non fournie, une connexion est établie par défaut. Défaut à NULL.
-
 ## Value
 
-Si output_table_name est NULL, retourne un data.frame contenant les
-délivrances de médicaments. Si output_table_name est fourni, sauvegarde
-les résultats dans la table spécifiée dans Oracle et retourne NULL de
-manière invisible. Dans les deux cas les colonnes de la table de sortie
-sont :
+Retourne une lazy table contenant les délivrances de médicaments. Les
+colonnes de la table de sortie sont :
 
 - BEN_NIR_PSA : Colonne présente uniquement si les identifiants patients
   (`patients_ids_filter`) ne sont pas fournis. Identifiant SNDS, aussi
@@ -94,6 +80,8 @@ sont :
   répertoire (NIR) anonymisé.
 
 - EXE_SOI_DTD : Date de la délivrance
+
+- FLX_DIS_DTD : Date de flux
 
 - PHA_ACT_QSN : Quantité délivrée
 
@@ -138,9 +126,13 @@ c'est-à-dire pour dis_dtd_lag_months = 6.
 Other extract:
 [`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md),
 [`extract_consultations_mcofcstc()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_mcofcstc.md),
+[`extract_deaths()`](https://sndstoolers.github.io/sndsTools/reference/extract_deaths.md),
 [`extract_drugs_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erucdf.md),
+[`extract_ij_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_ij_erprsf.md),
 [`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md),
-[`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md)
+[`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md),
+[`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md),
+[`snds_codes()`](https://sndstoolers.github.io/sndsTools/reference/snds_codes.md)
 
 ## Examples
 
@@ -149,8 +141,10 @@ if (FALSE) { # \dontrun{
 start_date <- as.Date("2010-01-01")
 end_date <- as.Date("2010-01-03")
 atc_cod_starts_with <- c("N04A")
+conn <- connect_oracle()
 
 dispenses <- extract_drugs_erphaf(
+  conn = conn,
   start_date = start_date,
   end_date = end_date,
   atc_cod_starts_with = atc_cod_starts_with

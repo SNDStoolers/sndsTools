@@ -8,18 +8,21 @@ start_date et end_date sont extraites.
 
 ``` r
 extract_consultations_mcofcstc(
+  conn,
   start_date,
   end_date,
   spe_codes_filter = NULL,
   prestation_codes_filter = NULL,
   ccam_codes_filter = NULL,
-  patient_ids_filter = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  patients_ids_filter = NULL
 )
 ```
 
 ## Arguments
+
+- conn:
+
+  DBI connection. Une connexion à la base de données Oracle.
 
 - start_date:
 
@@ -54,37 +57,23 @@ extract_consultations_mcofcstc(
   médicaux d'après la CCAM est disponible sur [le site de cette
   dernière](https://www.ameli.fr/accueil-de-la-ccam/index.php).
 
-- patient_ids_filter:
+- patients_ids_filter:
 
   data.frame Optionnel. Un data.frame contenant les paires
   d'identifiants des patients pour lesquels les consultations doivent
   être extraites. Les colonnes de ce data.frame doivent être
   `BEN_IDT_ANO` et `BEN_NIR_PSA` (en majuscules). Les `BEN_NIR_PSA`
   doivent être tous les `BEN_NIR_PSA` associés aux `BEN_IDT_ANO`
-  fournis. Si `patient_ids_filter` n'est pas fourni, les consultations
+  fournis. Si `patients_ids_filter` n'est pas fourni, les consultations
   de tous les patients sont extraites.
-
-- output_table_name:
-
-  character Optionnel. Le nom de la table de sortie dans la base de
-  données. Si `output_table_name` n'est pas fourni, une table de sortie
-  intermédiaire est créée en R. Si `output_table_name` est fourni mais
-  que cette table existe déjà dans oracle, le programme s'arrête avec un
-  message d'erreur.
-
-- conn:
-
-  dbConnection La connexion à la base de données. Si `conn` n'est pas
-  fourni, une connexion à la base de données est initialisée. Par
-  défaut, une connexion est établie avec oracle.
 
 ## Value
 
-Un data.frame contenant les consultations. Les colonnes sont les
-suivantes :
+Retourne une lazy table contenant les consultations. Les colonnes sont
+les suivantes :
 
 - `BEN_IDT_ANO` : Identifiant bénéficiaire anonymisé (seulement si
-  patient_ids_filter non nul)
+  patients_ids_filter non nul)
 
 - `NIR_ANO_17` : NIR anonymisé
 
@@ -117,34 +106,41 @@ sont extraites.
 
 Other extract:
 [`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md),
+[`extract_deaths()`](https://sndstoolers.github.io/sndsTools/reference/extract_deaths.md),
 [`extract_drugs_erphaf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erphaf.md),
 [`extract_drugs_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erucdf.md),
+[`extract_ij_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_ij_erprsf.md),
 [`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md),
-[`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md)
+[`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md),
+[`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md),
+[`snds_codes()`](https://sndstoolers.github.io/sndsTools/reference/snds_codes.md)
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
+conn <- connect_oracle()
 # Extraction des consultations à l'hôpital en 2019 pour les spécialités 01 et 02
 extract_consultations_mcofcstc(
+  conn = conn,
   start_date = as.Date("2019-01-01"),
   end_date = as.Date("2019-12-31"),
   spe_codes_filter = c("01", "02")
 )
 # Extraction de consultations à l'hôpital à partir de code CCAM
 extract_consultations_mcofcstc(
+  conn = conn,
   start_date = as.Date("2019-01-01"),
   end_date = as.Date("2019-12-31"),
   ccam_codes_filter = c("ACQK001", "ACQH003")
 )
 # Extraction de consultations à l'hôpital à partir de code CCAM et de spécialités
 extract_consultations_mcofcstc(
+  conn = conn,
   start_date = as.Date("2019-01-01"),
   end_date = as.Date("2019-12-31"),
   ccam_codes_filter = c("ACQK001", "ACQH003"),
   spe_codes_filter = c("01", "02")
-
 )
 } # }
 ```

@@ -52,7 +52,7 @@ retrieve_all_psa_from_psa(
 
   Character Optionnel. Si fourni, les résultats seront sauvegardés dans
   une table portant ce nom dans Oracle. Sinon la table en sortie est
-  retournée sous la forme d'un data.frame(/tibble).
+  retournée sous la forme d'un data.frame oracle lazy.
 
 - conn:
 
@@ -66,12 +66,12 @@ l'ensemble des `BEN_NIR_PSA` + `BEN_RNG_GEM` associés au `BEN_IDT_ANO`
 dans une table dédoublonnée. La table en sortie est une copie de(s)
 référentiel(s) `IR_BEN_R` (et `IR_BEN_R_ARC`) relatifs aux `BEN_IDT_ANO`
 impliqués et enregistrée sous Oracle ou retournée sous la forme d'un
-data.frame(/tibble). Si output_table_name est `NULL`, retourne un
-data.frame(/tibble). Si output_table_name est fourni, sauvegarde les
-résultats dans la table spécifiée dans Oracle et retourne `NULL` de
-manière invisible. Dans les deux cas les colonnes de la table de sortie
-sont celles des tables `IR_BEN_R` et `IR_BEN_R_ARC` auxquelles sont
-ajoutées les variables binaires:
+data.frame lazy. Si output_table_name est `NULL`, retourne un data.frame
+lazy. Si output_table_name est fourni, sauvegarde les résultats dans la
+table spécifiée dans Oracle et retourne `NULL` de manière invisible.
+Dans les deux cas les colonnes de la table de sortie sont celles des
+tables `IR_BEN_R` et `IR_BEN_R_ARC` auxquelles sont ajoutées les
+variables binaires:
 
 - `psa_w_multiple_idt_or_nir` (Logical): permet de vérifier que chaque
   BEN_NIR_PSA est associé à un seul `BEN_IDT_ANO` ou `BEN_NIR_ANO`. Si
@@ -112,8 +112,7 @@ visant à améliorer le processus d'inclusion.
 ## See also
 
 Other utils:
-[`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md),
-[`IS_PORTAIL`](https://sndstoolers.github.io/sndsTools/reference/IS_PORTAIL.md),
+[`.onLoad()`](https://sndstoolers.github.io/sndsTools/reference/dot-onLoad.md),
 [`check_output_table_name()`](https://sndstoolers.github.io/sndsTools/reference/check_output_table_name.md),
 [`connect_oracle()`](https://sndstoolers.github.io/sndsTools/reference/connect_oracle.md),
 [`create_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/create_table_from_query.md),
@@ -121,7 +120,8 @@ Other utils:
 [`get_first_non_archived_year()`](https://sndstoolers.github.io/sndsTools/reference/get_first_non_archived_year.md),
 [`insert_into_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/insert_into_table_from_query.md),
 [`retrieve_all_psa_from_idt()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_idt.md),
-[`retrieve_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_psa.md)
+[`retrieve_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_psa.md),
+[`write_oracle_table_by_batch()`](https://sndstoolers.github.io/sndsTools/reference/write_oracle_table_by_batch.md)
 
 ## Examples
 

@@ -111,15 +111,24 @@ SNDS.
   : Extraction des consultations dans le DCIR.
 - [`extract_consultations_mcofcstc()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_mcofcstc.md)
   : Extraction des consultations externes à l'hôpital (MCO).
+- [`extract_deaths()`](https://sndstoolers.github.io/sndsTools/reference/extract_deaths.md)
+  : Extraction des décès et de leurs causes médicales (CIM-10)
 - [`extract_drugs_erphaf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erphaf.md)
   : Extraction des délivrances de médicaments.
 - [`extract_drugs_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erucdf.md)
   : Extrait les dispensations de médicaments en accès précoces depuis le
   DCIR.
+- [`extract_ij_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_ij_erprsf.md)
+  : Extraction des indemnités journalières sans retraitement (brutes)
 - [`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md)
   : Extraction des Affections Longue Durée (ALD)
 - [`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md)
   : Extraction des diagnostics des séjours hospitaliers (MCO).
+- [`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md)
+  : Extraction des diagnostics des séjours de soins de réadaptation
+  (SSR)
+- [`snds_codes()`](https://sndstoolers.github.io/sndsTools/reference/snds_codes.md)
+  : Produit les listes de codes pour extraire des données SNDS
 
 ## Extraction SNDS en SQL
 
@@ -134,12 +143,6 @@ SNDS en pur SQL.
 
 Fonctions utilitaires pour manipuler les données extraites.
 
-- [`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md)
-  : Clés de jointure des tables DCIR
-
-- [`IS_PORTAIL`](https://sndstoolers.github.io/sndsTools/reference/IS_PORTAIL.md)
-  : Est-ce que le code tourne sur le portail de la CNAM ?
-
 - [`check_output_table_name()`](https://sndstoolers.github.io/sndsTools/reference/check_output_table_name.md)
   : Vérifie la validité du nom de la table de sortie Oracle.
 
@@ -148,6 +151,9 @@ Fonctions utilitaires pour manipuler les données extraites.
 
 - [`create_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/create_table_from_query.md)
   : Création d'une table à partir d'une requête SQL.
+
+- [`.onLoad()`](https://sndstoolers.github.io/sndsTools/reference/dot-onLoad.md)
+  : onLoad function
 
 - [`gather_table_stats()`](https://sndstoolers.github.io/sndsTools/reference/gather_table_stats.md)
   : Récupération des statistiques des tables
@@ -171,6 +177,18 @@ Fonctions utilitaires pour manipuler les données extraites.
 
 - [`retrieve_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_psa.md)
   : Generic function retrieving patient identifiers
+
+- [`write_oracle_table_by_batch()`](https://sndstoolers.github.io/sndsTools/reference/write_oracle_table_by_batch.md)
+  : Ecriture d'une table lazy vers oracle par batch
+
+## Constantes
+
+Constantes utilisées dans le package.
+
+- [`COLS_DCIR_JOIN_KEY`](https://sndstoolers.github.io/sndsTools/reference/COLS_DCIR_JOIN_KEY.md)
+  : Clés de jointure des tables DCIR
+- [`IS_PORTAIL`](https://sndstoolers.github.io/sndsTools/reference/IS_PORTAIL.md)
+  : Est-ce que le code tourne sur le portail de la CNAM ?
 
 ## Données synthétiques
 

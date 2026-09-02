@@ -170,18 +170,20 @@ spécifique.</p></li>
 </h3>
 <p>Dans cet ordre de priorité :</p>
 <ul>
+<li><p><code>conn</code> : Objet de connexion à la base de données
+Oracle.</p></li>
 <li><p>Dates de début <code>start_date</code>,
 <code>end_date</code></p></li>
 <li><p>Filtres : suffixé par <code>_filter</code>, par exemple
 <code>pse_spe_filter</code>. Plusieurs filtres peuvent être utilisés
 dans la même fonction.</p></li>
-<li><p>Autres paramètres éventuels.</p></li>
+<li><p>Autres paramètres éventuels non optionnels.</p></li>
 <li><p><code>patients_ids_filter</code> (Optionnel) : Filtrer sur une
 liste d’identifiants de patients si non NULL.</p></li>
-<li><p><code>output_table_name</code> : Nom de la table de sortie Oracle
-si non NULL, sinon la fonction retourne un data.frame.</p></li>
-<li><p><code>conn</code> : Objet de connexion à la base de données
-Oracle. Si NULL, la fonction retourne un data.frame.</p></li>
+<li><p><code>sup_columns</code> : Liste de colonnes supplémentaires à
+ajouter à la table de sortie. Ces colonnes doivent être présentes dans
+les tables sources.</p></li>
+<li><p>autres paramètres optionnels éventuels.</p></li>
 </ul>
 </div>
 <div class="section level3">
@@ -381,7 +383,7 @@ la description de la release ainsi que le nom des contributeurs.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -8,6 +8,7 @@ comprises entre `start_date` et `end_date` sont extraits.
 
 ``` r
 extract_stays_mcob(
+  conn,
   start_date,
   end_date,
   dp_cim10_codes_filter = NULL,
@@ -16,12 +17,15 @@ extract_stays_mcob(
   and_da_with_other_codes_filter = FALSE,
   da_cim10_codes_filter = NULL,
   patients_ids_filter = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  sup_columns = NULL
 )
 ```
 
 ## Arguments
+
+- conn:
+
+  DBI connection. Une connexion à la base de données Oracle.
 
 - start_date:
 
@@ -62,17 +66,10 @@ extract_stays_mcob(
   fournis. Si `patients_ids` n'est pas fourni, les consultations de tous
   les patients sont extraites. Défaut à `NULL`.
 
-- output_table_name:
+- sup_columns:
 
-  character Le nom de la table de sortie dans la base de données. Si
-  `output_table_name` n'est pas fourni, une table de sortie
-  intermédiaire est créée. Défaut à `NULL`.
-
-- conn:
-
-  dbConnection La connexion à la base de données. Si `conn` n'est pas
-  fourni, une connexion à la base de données est initialisée. Défaut à
-  `NULL`.
+  character vector (Optionnel). Colonnes supplémentaires à inclure dans
+  le résultat. Défaut à `NULL`.
 
 - or_dr_with_same_codes:
 
@@ -90,9 +87,9 @@ extract_stays_mcob(
 
 ## Value
 
-Un data.frame contenant les séjours hospitaliers. Attention: Les lignes
-des tables MCO B et C peuvent être dupliquées. Les colonnes sont les
-suivantes :
+Retourne une lazy table contenant les séjours hospitaliers. Attention:
+Les lignes des tables MCO B et C peuvent être dupliquées. Les colonnes
+sont les suivantes :
 
 - `BEN_IDT_ANO` : Identifiant bénéficiaire anonymisé (seulement si
   patient_ids non nul)
@@ -182,22 +179,29 @@ Scalpel](https://github.com/X-DataInitiative/SCALPEL-Flattening/blob/DREES-104-D
 Other extract:
 [`extract_consultations_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_erprsf.md),
 [`extract_consultations_mcofcstc()`](https://sndstoolers.github.io/sndsTools/reference/extract_consultations_mcofcstc.md),
+[`extract_deaths()`](https://sndstoolers.github.io/sndsTools/reference/extract_deaths.md),
 [`extract_drugs_erphaf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erphaf.md),
 [`extract_drugs_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erucdf.md),
-[`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md)
+[`extract_ij_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_ij_erprsf.md),
+[`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md),
+[`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md),
+[`snds_codes()`](https://sndstoolers.github.io/sndsTools/reference/snds_codes.md)
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
+conn <- connect_oracle()
 # Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
 extract_stays_mcob(
+ conn = conn,
  start_date = as.Date("2019-01-01"),
  end_date = as.Date("2019-12-31"),
- dp_cim10_codes = c("A", "B")
+ dp_cim10_codes_filter = c("A", "B")
 )
 # Extrait tous les séjours en 2019
 extract_stays_mcob(
+ conn = conn,
  start_date = as.Date("2019-01-01"),
  end_date = as.Date("2019-12-31")
 )

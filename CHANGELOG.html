@@ -51,9 +51,30 @@
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/" class="external-link">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html" class="external-link">Semantic Versioning</a>.</p>
 <div class="section level2">
-<h2 id="id_022---2026-06-03">[0.2.2] - 2026-06-03<a class="anchor" aria-label="anchor" href="#id_022---2026-06-03"></a></h2>
+<h2 id="unreleased">[Unreleased]<a class="anchor" aria-label="anchor" href="#unreleased"></a></h2>
+<p>Contributors : Léa Aguilhon, Léopold Maurice, Marc Dibbling, Louisicm, Ben Fournier, Matthieu Doutreligne</p>
 <div class="section level3">
 <h3 id="added">Added<a class="anchor" aria-label="anchor" href="#added"></a></h3>
+<ul><li>Added <code><a href="reference/extract_deaths.html">extract_deaths()</a></code> (#112) - extracts, for each death within a date range, the ICD-10 codes associated with the death (one row per code) from the medical cause-of-death tables <code>KI_CCI_R</code> (initial cause) and <code>KI_ECD_R</code> (other causes); a <code>STATUS</code> column distinguishes the initial cause (<code>"Initial cause"</code>) from the other codes (<code>"Other"</code>).</li>
+<li>Added notebook <code>notebooks/demo_death.R</code> - self-contained demo of <code><a href="reference/extract_deaths.html">extract_deaths()</a></code> (in-memory DuckDB + fictitious data).</li>
+<li>Added <code><a href="reference/extract_stays_ssr.html">extract_stays_ssr()</a></code> - extracts SSR (soins de réadaptation) stays diagnostics.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changed">Changed<a class="anchor" aria-label="anchor" href="#changed"></a></h3>
+<ul><li>Declared <code>tibble</code> in <code>Suggests</code> (used by the <code><a href="reference/extract_deaths.html">extract_deaths()</a></code> tests via <code><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tibble::tribble()</a></code>).</li>
+<li>Documentation generated with roxygen2 8.0.0; removed <code>quarto</code> from <code>VignetteBuilder</code> (unblocks <code>make check</code> and <code>make site</code>).</li>
+<li>Every extract function now returns either a lazy table or save it to oracle table, depending on output_table_name parameter. If output_table_name is NULL, the function returns a lazy table, otherwise it saves the result to oracle table and returns NULL.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixed">Fixed<a class="anchor" aria-label="anchor" href="#fixed"></a></h3>
+<ul><li>
+<code><a href="reference/extract_stays_mcob.html">extract_stays_mcob()</a></code>: write the temporary patient-ids table with <code>overwrite = TRUE</code> and remove it at the end of the function, avoiding collisions and leftover temporary tables on repeated calls.</li>
+</ul></div>
+</div>
+<div class="section level2">
+<h2 id="id_022---2026-06-03">[0.2.2] - 2026-06-03<a class="anchor" aria-label="anchor" href="#id_022---2026-06-03"></a></h2>
+<div class="section level3">
+<h3 id="added-1">Added<a class="anchor" aria-label="anchor" href="#added-1"></a></h3>
 <ul><li>Added synthetic SNDS data generation functionalities
 <ul><li>New <code>synthetic_data.R</code> with functions to download and manage synthetic datasets</li>
 <li>New <code>synthetic_data_avc.R</code> with 721 lines of AVC (stroke) case study synthetic data</li>
@@ -65,14 +86,14 @@
 <li>Added to vignette <code>contribuer.Rmd</code> API conventions</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changed">Changed<a class="anchor" aria-label="anchor" href="#changed"></a></h3>
+<h3 id="changed-1">Changed<a class="anchor" aria-label="anchor" href="#changed-1"></a></h3>
 <ul><li>Simplified and improved the “prise en main” (getting started) vignette</li>
 <li>Moved <code>connexion</code> parameter to last position in all functions for API consistency</li>
 <li>Changed constants from <code>constants()</code> function to direct variable exports</li>
 <li>Renamed all extraction functions to be consistent with the API naming convention</li>
 </ul></div>
 <div class="section level3">
-<h3 id="fixed">Fixed<a class="anchor" aria-label="anchor" href="#fixed"></a></h3>
+<h3 id="fixed-1">Fixed<a class="anchor" aria-label="anchor" href="#fixed-1"></a></h3>
 <ul><li>Fixed <code><a href="reference/extract_drugs_erphaf.html">extract_drugs_erphaf()</a></code> bug when no drug_filter is specified</li>
 <li>Fixed <code><a href="reference/extract_stays_mcob.html">extract_stays_mcob()</a></code> to allow null diagnostic filters</li>
 <li>Added validation to ensure <code>output_table_name</code> is in uppercase (#89)</li>
@@ -89,14 +110,14 @@
 <div class="section level2">
 <h2 id="id_012---2026-02-10">[0.1.2] - 2026-02-10<a class="anchor" aria-label="anchor" href="#id_012---2026-02-10"></a></h2>
 <div class="section level3">
-<h3 id="added-1">Added<a class="anchor" aria-label="anchor" href="#added-1"></a></h3>
+<h3 id="added-2">Added<a class="anchor" aria-label="anchor" href="#added-2"></a></h3>
 <ul><li>Documentation: added new instructions to get back the sndsTools.R file</li>
 </ul></div>
 </div>
 <div class="section level2">
 <h2 id="id_010---2026-02-10">[0.1.0] - 2026-02-10<a class="anchor" aria-label="anchor" href="#id_010---2026-02-10"></a></h2>
 <div class="section level3">
-<h3 id="added-2">Added<a class="anchor" aria-label="anchor" href="#added-2"></a></h3>
+<h3 id="added-3">Added<a class="anchor" aria-label="anchor" href="#added-3"></a></h3>
 <ul><li>Initial release of SndsTools</li>
 <li>Core extraction functions for SNDS data</li>
 <li>Basic documentation and vignettes</li>
@@ -113,7 +134,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

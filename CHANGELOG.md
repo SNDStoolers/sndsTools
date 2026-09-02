@@ -6,6 +6,47 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## \[Unreleased\]
+
+Contributors : Léa Aguilhon, Léopold Maurice, Marc Dibbling, Louisicm,
+Ben Fournier, Matthieu Doutreligne
+
+### Added
+
+- Added
+  [`extract_deaths()`](https://sndstoolers.github.io/sndsTools/reference/extract_deaths.md)
+  (#112) - extracts, for each death within a date range, the ICD-10
+  codes associated with the death (one row per code) from the medical
+  cause-of-death tables `KI_CCI_R` (initial cause) and `KI_ECD_R` (other
+  causes); a `STATUS` column distinguishes the initial cause
+  (`"Initial cause"`) from the other codes (`"Other"`).
+- Added notebook `notebooks/demo_death.R` - self-contained demo of
+  [`extract_deaths()`](https://sndstoolers.github.io/sndsTools/reference/extract_deaths.md)
+  (in-memory DuckDB + fictitious data).
+- Added
+  [`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md) -
+  extracts SSR (soins de réadaptation) stays diagnostics.
+
+### Changed
+
+- Declared `tibble` in `Suggests` (used by the
+  [`extract_deaths()`](https://sndstoolers.github.io/sndsTools/reference/extract_deaths.md)
+  tests via
+  [`tibble::tribble()`](https://tibble.tidyverse.org/reference/tribble.html)).
+- Documentation generated with roxygen2 8.0.0; removed `quarto` from
+  `VignetteBuilder` (unblocks `make check` and `make site`).
+- Every extract function now returns either a lazy table or save it to
+  oracle table, depending on output_table_name parameter. If
+  output_table_name is NULL, the function returns a lazy table,
+  otherwise it saves the result to oracle table and returns NULL.
+
+### Fixed
+
+- [`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md):
+  write the temporary patient-ids table with `overwrite = TRUE` and
+  remove it at the end of the function, avoiding collisions and leftover
+  temporary tables on repeated calls.
+
 ## \[0.2.2\] - 2026-06-03
 
 ### Added
