@@ -162,6 +162,9 @@ Fonctions utilitaires pour manipuler les données extraites.
   : Récupération de l'année non archivée la plus ancienne de la table
   ER_PRS_F.
 
+- [`get_profil_snds()`](https://sndstoolers.github.io/sndsTools/reference/get_profil_snds.md)
+  : Récupération du profil SNDS de l'utilisateur connecté.
+
 - [`insert_into_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/insert_into_table_from_query.md)
   : Insertion des résultats d'une requête SQL dans une table existante.
 
@@ -177,6 +180,9 @@ Fonctions utilitaires pour manipuler les données extraites.
 
 - [`retrieve_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_psa.md)
   : Generic function retrieving patient identifiers
+
+- [`tbl_oracle()`](https://sndstoolers.github.io/sndsTools/reference/tbl_oracle.md)
+  : Accès à une table du SNDS en qualifiant le schéma du profil.
 
 - [`write_oracle_table_by_batch()`](https://sndstoolers.github.io/sndsTools/reference/write_oracle_table_by_batch.md)
   : Ecriture d'une table lazy vers oracle par batch

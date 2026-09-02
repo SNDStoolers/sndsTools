@@ -1,50 +1,33 @@
-# Generic function retrieving patient identifiers
+# Accès à une table du SNDS en qualifiant le schéma du profil.
 
-Refer to `retrieve_all_psa_from_idt` and `retrieve_all_psa_from_psa` for
-details.
+Certaines mises à jour du portail cassent les connexions Oracle qui ne
+déclarent pas le schéma. Cette fonction préfixe donc la table par le
+profil de l'utilisateur. Hors Oracle, elle se rabat sur
+[`dplyr::tbl()`](https://dplyr.tidyverse.org/reference/tbl.html).
 
 ## Usage
 
 ``` r
-retrieve_psa(
-  ben_table_name,
-  start_key,
-  check_arc_table = TRUE,
-  output_table_name = NULL,
-  conn = NULL
-)
+tbl_oracle(conn, table_name, profil = NULL)
 ```
 
 ## Arguments
 
-- ben_table_name:
-
-  Character Obligatoire. Nom de la table d'entrée comprenant au moins la
-  variable `BEN_IDT_ANO` ou `BEN_NIR PSA`. Si la variable `BEN_RNG_GEM`
-  est incluse, elle sera également utilisée pour les jointures avec les
-  référentiels.
-
-- start_key:
-
-  Character Obligatoire. Doit être égal à "BEN_IDT_ANO" ou
-  "BEN_NIR_PSA".
-
-- check_arc_table:
-
-  Logical Optionnel. Si TRUE (par défaut), les tables `IR_BEN_R_ARC`
-  sont également consultées pour la recherche des `BEN_IDT_ANO` et des
-  critères de sélection.
-
-- output_table_name:
-
-  Character Optionnel. Si fourni, les résultats seront sauvegardés dans
-  une table portant ce nom dans Oracle. Sinon la table en sortie est
-  retournée sous la forme d'un data.frame(/tibble).
-
 - conn:
 
-  DBI connection Optionnel Une connexion à la base de données Oracle. Si
-  non fournie, une connexion est établie par défaut.
+  Connexion à la base de données
+
+- table_name:
+
+  Nom de la table
+
+- profil:
+
+  Nom du schéma du profil. Par défaut, celui de l'utilisateur connecté.
+
+## Value
+
+Table lazy
 
 ## See also
 
@@ -59,5 +42,5 @@ Other utils:
 [`insert_into_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/insert_into_table_from_query.md),
 [`retrieve_all_psa_from_idt()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_idt.md),
 [`retrieve_all_psa_from_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_psa.md),
-[`tbl_oracle()`](https://sndstoolers.github.io/sndsTools/reference/tbl_oracle.md),
+[`retrieve_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_psa.md),
 [`write_oracle_table_by_batch()`](https://sndstoolers.github.io/sndsTools/reference/write_oracle_table_by_batch.md)

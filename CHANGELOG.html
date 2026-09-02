@@ -69,6 +69,7 @@
 <h3 id="fixed">Fixed<a class="anchor" aria-label="anchor" href="#fixed"></a></h3>
 <ul><li>
 <code><a href="reference/extract_stays_mcob.html">extract_stays_mcob()</a></code>: write the temporary patient-ids table with <code>overwrite = TRUE</code> and remove it at the end of the function, avoiding collisions and leftover temporary tables on repeated calls.</li>
+<li>Les tables du SNDS sont lues via <code><a href="reference/tbl_oracle.html">tbl_oracle()</a></code> (#126), qui qualifie le nom de la table par le schéma du profil de l’utilisateur (<code>PROFIL_XXX</code>), déduit de son identifiant Oracle. Les connexions ne déclarant pas le schéma sont cassées par les mises à jour du portail.</li>
 </ul></div>
 </div>
 <div class="section level2">

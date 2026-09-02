@@ -1,12 +1,14 @@
-# Récupération de l'année non archivée la plus ancienne de la table ER_PRS_F.
+# Récupération du profil SNDS de l'utilisateur connecté.
 
-Récupération de l'année non archivée la plus ancienne de la table
-ER_PRS_F.
+Sur le portail, chaque utilisateur appartient à un profil (`PROFIL_XXX`)
+qui est le schéma hébergeant les tables du SNDS. Le nom du profil est
+déduit de l'identifiant Oracle, par exemple `ORAxxxxxx123` -\>
+`PROFIL_123`.
 
 ## Usage
 
 ``` r
-get_first_non_archived_year(conn)
+get_profil_snds(conn)
 ```
 
 ## Arguments
@@ -17,7 +19,8 @@ get_first_non_archived_year(conn)
 
 ## Value
 
-Année non archivée la plus ancienne
+Nom du schéma du profil, ou NULL si la connexion n'est pas Oracle (par
+exemple sur la base synthétique duckdb).
 
 ## See also
 
@@ -27,7 +30,7 @@ Other utils:
 [`connect_oracle()`](https://sndstoolers.github.io/sndsTools/reference/connect_oracle.md),
 [`create_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/create_table_from_query.md),
 [`gather_table_stats()`](https://sndstoolers.github.io/sndsTools/reference/gather_table_stats.md),
-[`get_profil_snds()`](https://sndstoolers.github.io/sndsTools/reference/get_profil_snds.md),
+[`get_first_non_archived_year()`](https://sndstoolers.github.io/sndsTools/reference/get_first_non_archived_year.md),
 [`insert_into_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/insert_into_table_from_query.md),
 [`retrieve_all_psa_from_idt()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_idt.md),
 [`retrieve_all_psa_from_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_psa.md),
