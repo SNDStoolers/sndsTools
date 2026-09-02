@@ -216,10 +216,10 @@ extract_stays_mcob <- function(
   hospital_stays_by_year <- purrr::map(start_year:end_year, function(year) {
     formatted_year <- sprintf("%02d", year %% 100)
 
-    t_mco_b <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}B"))
-    t_mco_c <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}C"))
-    t_mco_d <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}D"))
-    t_mco_um <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}UM"))
+    t_mco_b <- tbl_oracle(conn, glue::glue("T_MCO{formatted_year}B"))
+    t_mco_c <- tbl_oracle(conn, glue::glue("T_MCO{formatted_year}C"))
+    t_mco_d <- tbl_oracle(conn, glue::glue("T_MCO{formatted_year}D"))
+    t_mco_um <- tbl_oracle(conn, glue::glue("T_MCO{formatted_year}UM"))
 
     if (is.null(dp_cim10_codes_filter)) {
       eta_num_rsa_num <-

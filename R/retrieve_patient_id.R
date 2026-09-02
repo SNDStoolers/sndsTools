@@ -44,8 +44,8 @@ retrieve_psa <- function(
   ben_table_colnames <- dplyr::tbl(conn, ben_table_name) |> colnames()
 
   # Define reference table names
-  ben <- dplyr::tbl(conn, "IR_BEN_R")
-  ben_arc <- dplyr::tbl(conn, "IR_BEN_R_ARC")
+  ben <- tbl_oracle(conn, "IR_BEN_R")
+  ben_arc <- tbl_oracle(conn, "IR_BEN_R_ARC")
 
   # Check table content
   if (!(start_key %in% ben_table_colnames)) {

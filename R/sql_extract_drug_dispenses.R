@@ -51,7 +51,7 @@ sql_extract_drugs_erphaf <- function(
 
   # Create the subset of IR_PHA_V table that should be joined to the DCIR
   # tables(same code as extract_drugs_erphaf)
-  ir_pha_r <- dplyr::tbl(conn, "IR_PHA_R")
+  ir_pha_r <- tbl_oracle(conn, "IR_PHA_R")
 
   if (!is.null(atc_cod_starts_with_filter)) {
     starts_with_conditions <- vapply(

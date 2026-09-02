@@ -40,6 +40,50 @@ connect_oracle <- function() {
   conn
 }
 
+#' Récupération du profil SNDS de l'utilisateur connecté.
+#' @description
+#' Sur le portail, chaque utilisateur appartient à un profil (`PROFIL_XXX`)
+#' qui est le schéma hébergeant les tables du SNDS. Le nom du profil est
+#' déduit de l'identifiant Oracle, par exemple `ORAxxxxxx123` -> `PROFIL_123`.
+#' @param conn Connexion à la base de données
+#' @return Nom du schéma du profil, ou NULL si la connexion n'est pas Oracle
+#' (par exemple sur la base synthétique duckdb).
+#'
+#' @export
+#' @family utils
+get_profil_snds <- function(conn) {
+  if (!inherits(conn, "OraConnection")) {
+    return(NULL)
+  }
+  DBI::dbGetQuery(
+    conn,
+    "SELECT 'PROFIL_' || substr(user, 11, 3) AS PROFIL FROM dual"
+  )[[1]]
+}
+
+#' Accès à une table du SNDS en qualifiant le schéma du profil.
+#' @description
+#' Certaines mises à jour du portail cassent les connexions Oracle qui ne
+#' déclarent pas le schéma. Cette fonction préfixe donc la table par le profil
+#' de l'utilisateur. Hors Oracle, elle se rabat sur [dplyr::tbl()].
+#' @param conn Connexion à la base de données
+#' @param table_name Nom de la table
+#' @param profil Nom du schéma du profil. Par défaut, celui de l'utilisateur
+#' connecté.
+#' @return Table lazy
+#'
+#' @export
+#' @family utils
+tbl_oracle <- function(conn, table_name, profil = NULL) {
+  if (is.null(profil)) {
+    profil <- get_profil_snds(conn)
+  }
+  if (is.null(profil)) {
+    return(dplyr::tbl(conn, table_name))
+  }
+  dplyr::tbl(conn, DBI::Id(schema = profil, table = table_name))
+}
+
 #' Création d'une table à partir d'une requête SQL.
 #' @details
 #' La fonction crée une table sous Oracle à partir d'une requête SQL.

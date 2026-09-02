@@ -105,3 +105,32 @@ test_that("write_oracle_by_batch écrit correctement les données par batch", {
   expect_equal(nrow(result), nrow(lazy_df |> collect()))
   expect_equal(result |> dplyr::pull(value), lazy_df |> dplyr::pull(value))
 })
+
+test_that("tbl_oracle sans profil renvoie la table non qualifiée", {
+  conn <- connect_synthetic_snds()
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
+
+  expect_equal(
+    tbl_oracle(conn, "ER_PRS_F") |> colnames(),
+    dplyr::tbl(conn, "ER_PRS_F") |> colnames()
+  )
+})
+
+test_that("tbl_oracle préfixe la table par le profil", {
+  conn <- connect_synthetic_snds()
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
+
+  DBI::dbExecute(conn, "CREATE SCHEMA PROFIL_TST")
+  DBI::dbExecute(conn, "CREATE TABLE PROFIL_TST.MA_TABLE AS SELECT 1 AS X")
+
+  table <- tbl_oracle(conn, "MA_TABLE", profil = "PROFIL_TST")
+  expect_equal(table |> dplyr::collect() |> nrow(), 1)
+  expect_match(dbplyr::sql_render(table), "PROFIL_TST")
+})
+
+test_that("get_profil_snds renvoie NULL hors Oracle", {
+  conn <- connect_synthetic_snds()
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
+
+  expect_null(get_profil_snds(conn))
+})

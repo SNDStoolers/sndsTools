@@ -36,6 +36,10 @@ Contributors : Léa Aguilhon, Léopold Maurice, Marc Dibbling, Louisicm, Ben Fou
 - `extract_stays_mcob()`: write the temporary patient-ids table with
   `overwrite = TRUE` and remove it at the end of the function, avoiding
   collisions and leftover temporary tables on repeated calls.
+- Les tables du SNDS sont lues via `tbl_oracle()` (#126), qui qualifie le nom
+  de la table par le schéma du profil de l'utilisateur (`PROFIL_XXX`), déduit
+  de son identifiant Oracle. Les connexions ne déclarant pas le schéma sont
+  cassées par les mises à jour du portail.
 
 ## [0.2.2] - 2026-06-03
 

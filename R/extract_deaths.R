@@ -155,9 +155,9 @@ extract_deaths <- function(
     AND BEN_DCD_DTE <= DATE '{formatted_end_date}'"
   )
 
-  initial_cause <- dplyr::tbl(conn, "KI_CCI_R") |>
+  initial_cause <- tbl_oracle(conn, "KI_CCI_R") |>
     dplyr::filter(dbplyr::sql(date_condition), !is.na(BEN_IDT_ANO))
-  all_causes <- dplyr::tbl(conn, "KI_ECD_R") |>
+  all_causes <- tbl_oracle(conn, "KI_ECD_R") |>
     dplyr::filter(dbplyr::sql(date_condition), !is.na(BEN_IDT_ANO))
 
   ids_db <- NULL
