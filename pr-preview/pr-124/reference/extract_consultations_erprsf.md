@@ -112,9 +112,11 @@ Other extract:
 [`extract_deaths()`](https://sndstoolers.github.io/sndsTools/reference/extract_deaths.md),
 [`extract_drugs_erphaf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erphaf.md),
 [`extract_drugs_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erucdf.md),
+[`extract_ij_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_ij_erprsf.md),
 [`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md),
 [`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md),
-[`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md)
+[`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md),
+[`snds_codes()`](https://sndstoolers.github.io/sndsTools/reference/snds_codes.md)
 
 ## Examples
 

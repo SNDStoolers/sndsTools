@@ -118,6 +118,8 @@ SNDS.
 - [`extract_drugs_erucdf()`](https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erucdf.md)
   : Extrait les dispensations de médicaments en accès précoces depuis le
   DCIR.
+- [`extract_ij_erprsf()`](https://sndstoolers.github.io/sndsTools/reference/extract_ij_erprsf.md)
+  : Extraction des indemnités journalières sans retraitement (brutes)
 - [`extract_longtermdiseases_irimbr()`](https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.md)
   : Extraction des Affections Longue Durée (ALD)
 - [`extract_stays_mcob()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.md)
@@ -125,6 +127,8 @@ SNDS.
 - [`extract_stays_ssr()`](https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.md)
   : Extraction des diagnostics des séjours de soins de réadaptation
   (SSR)
+- [`snds_codes()`](https://sndstoolers.github.io/sndsTools/reference/snds_codes.md)
+  : Produit les listes de codes pour extraire des données SNDS
 
 ## Extraction SNDS en SQL
 

@@ -38,6 +38,7 @@
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/extract_deaths.html</loc></url>
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erphaf.html</loc></url>
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/extract_drugs_erucdf.html</loc></url>
+<url><loc>https://sndstoolers.github.io/sndsTools/reference/extract_ij_erprsf.html</loc></url>
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/extract_longtermdiseases_irimbr.html</loc></url>
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/extract_stays_mcob.html</loc></url>
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/extract_stays_ssr.html</loc></url>
@@ -49,6 +50,7 @@
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_psa.html</loc></url>
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/retrieve_psa.html</loc></url>
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/select_death_codes.html</loc></url>
+<url><loc>https://sndstoolers.github.io/sndsTools/reference/snds_codes.html</loc></url>
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/sql_extract_drugs_erphaf.html</loc></url>
 <url><loc>https://sndstoolers.github.io/sndsTools/reference/write_oracle_table_by_batch.html</loc></url>
 </urlset>

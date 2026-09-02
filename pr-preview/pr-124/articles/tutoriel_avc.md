@@ -70,9 +70,9 @@ if (dir.exists("~/sasdata1")) {
     end_date = as.Date("2024-12-31")
   )
 }
-#> INFO [2026-07-27 13:34:25] Charge le package sndsTools.
+#> INFO [2026-09-02 14:00:16] Charge le package sndsTools.
 #> Variables d'environment TZ et ORA_SDTZ fixées à 'Europe/Paris.'
-#> INFO [2026-07-27 13:34:25] Connection to an existing database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
+#> INFO [2026-09-02 14:00:16] Connection to an existing database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
 # packages utiles pour l'analyse
 library(dplyr)
 library(lubridate)
@@ -113,19 +113,19 @@ extract_stays_mcob(
   patients_ids_filter = NULL # Extraire tous les patients
 )
 #> # A query:  ?? x 25
-#> # Database: DuckDB 1.5.4 [unknown@Linux 6.17.0-1020-azure:R 4.6.1/:memory:]
+#> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1/:memory:]
 #>    ETA_NUM RSA_NUM SEJ_NUM SEJ_NBJ NBR_DGN NBR_RUM NBR_ACT ENT_MOD ENT_PRV
 #>      <int>   <int>   <int>   <int>   <int>   <int>   <int> <chr>   <chr>  
-#>  1  153240       7       7      14       2       2      18 7       5      
-#>  2  807015      12      12       8       2       1       0 6       1      
-#>  3  143041      16      16      15       3       2      10 6       5      
+#>  1  143041      16      16      15       3       2      10 6       5      
+#>  2  490232      20      20      18       1       1       2 6       2      
+#>  3  153240       7       7      14       2       2      18 7       5      
 #>  4  664182      21      21      20       2       2       3 6       5      
 #>  5  883006      23      23      17       2       2      11 6       2      
-#>  6  490232      20      20      18       1       1       2 6       2      
+#>  6  190076       3       3      10       3       2       6 7       6      
 #>  7  883006      23      23      17       2       2      11 6       2      
 #>  8  190076       3       3      10       3       2       6 7       6      
-#>  9  883006      23      23      17       2       2      11 6       2      
-#> 10  190076       3       3      10       3       2       6 7       6      
+#>  9  807015      12      12       8       2       1       0 6       1      
+#> 10  664182      21      21      20       2       2       3 6       5      
 #> # ℹ more rows
 #> # ℹ 16 more variables: SOR_MOD <chr>, SOR_DES <chr>, DGN_PAL <chr>,
 #> #   DGN_REL <chr>, GRG_GHM <chr>, BDI_DEP <chr>, BDI_COD <chr>, COD_SEX <chr>,
@@ -150,9 +150,9 @@ kable(sejours_avc_head)
 
 | ETA_NUM | RSA_NUM | SEJ_NUM | SEJ_NBJ | NBR_DGN | NBR_RUM | NBR_ACT | ENT_MOD | ENT_PRV | SOR_MOD | SOR_DES | DGN_PAL | DGN_REL | GRG_GHM | BDI_DEP | BDI_COD | COD_SEX | AGE_ANN | AGE_JOU | NIR_ANO_17 | EXE_SOI_DTD | EXE_SOI_DTF | DGN_PAL_UM | DGN_REL_UM | ASS_DGN |
 |---:|---:|---:|---:|---:|---:|---:|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|---:|---:|---:|:---|:---|:---|:---|:---|
-| 883006 | 23 | 23 | 17 | 2 | 2 | 11 | 6 | 2 | 6 | 7 | I62 | NA | 05M30 | 08 | 49331 | 2 | 78 | 37 | 10035 | 2024-06-04 | 2024-06-21 | I20 | I64 | NA |
-| 153240 | 7 | 7 | 14 | 2 | 2 | 18 | 7 | 5 | 6 | 5 | I10 | I61 | 05C76 | 50 | 02175 | 2 | 61 | 206 | 10041 | 2024-04-29 | 2024-05-13 | I20 | NA | NA |
+| 190076 | 3 | 3 | 10 | 3 | 2 | 6 | 7 | 6 | 6 | 5 | I62 | NA | 05K76 | 94 | 81924 | 2 | 45 | 36 | 10050 | 2024-06-22 | 2024-07-02 | I25 | NA | NA |
 | 664182 | 21 | 21 | 20 | 2 | 2 | 3 | 6 | 5 | 6 | 3 | I61 | I64 | 06C92 | 94 | 80289 | 1 | 34 | 188 | 10086 | 2024-01-06 | 2024-01-26 | I80 | NA | NA |
+| 153240 | 7 | 7 | 14 | 2 | 2 | 18 | 7 | 5 | 6 | 5 | I10 | I61 | 05C76 | 50 | 02175 | 2 | 61 | 206 | 10041 | 2024-04-29 | 2024-05-13 | I20 | NA | NA |
 | 143041 | 16 | 16 | 15 | 3 | 2 | 10 | 6 | 5 | 6 | 1 | I63 | I48 | 06M50 | 13 | 16315 | 1 | 78 | 138 | 10071 | 2024-06-13 | 2024-06-28 | NA | NA | I48 |
 | 490232 | 20 | 20 | 18 | 1 | 1 | 2 | 6 | 2 | 6 | 2 | I62 | I12 | 05M42 | 84 | 33760 | 1 | 73 | 310 | 10094 | 2024-08-31 | 2024-09-18 | NA | NA | Z95 |
 
@@ -318,11 +318,11 @@ kable(ald_avc_head)
 
 | BEN_IDT_ANO | BEN_NIR_PSA | BEN_RNG_GEM | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
 |---:|---:|---:|---:|:---|:---|:---|:---|
-| 43 | 10042 | 1 | 5 | 2023-07-28 | 2024-04-25 | 01 | I50 |
-| 87 | 10086 | 1 | 8 | 2023-06-07 | 2025-10-05 | 01 | I21 |
-| 72 | 10071 | 1 | 12 | 2023-01-25 | 2024-04-24 | 02 | I70 |
 | 51 | 10050 | 1 | 8 | 2023-08-23 | 2024-01-26 | 02 | I70 |
 | 42 | 10041 | 1 | 1 | 2023-06-08 | 2026-01-23 | 01 | I20 |
+| 43 | 10042 | 1 | 5 | 2023-07-28 | 2024-04-25 | 01 | I50 |
+| 95 | 10094 | 1 | 8 | 2023-05-01 | 2026-02-08 | 03 | I13 |
+| 43 | 10042 | 1 | 8 | 2023-11-02 | 2026-03-27 | 01 | I60 |
 
 ``` r
 
@@ -425,8 +425,8 @@ kable(head(drugs_par_atc, 5))
 | PHA_ATC_CLA |   n | pourcentage |
 |:------------|----:|------------:|
 | C09AA02     |   9 |        25.0 |
-| C02AC01     |   6 |        16.7 |
 | C08CA01     |   6 |        16.7 |
+| C02AC01     |   6 |        16.7 |
 | C03AA03     |   6 |        16.7 |
 | C07AB07     |   4 |        11.1 |
 
