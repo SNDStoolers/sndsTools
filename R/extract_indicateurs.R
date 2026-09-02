@@ -110,7 +110,7 @@ snds_codes <- function() {
 #' @param sup_columns Vecteur de noms de colonnes (Optionnel).
 #' Ajoute ces colonnes à la table créée. Défaut à `NULL`.
 #'
-#' @return @return Si `output_table_name` est `NULL`, retourne une lazy table contenant
+#' @return Si `output_table_name` est `NULL`, retourne une lazy table contenant
 #' les consultations. Si `output_table_name` est fourni, sauvegarde les
 #' résultats dans la table spécifiée dans Oracle et retourne le nom de la table.
 #' Dans les deux cas les colonnes de la table de sortie sont :
