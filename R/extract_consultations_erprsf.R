@@ -150,15 +150,15 @@ extract_consultations_erprsf <- function(
     er_prs_f <- purrr::map(
       start_year:min(end_year, first_non_archived_year - 1),
       function(year) {
-        dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
+        tbl_oracle(conn, glue::glue("ER_PRS_F_{year}"))
       }
     ) |>
       purrr::reduce(dplyr::union_all) |>
       dplyr::union_all(
-        dplyr::tbl(conn, "ER_PRS_F")
+        tbl_oracle(conn, "ER_PRS_F")
       )
   } else {
-    er_prs_f <- dplyr::tbl(conn, "ER_PRS_F")
+    er_prs_f <- tbl_oracle(conn, "ER_PRS_F")
   }
 
   # TODO: Ces filtres qualité devraient être externalisés dans une fonction

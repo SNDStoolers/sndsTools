@@ -171,7 +171,7 @@ extract_drugs_erphaf <- function(
   }
 
   # save the IR_PHA_R table in oracle for further filtering
-  ir_pha_r <- dplyr::tbl(conn, "IR_PHA_R")
+  ir_pha_r <- tbl_oracle(conn, "IR_PHA_R")
 
   if (!is.null(atc_cod_starts_with_filter)) {
     starts_with_conditions <- vapply(
@@ -248,39 +248,39 @@ extract_drugs_erphaf <- function(
     er_prs_f <- purrr::map(
       start_year:min(end_year, first_non_archived_year - 1),
       function(year) {
-        dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
+        tbl_oracle(conn, glue::glue("ER_PRS_F_{year}"))
       }
     ) |>
       purrr::reduce(dplyr::union_all) |>
       dplyr::union_all(
-        dplyr::tbl(conn, "ER_PRS_F")
+        tbl_oracle(conn, "ER_PRS_F")
       )
 
     er_pha_f <- purrr::map(
       start_year:min(end_year, first_non_archived_year - 1),
       function(year) {
-        dplyr::tbl(conn, glue::glue("ER_PHA_F_{year}"))
+        tbl_oracle(conn, glue::glue("ER_PHA_F_{year}"))
       }
     ) |>
       purrr::reduce(dplyr::union_all) |>
       dplyr::union_all(
-        dplyr::tbl(conn, "ER_PHA_F")
+        tbl_oracle(conn, "ER_PHA_F")
       )
 
     er_ete_f <- purrr::map(
       start_year:min(end_year, first_non_archived_year - 1),
       function(year) {
-        dplyr::tbl(conn, glue::glue("ER_ETE_F_{year}"))
+        tbl_oracle(conn, glue::glue("ER_ETE_F_{year}"))
       }
     ) |>
       purrr::reduce(dplyr::union_all) |>
       dplyr::union_all(
-        dplyr::tbl(conn, "ER_ETE_F")
+        tbl_oracle(conn, "ER_ETE_F")
       )
   } else {
-    er_prs_f <- dplyr::tbl(conn, "ER_PRS_F")
-    er_pha_f <- dplyr::tbl(conn, "ER_PHA_F")
-    er_ete_f <- dplyr::tbl(conn, "ER_ETE_F")
+    er_prs_f <- tbl_oracle(conn, "ER_PRS_F")
+    er_pha_f <- tbl_oracle(conn, "ER_PHA_F")
+    er_ete_f <- tbl_oracle(conn, "ER_ETE_F")
   }
   # Flux date filters (FLX_DIS_DTD is an index in DCIR tables)
   dis_dtd_condition <- glue::glue(

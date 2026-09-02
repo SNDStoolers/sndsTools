@@ -231,9 +231,9 @@ extract_stays_ssr <- function(
   ssr_stays_by_year <- purrr::map(start_year:end_year, function(year) {
     formatted_year <- sprintf("%02d", year %% 100)
 
-    t_ssr_b <- dplyr::tbl(conn, glue::glue("T_SSR{formatted_year}B"))
-    t_ssr_c <- dplyr::tbl(conn, glue::glue("T_SSR{formatted_year}C"))
-    t_ssr_d <- dplyr::tbl(conn, glue::glue("T_SSR{formatted_year}D"))
+    t_ssr_b <- tbl_oracle(conn, glue::glue("T_SSR{formatted_year}B"))
+    t_ssr_c <- tbl_oracle(conn, glue::glue("T_SSR{formatted_year}C"))
+    t_ssr_d <- tbl_oracle(conn, glue::glue("T_SSR{formatted_year}D"))
 
     if (is.null(dp_cim10_codes_filter)) {
       eta_num_rsa_num <-

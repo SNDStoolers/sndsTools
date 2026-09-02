@@ -153,39 +153,39 @@ extract_drugs_erucdf <- function(
     er_prs_f <- purrr::map(
       start_year:min(end_year, first_non_archived_year - 1),
       function(year) {
-        dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
+        tbl_oracle(conn, glue::glue("ER_PRS_F_{year}"))
       }
     ) |>
       purrr::reduce(dplyr::union_all) |>
       dplyr::union_all(
-        dplyr::tbl(conn, "ER_PRS_F")
+        tbl_oracle(conn, "ER_PRS_F")
       )
 
     er_ucd_f <- purrr::map(
       start_year:min(end_year, first_non_archived_year - 1),
       function(year) {
-        dplyr::tbl(conn, glue::glue("ER_UCD_F_{year}"))
+        tbl_oracle(conn, glue::glue("ER_UCD_F_{year}"))
       }
     ) |>
       purrr::reduce(dplyr::union_all) |>
       dplyr::union_all(
-        dplyr::tbl(conn, "ER_UCD_F")
+        tbl_oracle(conn, "ER_UCD_F")
       )
 
     er_ete_f <- purrr::map(
       start_year:min(end_year, first_non_archived_year - 1),
       function(year) {
-        dplyr::tbl(conn, glue::glue("ER_ETE_F_{year}"))
+        tbl_oracle(conn, glue::glue("ER_ETE_F_{year}"))
       }
     ) |>
       purrr::reduce(dplyr::union_all) |>
       dplyr::union_all(
-        dplyr::tbl(conn, "ER_ETE_F")
+        tbl_oracle(conn, "ER_ETE_F")
       )
   } else {
-    er_prs_f <- dplyr::tbl(conn, "ER_PRS_F")
-    er_ucd_f <- dplyr::tbl(conn, "ER_UCD_F")
-    er_ete_f <- dplyr::tbl(conn, "ER_ETE_F")
+    er_prs_f <- tbl_oracle(conn, "ER_PRS_F")
+    er_ucd_f <- tbl_oracle(conn, "ER_UCD_F")
+    er_ete_f <- tbl_oracle(conn, "ER_ETE_F")
   }
 
   dis_dtd_condition <- glue::glue(

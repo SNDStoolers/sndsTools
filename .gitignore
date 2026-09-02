@@ -12,8 +12,9 @@ man
 .vscode/
 .idea/
 # AI files
-AGENTS.md
-# concatenated file for use on portail CNAM 
+claude/
+CLAUDE.MD
+# concatenated file for use on portail CNAM
 sndsTools.R
 # macOS Finder metadata
 .DS_Store

@@ -134,7 +134,7 @@ extract_consultations_mcofcstc <- function(
     date_condition <- glue::glue(
       "EXE_SOI_DTD <= DATE '{formatted_end_date}' AND EXE_SOI_DTD >= DATE '{formatted_start_date}'" # nolint
     )
-    cstc <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}CSTC")) |>
+    cstc <- tbl_oracle(conn, glue::glue("T_MCO{formatted_year}CSTC")) |>
       dplyr::filter(
         NIR_RET == "0",
         NAI_RET == "0",
@@ -147,7 +147,7 @@ extract_consultations_mcofcstc <- function(
       dplyr::distinct()
 
     # Filtre sur codes CCAM
-    fmstc <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}FMSTC")) |>
+    fmstc <- tbl_oracle(conn, glue::glue("T_MCO{formatted_year}FMSTC")) |>
       dplyr::select(ETA_NUM, SEQ_NUM, CCAM_COD) |>
       dplyr::distinct()
     if (!is.null(ccam_codes_filter)) {
@@ -163,7 +163,7 @@ extract_consultations_mcofcstc <- function(
         dplyr::distinct()
     }
     # Filtre sur codes prestatioon et spécialités
-    fcstc <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}FCSTC")) |>
+    fcstc <- tbl_oracle(conn, glue::glue("T_MCO{formatted_year}FCSTC")) |>
       dplyr::select(ETA_NUM, SEQ_NUM, ACT_COD, EXE_SPE)
     if (!is.null(prestation_codes_filter)) {
       fcstc <- fcstc |>

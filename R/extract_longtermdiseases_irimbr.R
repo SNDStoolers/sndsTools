@@ -155,7 +155,7 @@ extract_longtermdiseases_irimbr <- function(
 
   codes_conditions <- paste(codes_conditions, collapse = " OR ")
 
-  imb_r <- dplyr::tbl(conn, "IR_IMB_R")
+  imb_r <- tbl_oracle(conn, "IR_IMB_R")
 
   date_condition <- glue::glue(
     "IMB_ALD_DTD <= DATE '{formatted_end_date}'
