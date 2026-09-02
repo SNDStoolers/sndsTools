@@ -1,0 +1,36 @@
+# Récupération de l'année non archivée la plus ancienne de la table ER_PRS_F.
+
+Récupération de l'année non archivée la plus ancienne de la table
+ER_PRS_F.
+
+## Usage
+
+``` r
+get_first_non_archived_year(conn)
+```
+
+## Arguments
+
+- conn:
+
+  Connexion à la base de données
+
+## Value
+
+Année non archivée la plus ancienne
+
+## See also
+
+Other utils:
+[`.onLoad()`](https://sndstoolers.github.io/sndsTools/reference/dot-onLoad.md),
+[`check_output_table_name()`](https://sndstoolers.github.io/sndsTools/reference/check_output_table_name.md),
+[`connect_oracle()`](https://sndstoolers.github.io/sndsTools/reference/connect_oracle.md),
+[`create_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/create_table_from_query.md),
+[`gather_table_stats()`](https://sndstoolers.github.io/sndsTools/reference/gather_table_stats.md),
+[`get_profil_snds()`](https://sndstoolers.github.io/sndsTools/reference/get_profil_snds.md),
+[`insert_into_table_from_query()`](https://sndstoolers.github.io/sndsTools/reference/insert_into_table_from_query.md),
+[`retrieve_all_psa_from_idt()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_idt.md),
+[`retrieve_all_psa_from_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_all_psa_from_psa.md),
+[`retrieve_psa()`](https://sndstoolers.github.io/sndsTools/reference/retrieve_psa.md),
+[`tbl_oracle()`](https://sndstoolers.github.io/sndsTools/reference/tbl_oracle.md),
+[`write_oracle_table_by_batch()`](https://sndstoolers.github.io/sndsTools/reference/write_oracle_table_by_batch.md)
