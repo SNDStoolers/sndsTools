@@ -1,87 +1,65 @@
 require(dplyr)
 
-
-fake_patients_ids <- data.frame(
-  BEN_IDT_ANO = c(1, 2, 3),
-  BEN_NIR_PSA = c(11, 12, 13)
+# nolint start
+fake_patients_ids <- tibble::tribble(
+  ~BEN_IDT_ANO , ~BEN_NIR_PSA , ~BEN_RNG_GEM ,
+             1 ,           11 ,            1 ,
+             2 ,           12 ,            1 ,
+             3 ,           13 ,            1
 )
+fake_dcir_join_keys <- tibble::tribble(
+  ~DCT_ORD_NUM , ~FLX_EMT_ORD , ~FLX_EMT_NUM , ~FLX_EMT_TYP , ~ORG_CLE_NUM , ~PRS_ORD_NUM , ~REM_TYP_AFF , ~FLX_DIS_DTD , ~FLX_TRT_DTD ,
+             1 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2019-02-10" , "2019-01-10" ,
+             2 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2019-02-02" , "2019-01-02" ,
+             3 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2019-02-03" , "2019-01-03" ,
+             4 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2020-02-05" , "2020-01-05" ,
+             5 ,            1 ,            1 ,            1 ,            1 ,            1 ,            1 , "2019-02-04" , "2019-01-04"
+) |>
+  dplyr::mutate(
+    across(c(FLX_DIS_DTD, FLX_TRT_DTD), as.Date)
+  )
 
-fake_dcir_join_keys <- data.frame(
-  DCT_ORD_NUM = c(1, 2, 3, 4, 5),
-  FLX_DIS_DTD = as.Date(
-    c(
-      "2019-02-10",
-      "2019-02-02",
-      "2019-02-03",
-      "2020-02-05",
-      "2019-02-04"
-    )
-  ),
-  FLX_EMT_ORD = c(1, 1, 1, 1, 1),
-  FLX_EMT_NUM = c(1, 1, 1, 1, 1),
-  FLX_EMT_TYP = c(1, 1, 1, 1, 1),
-  FLX_TRT_DTD = as.Date(
-    c(
-      "2019-01-10",
-      "2019-01-02",
-      "2019-01-03",
-      "2020-01-05",
-      "2019-01-04"
-    )
-  ),
-  ORG_CLE_NUM = c(1, 1, 1, 1, 1),
-  PRS_ORD_NUM = c(1, 1, 1, 1, 1),
-  REM_TYP_AFF = c(1, 1, 1, 1, 1)
+
+fake_erprsf <- tibble::tribble(
+  ~BEN_NIR_PSA , ~BEN_RNG_GEM , ~EXE_SOI_DTD , ~PSP_SPE_COD , ~DPN_QLF , ~CPL_MAJ_TOP ,
+            11 ,            1 , "2019-01-10" , "01"         ,        0 ,            0 ,
+            12 ,            1 , "2019-01-02" , "22"         ,        0 ,            0 ,
+            13 ,            1 , "2019-01-03" , "32"         ,        0 ,            0 ,
+            15 ,            1 , "2020-01-05" , "34"         ,        0 ,            1 ,
+            13 ,            1 , "2019-01-04" , "01"         ,       71 ,            2
+) |>
+  dplyr::bind_cols(fake_dcir_join_keys) |>
+  dplyr::mutate(
+    across(c(EXE_SOI_DTD), as.Date)
+  )
+
+fake_eretef <- tibble::tribble(
+  ~ETE_NUM , ~ETE_IND_TAA ,
+        11 ,           10 ,
+        12 ,           10 ,
+        13 ,           10
+) |>
+  dplyr::bind_cols(fake_dcir_join_keys |> head(3))
+
+fake_erphaf <- tibble::tribble(
+  ~PHA_PRS_C13    , ~PHA_ACT_QSN ,
+  "3400932026555" ,            1 ,
+  "3400932725847" ,            1 ,
+  "3400930219874" ,            1 ,
+  "3400930219874" ,            1 ,
+  "3400936267343" ,            1
+) |>
+  dplyr::bind_cols(fake_dcir_join_keys)
+
+fake_irphar <- tibble::tribble(
+  ~PHA_CIP_C13    , ~PHA_ATC_CLA ,
+  "3400932026555" , "N04BC01"    ,
+  "3400932725847" , "N05AC01"    ,
+  "3400930219874" , "J05AG05"    ,
+  "3400930219874" , "J05AG05"    ,
+  "3400936267343" , "J01MA06"
 )
-
-fake_erprsf <- data.frame(
-  BEN_NIR_PSA = c(11, 12, 13, 15, 13),
-  BEN_RNG_GEM = c(1, 1, 1, 1, 1),
-  EXE_SOI_DTD = as.Date(
-    c(
-      "2019-01-10",
-      "2019-01-02",
-      "2019-01-03",
-      "2020-01-05",
-      "2019-01-04"
-    )
-  ),
-  PSP_SPE_COD = c("01", "22", "32", "34", "01"),
-  DPN_QLF = c(0, 0, 0, 0, 71),
-  CPL_MAJ_TOP = c(0, 0, 0, 1, 2)
-) |>
-  cbind(fake_dcir_join_keys)
-
-fake_erphaf <- data.frame(
-  PHA_PRS_C13 = c(
-    "3400932026555",
-    "3400932725847",
-    "3400930219874",
-    "3400930219874",
-    "3400936267343"
-  ),
-  PHA_ACT_QSN = c(1, 1, 1, 1, 1)
-) |>
-  cbind(fake_dcir_join_keys)
-
-fake_irphar <- data.frame(
-  PHA_CIP_C13 = c(
-    "3400932026555",
-    "3400932725847",
-    "3400930219874",
-    "3400930219874",
-    "3400936267343"
-  ),
-  PHA_ATC_CLA = c("N04BC01", "N05AC01", "J05AG05", "J05AG05", "J01MA06")
-)
-
-
-fake_eretef <- data.frame(
-  "ETE_NUM" = c(11, 12, 13),
-  "ETE_IND_TAA" = c(10, 10, 10)
-) |>
-  cbind(fake_dcir_join_keys |> head(3))
-
+# nolint end
 
 conn <- connect_synthetic_snds()
 on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
@@ -101,22 +79,16 @@ test_that("extract_drugs_erphaf works for ATC", {
     atc_cod_starts_with_filter = c("J05"),
     patients_ids = fake_patients_ids,
     conn = conn
-  )
+  ) |>
+    dplyr::collect()
 
+  expected_drug_dispenses <- tibble::tribble(
+    ~BEN_IDT_ANO , ~EXE_SOI_DTD          , ~FLX_DIS_DTD          , ~PHA_ACT_QSN , ~PHA_ATC_CLA , ~PHA_PRS_C13    , ~PSP_SPE_COD , ~BEN_RNG_GEM ,
+               3 , as.Date("2019-01-03") , as.Date("2019-02-03") ,            1 , "J05AG05"    , "3400930219874" , "32"         ,            1
+  )
   expect_equal(
     drug_dispenses |> dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD),
-    structure(
-      list(
-        BEN_IDT_ANO = c(3),
-        EXE_SOI_DTD = as.Date(c("2019-01-03")),
-        PHA_ACT_QSN = c(1),
-        PHA_ATC_CLA = c("J05AG05"),
-        PHA_PRS_C13 = c("3400930219874"),
-        PSP_SPE_COD = c("32")
-      ),
-      class = c("tbl_df", "tbl", "data.frame"),
-      row.names = c(NA, -1L)
-    )
+    expected_drug_dispenses
   )
 })
 
@@ -131,21 +103,17 @@ test_that("extract_drugs_erphaf works for CIP13", {
     cip13_cod_filter = c("3400932725847"),
     patients_ids = fake_patients_ids,
     conn = conn
+  ) |>
+    dplyr::collect()
+  # nolint start
+  expected_drug_dispenses <- tibble::tribble(
+    ~BEN_IDT_ANO , ~EXE_SOI_DTD          , ~FLX_DIS_DTD          , ~PHA_ACT_QSN , ~PHA_ATC_CLA , ~PHA_PRS_C13    , ~PSP_SPE_COD , ~BEN_RNG_GEM ,
+               2 , as.Date("2019-01-02") , as.Date("2019-02-02") ,            1 , "N05AC01"    , "3400932725847" , "22"         ,            1 ,
+               3 , as.Date("2019-01-03") , as.Date("2019-02-03") ,            1 , "J05AG05"    , "3400930219874" , "32"         ,            1
   )
-
+  # nolint end
   expect_equal(
     drug_dispenses |> dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD),
-    structure(
-      list(
-        BEN_IDT_ANO = c(2, 3),
-        EXE_SOI_DTD = as.Date(c("2019-01-02", "2019-01-03")),
-        PHA_ACT_QSN = c(1, 1),
-        PHA_ATC_CLA = c("N05AC01", "J05AG05"),
-        PHA_PRS_C13 = c("3400932725847", "3400930219874"),
-        PSP_SPE_COD = c("22", "32")
-      ),
-      class = c("tbl_df", "tbl", "data.frame"),
-      row.names = c(NA, -2L)
-    )
+    expected_drug_dispenses
   )
 })

@@ -75,7 +75,8 @@ test_that("extract_stays_mcob works", {
     patients_ids_filter = patients_ids_filter,
     conn = conn
   ) |>
-    dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, DGN_PAL, DGN_PAL_UM, ASS_DGN)
+    dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, DGN_PAL, DGN_PAL_UM, ASS_DGN) |>
+    dplyr::collect()
 
   expect_equal(
     hospital_stays |>
@@ -133,7 +134,8 @@ test_that("extract_stays_mcob works without any filters", {
     patients_ids_filter = patients_ids_filter,
     conn = conn
   ) |>
-    dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, DGN_PAL, DGN_PAL_UM, ASS_DGN)
+    dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD, DGN_PAL, DGN_PAL_UM, ASS_DGN) |>
+    dplyr::collect()
 
   expect_equal(
     hospital_stays |>

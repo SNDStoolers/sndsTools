@@ -81,7 +81,7 @@ connect_synthetic_snds <- function(
 #' @family synthetic
 # nolint end
 download_synthetic_snds <- function(path2zip) {
-  synth_url_db <- "https://github.com/SNDStoolers/synthetic_snds/raw/refs/heads/main/data/synthetic_snds_parquet.zip"
+  synth_url_db <- "https://github.com/SNDStoolers/synthetic_snds/raw/refs/heads/main/data/synthetic_snds_parquet.zip" # nolint
   logger::log_info(glue::glue(
     "Télécharge la base synthétique du SNDS au chemin {path_}",
     path_ = path2zip

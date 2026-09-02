@@ -1,54 +1,3 @@
-# Liste des finess géographiques APHP, APHM et HCL à supprimer pour éviter les
-# doublons
-finess_doublons <- c(
-  "130780521",
-  "130783236",
-  "130783293",
-  "130784234",
-  "130804297",
-  "600100101",
-  "750041543",
-  "750100018",
-  "750100042",
-  "750100075",
-  "750100083",
-  "750100091",
-  "750100109",
-  "750100125",
-  "750100166",
-  "750100208",
-  "750100216",
-  "750100232",
-  "750100273",
-  "750100299",
-  "750801441",
-  "750803447",
-  "750803454",
-  "910100015",
-  "910100023",
-  "920100013",
-  "920100021",
-  "920100039",
-  "920100047",
-  "920100054",
-  "920100062",
-  "930100011",
-  "930100037",
-  "930100045",
-  "940100027",
-  "940100035",
-  "940100043",
-  "940100050",
-  "940100068",
-  "950100016",
-  "690783154",
-  "690784137",
-  "690784152",
-  "690784178",
-  "690787478",
-  "830100558"
-)
-
 #' Construit les conditions pour extraire les diagnostics principaux et reliés.
 #'
 #' @description
@@ -136,6 +85,7 @@ build_da_conditions <- function(cim10_codes = NULL) {
 #' dans les lignes de la table résultante. Une explication détaillée et un
 #' diagramme illustrant le fonctionnement retenu sont disponibles sur [le github du projet Scalpel](https://github.com/X-DataInitiative/SCALPEL-Flattening/blob/DREES-104-DocFlattening/README_joins.md#the-pmsi-flattening).
 #'
+#' @param conn DBI connection. Une connexion à la base de données Oracle.
 #' @param start_date Date La date de début de la période sur laquelle extraire
 #' les séjours.
 #' @param end_date Date La date de fin de la période sur laquelle
@@ -167,15 +117,11 @@ build_da_conditions <- function(cim10_codes = NULL) {
 #' être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis. Si
 #' `patients_ids` n'est pas fourni, les consultations de tous les patients sont
 #' extraites. Défaut à `NULL`.
-#' @param output_table_name character Le nom de la table de sortie dans la base
-#' de données. Si `output_table_name` n'est pas fourni, une table de sortie
-#' intermédiaire est créée. Défaut à `NULL`.
-#' @param conn dbConnection La connexion à la base de données. Si `conn` n'est
-#' pas fourni, une connexion à la base de données est initialisée. Défaut à
-#' `NULL`.
+#' @param sup_columns character vector (Optionnel). Colonnes supplémentaires à
+#'   inclure dans le résultat. Défaut à `NULL`.
 #'
-#' @return Un data.frame contenant les séjours hospitaliers. Attention: Les
-#' lignes des tables MCO B et C peuvent être dupliquées. Les colonnes sont les
+#' @return Retourne une lazy table contenant les séjours hospitaliers. Attention: Les
+#'   lignes des tables MCO B et C peuvent être dupliquées. Les colonnes sont les
 #' suivantes :
 #' - `BEN_IDT_ANO` : Identifiant bénéficiaire anonymisé (seulement si
 #'   patient_ids non nul)
@@ -206,22 +152,26 @@ build_da_conditions <- function(cim10_codes = NULL) {
 #' - `ASS_DGN` : Diagnostic associé
 #'
 #' @examples \dontrun{
-#' # Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
-#' extract_stays_mcob(
-#'  start_date = as.Date("2019-01-01"),
-#'  end_date = as.Date("2019-12-31"),
-#'  dp_cim10_codes = c("A", "B")
-#' )
-#' # Extrait tous les séjours en 2019
-#' extract_stays_mcob(
-#'  start_date = as.Date("2019-01-01"),
-#'  end_date = as.Date("2019-12-31")
-#' )
-#' }
+ #' conn <- connect_oracle()
+ #' # Extrait uniquement les séjours en 2019 dont le diagnostic principal commence par A ou B
+ #' extract_stays_mcob(
+ #'  conn = conn,
+ #'  start_date = as.Date("2019-01-01"),
+ #'  end_date = as.Date("2019-12-31"),
+ #'  dp_cim10_codes_filter = c("A", "B")
+ #' )
+ #' # Extrait tous les séjours en 2019
+ #' extract_stays_mcob(
+ #'  conn = conn,
+ #'  start_date = as.Date("2019-01-01"),
+ #'  end_date = as.Date("2019-12-31")
+ #' )
+ #' }
 #' @export
 #' @family extract
 # nolint end
 extract_stays_mcob <- function(
+  conn,
   start_date,
   end_date,
   dp_cim10_codes_filter = NULL,
@@ -230,10 +180,10 @@ extract_stays_mcob <- function(
   and_da_with_other_codes_filter = FALSE,
   da_cim10_codes_filter = NULL,
   patients_ids_filter = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  sup_columns = NULL
 ) {
   stopifnot(
+    inherits(conn, "DBIConnection"),
     !is.null(start_date),
     !is.null(end_date),
     inherits(start_date, "Date"),
@@ -241,16 +191,7 @@ extract_stays_mcob <- function(
     start_date <= end_date
   )
 
-  connection_opened <- FALSE
-  if (is.null((conn))) {
-    conn <- connect_oracle()
-    connection_opened <- TRUE
-  }
-
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  if (!is.null(output_table_name)) {
-    check_output_table_name(output_table_name, conn)
-  }
 
   if (!is.null(patients_ids_filter)) {
     stopifnot(
@@ -262,6 +203,7 @@ extract_stays_mcob <- function(
       conn,
       patients_ids_table_name,
       patients_ids_filter,
+      temporary = TRUE,
       overwrite = TRUE
     )
   }
@@ -271,25 +213,7 @@ extract_stays_mcob <- function(
   formatted_start_date <- format(start_date, "%Y-%m-%d")
   formatted_end_date <- format(end_date, "%Y-%m-%d")
 
-  hospital_stays_list <- list()
-
-  pb <- progress::progress_bar$new(
-    format = "Extracting :year1 (going from :year2 to :year3) \
-    [:bar] :percent in :elapsed (eta: :eta)",
-    total = (end_year - start_year + 1),
-    clear = FALSE,
-    width = 80
-  )
-  pb$tick(0)
-  for (year in start_year:end_year) {
-    pb$tick(
-      tokens = list(
-        year1 = year,
-        year2 = start_year,
-        year3 = end_year
-      )
-    )
-
+  hospital_stays_by_year <- purrr::map(start_year:end_year, function(year) {
     formatted_year <- sprintf("%02d", year %% 100)
 
     t_mco_b <- dplyr::tbl(conn, glue::glue("T_MCO{formatted_year}B"))
@@ -444,7 +368,7 @@ extract_stays_mcob <- function(
         -FHO_RET,
         -PMS_RET
       ) |>
-      dplyr::filter(!(GRG_GHM %like% "%90%"), !(ETA_NUM %in% finess_doublons))
+      dplyr::filter(!(GRG_GHM %like% "%90%"), !(ETA_NUM %in% FINESS_DOUBLONS))
 
     if (year >= 2013) {
       t_mco_b_c_quality_filtered <-
@@ -470,9 +394,6 @@ extract_stays_mcob <- function(
       dplyr::select(ETA_NUM, RSA_NUM) |>
       dplyr::distinct()
 
-    t_mco_b_c_quality_filtered_c <- t_mco_b_c_quality_filtered |>
-      dplyr::collect()
-
     # Medical unit diagnoses
     selected_cols_um <- c("ETA_NUM", "RSA_NUM", "DGN_PAL", "DGN_REL")
     t_mco_um_selected_stays <-
@@ -486,11 +407,10 @@ extract_stays_mcob <- function(
         DGN_PAL_UM = DGN_PAL,
         DGN_REL_UM = DGN_REL
       ) |>
-      dplyr::distinct() |>
-      dplyr::collect()
+      dplyr::distinct()
 
     mco_b_c_um <-
-      t_mco_b_c_quality_filtered_c |>
+      t_mco_b_c_quality_filtered |>
       dplyr::left_join(
         t_mco_um_selected_stays,
         by = c("ETA_NUM", "RSA_NUM")
@@ -505,10 +425,9 @@ extract_stays_mcob <- function(
         by = c("ETA_NUM", "RSA_NUM")
       ) |>
       dplyr::select(dplyr::all_of(selected_cols)) |>
-      dplyr::distinct() |>
-      dplyr::collect()
+      dplyr::distinct()
 
-    mco_b_c_d <- t_mco_b_c_quality_filtered_c |>
+    mco_b_c_d <- t_mco_b_c_quality_filtered |>
       dplyr::left_join(
         t_mco_d_selected_stays,
         by = c("ETA_NUM", "RSA_NUM")
@@ -516,7 +435,7 @@ extract_stays_mcob <- function(
 
     # Bind all diagnoses: DP, DR, associated, DP and DR from UM
     all_diagnoses <-
-      dplyr::bind_rows(
+      dplyr::union_all(
         mco_b_c_um,
         mco_b_c_d
       ) |>
@@ -527,21 +446,10 @@ extract_stays_mcob <- function(
       dplyr::filter(
         !dplyr::if_all(c(DGN_PAL_UM, DGN_REL_UM, ASS_DGN), is.na)
       )
+    all_diagnoses_wo_duplicates
+  })
 
-    hospital_stays_list <- append(
-      hospital_stays_list,
-      list(all_diagnoses_wo_duplicates)
-    )
-  }
+  result <- purrr::reduce(hospital_stays_by_year, dplyr::union_all)
 
-  result <- dplyr::bind_rows(hospital_stays_list)
-  # nettoyage de la table temporaire des identifiants patients
-  if (!is.null(patients_ids_filter)) {
-    DBI::dbRemoveTable(conn, patients_ids_table_name)
-  }
-  result <- save_or_return_result(result, output_table_name, conn)
-  if (connection_opened) {
-    DBI::dbDisconnect(conn)
-  }
   result
 }

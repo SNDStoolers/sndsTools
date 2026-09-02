@@ -9,6 +9,9 @@
 #' Cette configuration est essentielle pour garantir la cohérence entre les
 #' objets datetime manipulés dans R et ceux stockés ou récupérés depuis la base
 #' de données Oracle : [cf détails et exemples](https://soeiro.gitlab.io/pepidoc/r.html#dates-heures-et-fuseaux-horaires). # nolint
+#' @return NULL
+#' @export
+#' @family utils
 .onLoad <- function(libname, pkgname) {
   Sys.setenv(
     TZ = "Europe/Paris",
@@ -92,56 +95,6 @@ insert_into_table_from_query <- function(
     conn,
     glue::glue("INSERT INTO {output_table_name} {query}")
   )
-}
-
-#' Retourne le résultat d'une extraction, ou le sauvegarde dans une table.
-#'
-#' @description
-#' Logique de sortie commune aux fonctions d'extraction. La fonction accepte
-#' indifféremment un résultat **déjà collecté** en mémoire (`data.frame`) ou une
-#' **requête paresseuse** (`tbl_lazy`, c.-à-d. une requête `dbplyr` non encore
-#' exécutée), et centralise la décision « collecter / écrire en base » :
-#'
-#' - Si `output_table_name` est `NULL` :
-#'   - un `data.frame` est renvoyé tel quel ;
-#'   - une `tbl_lazy` est collectée (`dplyr::collect()`) puis renvoyée sous
-#'     forme de `data.frame`.
-#' - Si `output_table_name` est fourni :
-#'   - une `tbl_lazy` est matérialisée **directement dans la base** via
-#'     `CREATE TABLE ... AS SELECT` ([create_table_from_query()]), sans jamais
-#'     transiter par la mémoire R (pas de `collect`) ;
-#'   - un `data.frame` est écrit avec `DBI::dbWriteTable()`.
-#'   La fonction renvoie alors `NULL` de manière invisible.
-#'
-#' Accepter une `tbl_lazy` permet aux fonctions d'extraction de rester
-#' paresseuses jusqu'à cette frontière : le seul `collect` éventuel a lieu ici,
-#' et il est totalement évité lorsque le résultat est sauvegardé en base.
-#'
-#' @param result data.frame ou tbl_lazy. Le résultat de l'extraction, collecté
-#'   en mémoire (`data.frame`) ou sous forme de requête paresseuse `dbplyr`.
-#' @param output_table_name character ou `NULL`. Le nom de la table de sortie.
-#'   Lorsqu'il est fourni, la validité du nom doit déjà avoir été vérifiée par
-#'   l'appelant (`check_output_table_name()`).
-#' @param conn dbConnection La connexion à la base de données.
-#' @return Un `data.frame` si `output_table_name` est `NULL`, sinon `NULL`
-#'   invisible (le résultat est écrit dans la table).
-#'
-#' @keywords internal
-save_or_return_result <- function(result, output_table_name, conn) {
-  is_lazy <- inherits(result, "tbl_lazy")
-  if (is.null(output_table_name)) {
-    if (is_lazy) {
-      return(dplyr::collect(result))
-    }
-    return(result)
-  }
-  if (is_lazy) {
-    create_table_from_query(conn, output_table_name, result)
-  } else {
-    DBI::dbWriteTable(conn, output_table_name, result)
-  }
-  message(glue::glue("Results saved to table {output_table_name} in Oracle."))
-  invisible(NULL)
 }
 
 
@@ -240,4 +193,102 @@ gather_table_stats <- function(conn, table) {
     "BEGIN DBMS_STATS.GATHER_TABLE_STATS(:1, :2); END;",
     data = data.frame(user, table)
   )
+}
+
+#' Ecriture d'une table lazy vers oracle par batch
+#' @description
+#' Cette fonction permet d'écrire une table lazy vers Oracle en la découpant
+#' en plusieurs batchs selon un critère de date. Cela permet de gérer des
+#' volumes de données importants et d'éviter les problèmes de mémoire ou de
+#' timeout lors de l'insertion.
+#' Elle est particulièrement utile pour les tables du DCIR indexées sur la
+#' colonne `FLX_DIS_DTD`.
+#' @param conn Connexion à la base de données
+#' @param lazy_df Table lazy à écrire
+#' @param output_table_name Nom de la table de sortie
+#' @param start_date Date de début pour le batch
+#' @param end_date Date de fin pour le batch
+#' @param dis_dtd_lag_months Nombre de mois de décalage pour la colonne
+#' FLX_DIS_DTD si la table à écrire provient du DCIR. Par défaut 6 mois.
+#' @param batch_by Taille de batch : "month" ou "year"
+#' @param batch_colname Nom de la colonne à utiliser pour le batch. Par défaut
+#' utilise "FLX_DIS_DTD" si la table provient du DCIR.
+#' @return NULL
+#' @export
+#' @family utils
+write_oracle_table_by_batch <- function(
+  conn,
+  lazy_df,
+  output_table_name,
+  start_date,
+  end_date,
+  dis_dtd_lag_months = 6,
+  batch_by = "month",
+  batch_colname = NULL
+) {
+  check_output_table_name(output_table_name, conn)
+  stopifnot(
+    batch_by %in% c("month", "year")
+  )
+  is_dcir_table <- "FLX_DIS_DTD" %in% colnames(lazy_df)
+  if (is_dcir_table) {
+    # For DCIR tables, take into account the lag of input data into SNDS
+    batch_colname <- "FLX_DIS_DTD"
+    extract_end_date <-
+      end_date |>
+      lubridate::add_with_rollback(months(dis_dtd_lag_months)) |>
+      lubridate::floor_date("months")
+  } else {
+    extract_end_date <- end_date
+  }
+  # TODO: if the table is not from DCIR (then it is PMSI), so maybe we should put EXE_SOI_DTD as default #nolint
+  stopifnot(
+    batch_colname %in% colnames(lazy_df)
+  )
+
+  # create range
+  batch_range <- seq(
+    from = as.Date(start_date),
+    to = as.Date(extract_end_date),
+    by = batch_by
+  )
+
+  pb <- progress::progress_bar$new(
+    format = "Extracting :batch (going from :start  to :end) [:bar] :percent in :elapsed (eta: :eta)", # nolint
+    total = length(batch_range),
+    clear = FALSE,
+    width = 80
+  )
+  pb$tick(0)
+  batch_range |>
+    purrr::map(function(batch_start) {
+      pb$tick(
+        tokens = list(
+          batch = batch_start,
+          start = batch_range[1],
+          end = batch_range[length(batch_range)]
+        )
+      )
+      batch_end <- lubridate::ceiling_date(batch_start, unit = batch_by)
+      batch_query <- lazy_df |>
+        dplyr::filter(
+          .data[[batch_colname]] >= as.Date(batch_start) &
+            .data[[batch_colname]] < as.Date(batch_end)
+        ) |>
+        dbplyr::sql_render()
+      # write to oracle
+      is_first_batch <- batch_start == batch_range[1]
+
+      if (is_first_batch) {
+        DBI::dbExecute(
+          conn,
+          glue::glue("CREATE TABLE {output_table_name} AS {batch_query}")
+        )
+      } else {
+        DBI::dbExecute(
+          conn,
+          glue::glue("INSERT INTO {output_table_name} {batch_query}")
+        )
+      }
+    })
 }

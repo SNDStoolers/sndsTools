@@ -14,6 +14,7 @@
 #' les ALD associées à ces patients sont extraites. Dans
 #' le cas contraire, les ALD de tous les patients sont extraites.
 #'
+#' @param conn DBI connection. Une connexion à la base de données Oracle.
 #' @param start_date Date La date de début de la période
 #'   sur laquelle extraire les ALD actives.
 #' @param end_date Date La date de fin de la période
@@ -35,26 +36,23 @@
 #'   Voir [la fiche sur les ALD de la documentation du SNDS](
 #' https://documentation-snds.health-data-hub.fr/snds/fiches/beneficiaires_ald.html).
 #'   et notamment le Programme #1 pour la référence de ce filtre.
-#' @param patients_ids data.frame Optionnel. Un data.frame contenant les
-#'   paires d'identifiants des patients pour lesquels les délivrances de
-#'   médicaments doivent être extraites. Les colonnes de ce data.frame
-#'   doivent être "BEN_IDT_ANO" et "BEN_NIR_PSA". Les "BEN_NIR_PSA" doivent
-#'   être tous les "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.
-#' @param output_table_name Character Optionnel. Si fourni, les résultats seront
-#'   sauvegardés dans une table portant ce nom dans la base de données au lieu
-#'   d'être retournés sous forme de data frame.
-#' @param conn DBI connection Une connexion à la base de données Oracle.
-#'   Si non fournie, une connexion est établie par défaut.
-#' @return Si output_table_name est NULL, retourne un data.frame contenant les
+#' @param patients_ids_filter data.frame Optionnel. Un data.frame contenant les
+#'   paires d'identifiants des patients pour lesquels les ALD doivent être
+#'   extraites. Les colonnes de ce data.frame doivent être "BEN_IDT_ANO",
+#'   "BEN_NIR_PSA" et "BEN_RNG_GEM". Les "BEN_NIR_PSA" doivent être tous les
+#'   "BEN_NIR_PSA" associés aux "BEN_IDT_ANO" fournis.
+#' @param sup_columns character vector (Optionnel). Colonnes supplémentaires à
+#'   inclure dans le résultat. Défaut à `NULL`.
+#' @return Retourne une lazy table contenant les
 #'   les ALDs actives sur la période. Si output_table_name est fourni,
 #'   sauvegarde les résultats dans la table spécifiée dans Oracle et
 #'   retourne NULL de manière invisible. Dans les deux cas les colonnes
 #'   de la table de sortie sont :
 #'   - BEN_NIR_PSA : Colonne présente uniquement si les identifiants
-#'   patients (`patients_ids`) ne sont pas fournis. Identifiant SNDS,
+#'   patients (`patients_ids_filter`) ne sont pas fournis. Identifiant SNDS,
 #'   ausi appelé pseudo-NIR.
 #'   - BEN_IDT_ANO : Colonne présente uniquement si les identifiants
-#'   patients (`patients_ids`) sont fournis. Numéro d’inscription
+#'   patients (`patients_ids_filter`) sont fournis. Numéro d'inscription
 #'   au répertoire (NIR) anonymisé.
 #'   - IMB_ALD_NUM : Le numéro de l'ALD
 #'   - IMB_ALD_DTD : La date de début de l'ALD
@@ -67,8 +65,10 @@
 #' start_date <- as.Date("2010-01-01")
 #' end_date <- as.Date("2010-01-03")
 #' icd_cod_starts_with <- c("G20")
+#' conn <- connect_oracle()
 #'
 #' long_term_disease <- extract_longtermdiseases_irimbr(
+#'   conn = conn,
 #'   start_date = start_date,
 #'   end_date = end_date,
 #'   icd_cod_starts_with = icd_cod_starts_with
@@ -77,17 +77,18 @@
 #' @export
 #' @family extract
 extract_longtermdiseases_irimbr <- function(
-  start_date = NULL,
-  end_date = NULL,
+  conn,
+  start_date,
+  end_date,
   icd_cod_starts_with = NULL,
   ald_numbers = NULL,
   excl_etm_nat = c("11", "12", "13"),
-  patients_ids = NULL,
-  output_table_name = NULL,
-  conn = NULL
+  patients_ids_filter = NULL,
+  sup_columns = NULL
 ) {
   # nolint end. Force # nolint: cyclocomp_linter for the function.
   stopifnot(
+    inherits(conn, "DBIConnection"),
     !is.null(start_date),
     !is.null(end_date),
     inherits(start_date, "Date"),
@@ -95,31 +96,24 @@ extract_longtermdiseases_irimbr <- function(
     start_date <= end_date
   )
 
-  connection_opened <- FALSE
-  if (is.null(conn)) {
-    conn <- connect_oracle()
-    connection_opened <- TRUE
-  }
-
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  if (!is.null(output_table_name)) {
-    output_table_name_is_temp <- FALSE
-    check_output_table_name(output_table_name, conn)
-  } else {
-    output_table_name_is_temp <- TRUE
-    output_table_name <- glue::glue("TMP_LTD_{timestamp}")
-  }
 
-  if (!is.null(patients_ids)) {
+  if (!is.null(patients_ids_filter)) {
     stopifnot(
       identical(
-        names(patients_ids),
-        c("BEN_IDT_ANO", "BEN_NIR_PSA")
+        names(patients_ids_filter),
+        c("BEN_IDT_ANO", "BEN_NIR_PSA", "BEN_RNG_GEM")
       ),
-      !anyDuplicated(patients_ids)
+      !anyDuplicated(patients_ids_filter)
     )
     patients_ids_table_name <- glue::glue("TMP_PATIENTS_IDS_{timestamp}")
-    DBI::dbWriteTable(conn, patients_ids_table_name, patients_ids)
+    DBI::dbWriteTable(
+      conn,
+      patients_ids_table_name,
+      patients_ids_filter,
+      temporary = TRUE,
+      overwrite = TRUE
+    )
   }
 
   formatted_start_date <- format(start_date, "%Y-%m-%d")
@@ -182,59 +176,39 @@ extract_longtermdiseases_irimbr <- function(
   }
 
   cols_to_select <- c(
+    "BEN_NIR_PSA",
+    "BEN_RNG_GEM",
     "IMB_ALD_NUM",
     "IMB_ALD_DTD",
     "IMB_ALD_DTF",
     "IMB_ETM_NAT",
     "MED_MTF_COD"
   )
+  if (!is.null(sup_columns)) {
+    cols_to_select <- c(cols_to_select, sup_columns)
+  }
 
-  query <- query |>
+  result <- query |>
     dplyr::select(
-      BEN_NIR_PSA,
       dplyr::all_of(cols_to_select)
     ) |>
     dplyr::distinct()
 
-  if (!is.null(patients_ids)) {
+  if (!is.null(patients_ids_filter)) {
     patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
     patients_ids_table <- patients_ids_table |>
-      dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA) |>
+      dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM) |>
       dplyr::distinct()
-    query <- query |>
-      dplyr::inner_join(patients_ids_table, by = "BEN_NIR_PSA") |>
+    result <- result |>
+      dplyr::inner_join(
+        patients_ids_table,
+        by = c("BEN_NIR_PSA", "BEN_RNG_GEM")
+      ) |>
       dplyr::select(
         BEN_IDT_ANO,
         dplyr::all_of(cols_to_select)
       ) |>
       dplyr::distinct()
-  }
-
-  query <- query |>
-    dbplyr::sql_render()
-
-  DBI::dbExecute(
-    conn,
-    glue::glue("CREATE TABLE {output_table_name} AS {query}")
-  )
-
-  if (!is.null(patients_ids)) {
-    DBI::dbRemoveTable(conn, patients_ids_table_name)
-  }
-
-  if (output_table_name_is_temp) {
-    query <- dplyr::tbl(conn, output_table_name)
-    result <- dplyr::collect(query)
-    DBI::dbRemoveTable(conn, output_table_name)
-  } else {
-    result <- invisible(NULL)
-    message(
-      glue::glue("Results saved to table {output_table_name} in Oracle.")
-    )
-  }
-
-  if (connection_opened) {
-    DBI::dbDisconnect(conn)
   }
 
   result

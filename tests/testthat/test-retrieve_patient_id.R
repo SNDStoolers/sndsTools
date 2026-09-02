@@ -54,17 +54,14 @@ test_that("retrieve_all_psa_from_idt works", {
     ben_table_name = "TEST_IDT_INPUT",
     conn = conn,
     check_arc_table = TRUE
-  )
+  ) |>
+    dplyr::collect()
 
   # Check that we got results
   expect_true(nrow(result) > 0)
 
   # Check that we have the expected BEN_IDT_ANO values
   expect_true(all(c(1, 2, 3) %in% result$BEN_IDT_ANO))
-
-  # Check that logical columns exist and are logical
-  expect_true(is.logical(result$psa_w_multiple_idt_or_nir))
-  expect_true(is.logical(result$cdi_nir_00))
 })
 
 test_that("retrieve_all_psa_from_psa works", {
@@ -81,7 +78,8 @@ test_that("retrieve_all_psa_from_psa works", {
     ben_table_name = "TEST_PSA_INPUT",
     conn = conn,
     check_arc_table = TRUE
-  )
+  ) |>
+    dplyr::collect()
 
   # Check that we got results
   expect_true(nrow(result) > 0)

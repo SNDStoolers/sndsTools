@@ -30,6 +30,8 @@
 #' mois](https://documentation-snds.health-data-hub.fr/snds/formation_snds/initiation/schema_relationnel_snds.html#_3-3-dcir),
 #' c'est-à-dire pour dis_dtd_lag_months = 6.
 #'
+#' @param conn DBI connection. Une connexion à la base de données
+#'   Oracle.
 #' @param start_date Date. La date de début de la période
 #'   des délivrances des médicaments à extraire.
 #' @param end_date Date. La date de fin de la période
@@ -50,18 +52,8 @@
 #'   récupérer les délivrances de médicaments. Défaut à 6 mois.
 #' @param sup_columns Character vector (Optionnel). Les colonnes supplémentaires
 #'  à ajouter à la table de sortie. Défaut à NULL, donc aucune colonne ajoutée.
-#' @param output_table_name Character (Optionnel). Si fourni, les résultats
-#'   seront sauvegardés dans une table portant ce nom dans la base de données au
-#'   lieu d'être retournés sous forme de data frame. Si la table existe déjà
-#'   dans la base oracle, alors le programme s'arrête en retournant une erreur.
-#'   Défault à NULL.
-#' @param conn DBI connection (Optionnel). Une connexion à la base de données
-#'   Oracle. Si non fournie, une connexion est établie par défaut. Défaut à
-#'   NULL.
-#' @return Si output_table_name est NULL, retourne un data.frame contenant les
-#'   délivrances de médicaments. Si output_table_name est fourni, sauvegarde les
-#'   résultats dans la table spécifiée dans Oracle et retourne NULL de manière
-#'   invisible. Dans les deux cas les colonnes de la table de sortie sont :
+#' @return Retourne une lazy table contenant les
+#'   délivrances de médicaments. Les colonnes de la table de sortie sont :
 #'   - BEN_NIR_PSA : Colonne présente uniquement si les identifiants
 #'   patients (`patients_ids_filter`) ne sont pas fournis. Identifiant SNDS,
 #'   aussi appelé pseudo-NIR.
@@ -69,6 +61,7 @@
 #'   patients (`patients_ids_filter`) sont fournis. Numéro d’inscription
 #'   au répertoire (NIR) anonymisé.
 #'   - EXE_SOI_DTD : Date de la délivrance
+#'  - FLX_DIS_DTD : Date de flux
 #'   - PHA_ACT_QSN : Quantité délivrée
 #'   - PHA_ATC_CLA : Code ATC du médicament délivré
 #'   - PHA_PRS_C13 : Code CIP du médicament délivré (nom dans la table
@@ -82,8 +75,10 @@
 #' start_date <- as.Date("2010-01-01")
 #' end_date <- as.Date("2010-01-03")
 #' atc_cod_starts_with <- c("N04A")
+#' conn <- connect_oracle()
 #'
 #' dispenses <- extract_drugs_erphaf(
+#'   conn = conn,
 #'   start_date = start_date,
 #'   end_date = end_date,
 #'   atc_cod_starts_with = atc_cod_starts_with
@@ -93,18 +88,17 @@
 #' @family extract
 # nolint end
 extract_drugs_erphaf <- function(
-  start_date, # nolint
+  conn,
+  start_date,
   end_date,
   atc_cod_starts_with_filter = NULL,
   cip13_cod_filter = NULL,
   patients_ids_filter = NULL,
   dis_dtd_lag_months = 6,
-  sup_columns = NULL,
-  output_table_name = NULL,
-  conn = NULL,
-  show_sql_query = TRUE
+  sup_columns = NULL
 ) {
   stopifnot(
+    inherits(conn, "DBIConnection"),
     !is.null(start_date),
     !is.null(end_date),
     inherits(start_date, "Date"),
@@ -112,26 +106,13 @@ extract_drugs_erphaf <- function(
     start_date <= end_date
   )
 
-  connection_opened <- FALSE
-  if (is.null(conn)) {
-    conn <- connect_oracle()
-    connection_opened <- TRUE
-  }
-
   timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  if (!is.null(output_table_name)) {
-    output_table_name_is_temp <- FALSE
-    check_output_table_name(output_table_name, conn)
-  } else {
-    output_table_name_is_temp <- TRUE
-    output_table_name <- glue::glue("TMP_DISP_{timestamp}")
-  }
 
   if (!is.null(patients_ids_filter)) {
     stopifnot(
       identical(
         names(patients_ids_filter),
-        c("BEN_IDT_ANO", "BEN_NIR_PSA")
+        c("BEN_IDT_ANO", "BEN_NIR_PSA", "BEN_RNG_GEM")
       ),
       !anyDuplicated(patients_ids_filter)
     )
@@ -140,10 +121,11 @@ extract_drugs_erphaf <- function(
       conn,
       patients_ids_table_name,
       patients_ids_filter,
+      temporary = TRUE,
       overwrite = TRUE
     )
   }
-
+  # TODO: Extract as a utils.
   dis_dtd_end_date <-
     end_date |>
     lubridate::add_with_rollback(months(dis_dtd_lag_months)) |>
@@ -151,13 +133,22 @@ extract_drugs_erphaf <- function(
 
   start_year <- lubridate::year(start_date)
   end_year <- lubridate::year(dis_dtd_end_date)
-  start_month <- lubridate::month(start_date)
+
   formatted_start_date <- format(start_date, "%Y-%m-%d")
   formatted_end_date <- format(end_date, "%Y-%m-%d")
   formatted_dis_dtd_end_date <- format(dis_dtd_end_date, "%Y-%m-%d")
-  dis_dtd_end_month <- lubridate::month(formatted_dis_dtd_end_date)
 
   first_non_archived_year <- get_first_non_archived_year(conn)
+  # For archived years, flx distrib for exec in dec. in year Y are in jan/feb of year Y+1 cf. https://github.com/SNDStoolers/sndsTools/issues/82 # nolint
+  # TODO: we need to add a test for this special case.
+  if (start_year <= first_non_archived_year) {
+    dis_dtd_end_date <- max(
+      dis_dtd_end_date,
+      end_date |>
+        lubridate::add_with_rollback(months(dis_dtd_lag_months + 2)) |>
+        lubridate::floor_date("months")
+    )
+  }
 
   if (!is.null(atc_cod_starts_with_filter)) {
     print(
@@ -179,6 +170,7 @@ extract_drugs_erphaf <- function(
     print(glue::glue("Extracting drug dispenses for all CIP13 codes"))
   }
 
+  # save the IR_PHA_R table in oracle for further filtering
   ir_pha_r <- dplyr::tbl(conn, "IR_PHA_R")
 
   if (!is.null(atc_cod_starts_with_filter)) {
@@ -199,18 +191,15 @@ extract_drugs_erphaf <- function(
     )
   }
   if (!is.null(atc_cod_starts_with_filter) && !is.null(cip13_cod_filter)) {
-    # nolint
     drug_filter <- atc_conditions + " OR " + cip13_conditions
   } else if (
     !is.null(cip13_cod_filter) && is.null(atc_cod_starts_with_filter)
   ) {
-    # nolint
     drug_filter <- cip13_conditions
   } else if (
     !is.null(atc_cod_starts_with_filter) &&
       is.null(cip13_cod_filter)
   ) {
-    # nolint
     drug_filter <- atc_conditions
   } else {
     drug_filter <- NULL
@@ -230,180 +219,138 @@ extract_drugs_erphaf <- function(
   if (!is.null(drug_filter)) {
     ir_pha_filtered_query <- ir_pha_filtered |>
       dplyr::filter(dbplyr::sql(drug_filter)) |>
-      dbplyr::sql_render()
-
-    ir_pha_filtered <- ir_pha_r |>
       dplyr::select(
         dplyr::all_of(ir_pha_needed_cols)
-      )
+      ) |>
+      dbplyr::sql_render()
+
     ir_pha_r_filtered_name <- glue::glue("TMP_IR_PHA_R_{timestamp}")
+    if (DBI::dbExistsTable(conn, ir_pha_r_filtered_name)) {
+      DBI::dbRemoveTable(conn, ir_pha_r_filtered_name)
+    }
     DBI::dbExecute(
       conn,
       glue::glue(
         "CREATE TABLE {ir_pha_r_filtered_name} AS {ir_pha_filtered_query}"
       )
     )
-    on.exit({
-      DBI::dbRemoveTable(conn, ir_pha_r_filtered_name)
-    })
     ir_pha_filtered_table <- dplyr::tbl(conn, ir_pha_r_filtered_name)
   } else {
-    # wwe still need PHA_ATC_CLA for the final extraction
+    # we still need PHA_ATC_CLA for the final extraction
     ir_pha_filtered_table <- ir_pha_r |>
       dplyr::select(
         dplyr::all_of(ir_pha_needed_cols)
       )
   }
 
-  pb <- progress::progress_bar$new(
-    format = "Extracting :year1 (going from :year2 to :year3) [:bar] :percent in :elapsed (eta: :eta)", # nolint
-    total = (end_year - start_year + 1),
-    clear = FALSE,
-    width = 80
-  )
-  pb$tick(0)
-  for (year in start_year:end_year) {
-    pb$tick(
-      tokens = list(
-        year1 = year,
-        year2 = start_year,
-        year3 = end_year
+  # concatenate all archived years
+  if (start_year <= first_non_archived_year) {
+    er_prs_f <- purrr::map(
+      start_year:min(end_year, first_non_archived_year - 1),
+      function(year) {
+        dplyr::tbl(conn, glue::glue("ER_PRS_F_{year}"))
+      }
+    ) |>
+      purrr::reduce(dplyr::union_all) |>
+      dplyr::union_all(
+        dplyr::tbl(conn, "ER_PRS_F")
       )
+
+    er_pha_f <- purrr::map(
+      start_year:min(end_year, first_non_archived_year - 1),
+      function(year) {
+        dplyr::tbl(conn, glue::glue("ER_PHA_F_{year}"))
+      }
+    ) |>
+      purrr::reduce(dplyr::union_all) |>
+      dplyr::union_all(
+        dplyr::tbl(conn, "ER_PHA_F")
+      )
+
+    er_ete_f <- purrr::map(
+      start_year:min(end_year, first_non_archived_year - 1),
+      function(year) {
+        dplyr::tbl(conn, glue::glue("ER_ETE_F_{year}"))
+      }
+    ) |>
+      purrr::reduce(dplyr::union_all) |>
+      dplyr::union_all(
+        dplyr::tbl(conn, "ER_ETE_F")
+      )
+  } else {
+    er_prs_f <- dplyr::tbl(conn, "ER_PRS_F")
+    er_pha_f <- dplyr::tbl(conn, "ER_PHA_F")
+    er_ete_f <- dplyr::tbl(conn, "ER_ETE_F")
+  }
+  # Flux date filters (FLX_DIS_DTD is an index in DCIR tables)
+  dis_dtd_condition <- glue::glue(
+    "FLX_DIS_DTD >= DATE '{formatted_start_date}' AND FLX_DIS_DTD <= DATE '{formatted_dis_dtd_end_date}'" # nolint
+  )
+  er_prs_f_flx_filtered <- er_prs_f |>
+    dplyr::filter(dbplyr::sql(dis_dtd_condition))
+  er_pha_f_flx_filtered <- er_pha_f |>
+    dplyr::filter(dbplyr::sql(dis_dtd_condition))
+  er_ete_f_flx_filtered <- er_ete_f |>
+    dplyr::filter(dbplyr::sql(dis_dtd_condition))
+
+  soi_dtd_condition <- glue::glue(
+    "EXE_SOI_DTD >= DATE '{formatted_start_date}' AND EXE_SOI_DTD <= DATE '{formatted_end_date}'" # nolint
+  )
+  er_prs_f_dtd_filtered <- er_prs_f_flx_filtered |>
+    dplyr::filter(
+      dbplyr::sql(soi_dtd_condition),
+      DPN_QLF != 71L
+    )
+  ir_pha_cols_not_in_er_pha <- setdiff(
+    colnames(ir_pha_filtered_table),
+    colnames(er_pha_f)
+  )
+  er_pha_drug_filtered <- er_pha_f_flx_filtered |>
+    dplyr::inner_join(
+      ir_pha_filtered_table |>
+        dplyr::select(dplyr::all_of(ir_pha_cols_not_in_er_pha)),
+      by = c("PHA_PRS_C13" = "PHA_CIP_C13")
+    )
+  prs_pha_joined <- er_prs_f_dtd_filtered |>
+    dplyr::inner_join(er_pha_drug_filtered, by = COLS_DCIR_JOIN_KEY)
+
+  query <- prs_pha_joined |>
+    dplyr::left_join(er_ete_f_flx_filtered, by = COLS_DCIR_JOIN_KEY) |>
+    dplyr::filter(
+      (ETE_IND_TAA != 1L) | is.na(ETE_IND_TAA)
     )
 
-    flux_start_month <- 1
-    flux_end_month <- 12
-    if (year == end_year) {
-      flux_end_month <- dis_dtd_end_month
-    }
-    if (year == start_year) {
-      flux_start_month <- max(1, start_month)
-    }
-    for (month in c(flux_start_month:flux_end_month)) {
-      dis_dtd_start <- glue::glue("DATE '{year}-{sprintf('%02d', month)}-01'")
-      if (month == 12) {
-        dis_dtd_end <- glue::glue("DATE '{year + 1}-01-01'")
-      } else {
-        dis_dtd_end <- glue::glue(
-          "DATE '{year}-{sprintf('%02d', month + 1)}-01'"
-        ) # nolint
-      }
-
-      dis_dtd_condition <- glue::glue(
-        "FLX_DIS_DTD >= {dis_dtd_start} AND FLX_DIS_DTD < {dis_dtd_end}"
-      )
-
-      soi_dtd_condition <- glue::glue(
-        "EXE_SOI_DTD >= DATE '{formatted_start_date}' AND EXE_SOI_DTD <= DATE '{formatted_end_date}'" # nolint
-      )
-
-      print(glue::glue("-flux: {dis_dtd_start} to {dis_dtd_end}"))
-
-      # Flx distrb for jan-feb of a year Y are in Y-1 for archived years
-      if (year <= first_non_archived_year && month %in% c(1:2)) {
-        years_to_query <- c(year - 1L, year)
-      } else {
-        years_to_query <- c(year)
-      }
-
-      for (year_q in years_to_query) {
-        if (year_q < first_non_archived_year) {
-          er_prs_f <- dplyr::tbl(conn, glue::glue("ER_PRS_F_{year_q}"))
-          er_pha_f <- dplyr::tbl(conn, glue::glue("ER_PHA_F_{year_q}"))
-          er_ete_f <- dplyr::tbl(conn, glue::glue("ER_ETE_F_{year_q}"))
-        } else {
-          er_prs_f <- dplyr::tbl(conn, "ER_PRS_F")
-          er_pha_f <- dplyr::tbl(conn, "ER_PHA_F")
-          er_ete_f <- dplyr::tbl(conn, "ER_ETE_F")
-        }
-
-        ir_pha_cols_not_in_er_pha <- setdiff(
-          colnames(ir_pha_filtered_table),
-          colnames(er_pha_f)
-        )
-        query <- er_prs_f |>
-          dplyr::inner_join(er_pha_f, by = COLS_DCIR_JOIN_KEY) |>
-          dplyr::inner_join(
-            ir_pha_filtered_table |>
-              dplyr::select(dplyr::all_of(ir_pha_cols_not_in_er_pha)),
-            by = c("PHA_PRS_C13" = "PHA_CIP_C13")
-          )
-
-        query <- query |>
-          dplyr::left_join(er_ete_f, by = COLS_DCIR_JOIN_KEY) |>
-          dplyr::filter(
-            dbplyr::sql(soi_dtd_condition),
-            dbplyr::sql(dis_dtd_condition)
-          ) |>
-          dplyr::filter(
-            DPN_QLF != 71L,
-            (ETE_IND_TAA != 1L) | is.na(ETE_IND_TAA)
-          )
-
-        cols_to_select <- c(
-          "EXE_SOI_DTD",
-          "PHA_ACT_QSN",
-          "PHA_ATC_CLA",
-          "PHA_PRS_C13",
-          "PSP_SPE_COD"
-        )
-        if (!is.null(sup_columns)) {
-          cols_to_select <- c(cols_to_select, sup_columns)
-        }
-
-        query <- query |>
-          dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select)) |>
-          dplyr::distinct()
-
-        if (!is.null(patients_ids_filter)) {
-          patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
-          patients_ids_table <- patients_ids_table |>
-            dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA) |>
-            dplyr::distinct()
-          query <- query |>
-            dplyr::inner_join(patients_ids_table, by = "BEN_NIR_PSA") |>
-            dplyr::select(BEN_IDT_ANO, dplyr::all_of(cols_to_select)) |>
-            dplyr::distinct()
-        }
-
-        query <- query |> dbplyr::sql_render()
-        if (!DBI::dbExistsTable(conn, output_table_name)) {
-          DBI::dbExecute(
-            conn,
-            glue::glue("CREATE TABLE {output_table_name} AS {query}")
-          )
-          if (show_sql_query) {
-            message(glue::glue(
-              "
-          Premier mois requêté en date de flux
-          à l'aide de la requête sql suivante :\n {query}"
-            ))
-          }
-        } else {
-          DBI::dbExecute(
-            conn,
-            glue::glue("INSERT INTO {output_table_name} {query}")
-          )
-        }
-      }
-    }
+  cols_to_select <- c(
+    "EXE_SOI_DTD",
+    "FLX_DIS_DTD",
+    "PHA_ACT_QSN",
+    "PHA_ATC_CLA",
+    "PHA_PRS_C13",
+    "PSP_SPE_COD",
+    "BEN_RNG_GEM"
+  )
+  if (!is.null(sup_columns)) {
+    cols_to_select <- c(cols_to_select, sup_columns)
   }
 
+  result <- query |>
+    dplyr::select(BEN_NIR_PSA, dplyr::all_of(cols_to_select)) |>
+    dplyr::distinct()
+
+  # TODO : lien patients_ids_filter pourrait être extrait en utils
   if (!is.null(patients_ids_filter)) {
-    DBI::dbRemoveTable(conn, patients_ids_table_name)
-  }
+    patients_ids_table <- dplyr::tbl(conn, patients_ids_table_name)
+    patients_ids_table <- patients_ids_table |>
+      dplyr::select(BEN_IDT_ANO, BEN_NIR_PSA, BEN_RNG_GEM) |>
+      dplyr::distinct()
 
-  if (output_table_name_is_temp) {
-    query <- dplyr::tbl(conn, output_table_name)
-    result <- dplyr::collect(query)
-    DBI::dbRemoveTable(conn, output_table_name)
-  } else {
-    result <- invisible(NULL)
-    message(glue::glue("Results saved to table {output_table_name} in Oracle."))
-  }
-
-  if (connection_opened) {
-    DBI::dbDisconnect(conn)
+    result <- result |>
+      dplyr::inner_join(
+        patients_ids_table,
+        by = c("BEN_NIR_PSA", "BEN_RNG_GEM")
+      ) |>
+      dplyr::select(BEN_IDT_ANO, dplyr::all_of(cols_to_select)) |>
+      dplyr::distinct()
   }
 
   result

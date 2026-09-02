@@ -38,12 +38,12 @@ test_that("extract_consultations_erprsf_works ", {
   prestation_filter <- c("C", "CS")
 
   consultations <- extract_consultations_erprsf(
+    conn,
     start_date = start_date,
     end_date = end_date,
     pse_spe_filter = pse_spe_filter,
     prestation_filter = prestation_filter,
-    patients_ids_filter = fake_patients_ids,
-    conn = conn
+    patients_ids_filter = fake_patients_ids
   )
 
   expect_equal(

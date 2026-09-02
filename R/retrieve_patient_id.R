@@ -27,6 +27,7 @@ retrieve_psa <- function(
 ) {
   # Check if a connection is provided
   connection_opened <- FALSE
+  save_result_as_oracle_table <- !is.null(output_table_name)
   if (is.null(conn)) {
     conn <- connect_oracle()
     connection_opened <- TRUE
@@ -105,40 +106,44 @@ retrieve_psa <- function(
   }
 
   # Assessment of exclusion criteria
-  idt_psa <- idt_psa |>
-    dplyr::distinct() |>
-    dplyr::collect() |>
-    dplyr::group_by(!!!rlang::syms(psa_key)) |>
-    dplyr::mutate(
-      psa_w_multiple_idt_or_nir = dplyr::n_distinct(BEN_IDT_ANO) > 1 |
-        dplyr::n_distinct(BEN_NIR_ANO) > 1
-    ) |>
-    dplyr::ungroup() |>
-    dplyr::group_by(!!!rlang::syms(idt_key)) |>
-    dplyr::mutate(
-      psa_w_multiple_idt_or_nir = any(psa_w_multiple_idt_or_nir),
-      cdi_nir_00 = !is.na(BEN_CDI_NIR) & BEN_CDI_NIR == "00",
-      nir_ano_defined = !is.na(BEN_NIR_ANO),
-      birth_date_variation = dplyr::n_distinct(BEN_NAI_ANN) > 1 |
-        dplyr::n_distinct(BEN_NAI_MOI) > 1,
-      sex_variation = dplyr::n_distinct(BEN_SEX_COD) > 1
-    )
+  result <- idt_psa |>
+    dplyr::distinct()
+  #nolint start
+  # TODO: For now I drop the computations of the indicators and leave it to the user to compute them if needed.
+  # |> dplyr::group_by(!!!rlang::syms(psa_key)) |>
+  # dplyr::mutate(
+  #   psa_w_multiple_idt_or_nir = dplyr::n_distinct(BEN_IDT_ANO, na.rm = TRUE) >
+  #     1 |
+  #     dplyr::n_distinct(BEN_NIR_ANO, na.rm = TRUE) > 1
+  # )
+  # ungroup forces to collect which is undesired for big data bases.
+  # # |>
+  # dplyr::collect() |>
+  # dplyr::ungroup() |>
+  # dplyr::group_by(!!!rlang::syms(idt_key)) |>
+  # dplyr::mutate(
+  #   psa_w_multiple_idt_or_nir = any(psa_w_multiple_idt_or_nir),
+  #   cdi_nir_00 = !is.na(BEN_CDI_NIR) & BEN_CDI_NIR == "00",
+  #   nir_ano_defined = !is.na(BEN_NIR_ANO),
+  #   birth_date_variation = dplyr::n_distinct(BEN_NAI_ANN, na.rm = TRUE) > 1 |
+  #     dplyr::n_distinct(BEN_NAI_MOI, na.rm = TRUE) > 1,
+  #   sex_variation = dplyr::n_distinct(BEN_SEX_COD, na.rm = TRUE) > 1
+  # )
+  # nolint end
 
   # Handle output: Return or save the table
-  if (is.null(output_table_name)) {
-    if (connection_opened) {
-      DBI::dbDisconnect(conn)
-    }
-    idt_psa
-  } else {
-    DBI::dbWriteTable(
+  if (save_result_as_oracle_table) {
+    full_query <- result |> dbplyr::sql_render()
+    DBI::dbExecute(
       conn,
-      output_table_name,
-      idt_psa |> dplyr::collect()
+      glue::glue("CREATE TABLE {output_table_name} AS {full_query}")
     )
+    result <- invisible(NULL)
     message(glue::glue("Results saved to table {output_table_name} in Oracle."))
+    # cleaning
     if (connection_opened) DBI::dbDisconnect(conn)
   }
+  result
 }
 
 # nolint start
@@ -175,7 +180,7 @@ retrieve_psa <- function(
 #' `BEN_IDT_ANO` et des critères de sélection.
 #' @param output_table_name Character Optionnel. Si fourni, les résultats seront
 #' sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en
-#' sortie est retournée sous la forme d'un data.frame(/tibble).
+#' sortie est retournée sous la forme d'un data.frame lazy.
 #' @param conn DBI connection Optionnel Une connexion à la base de données
 #' Oracle. Si non fournie, une connexion est établie par défaut.
 #' @return A partir d'une table avec `BEN_IDT_ANO`, la fonction retournera
@@ -183,8 +188,8 @@ retrieve_psa <- function(
 #' dans une table dédoublonnée.
 #' La table en sortie est une copie de(s) référentiel(s) `IR_BEN_R`
 #' (et `IR_BEN_R_ARC`) relatifs aux `BEN_IDT_ANO` impliqués et enregistrée
-#' sous Oracle ou retournée sous la forme d'un data.frame(/tibble).
-#' Si output_table_name est `NULL`, retourne un data.frame(/tibble).
+#' sous Oracle ou retournée sous la forme d'un data.frame lazy.
+#' Si output_table_name est `NULL`, retourne un data.frame lazy.
 #' Si output_table_name est fourni, sauvegarde les résultats dans la table
 #' spécifiée dans Oracle et retourne `NULL` de manière invisible.
 #' Dans les deux cas les colonnes de la table de sortie sont celles
@@ -292,7 +297,7 @@ retrieve_all_psa_from_idt <- function(
 #' `BEN_IDT_ANO` et des critères de sélection.
 #' @param output_table_name Character Optionnel. Si fourni, les résultats seront
 #' sauvegardés dans une table portant ce nom dans Oracle. Sinon la table en
-#' sortie est retournée sous la forme d'un data.frame(/tibble).
+#' sortie est retournée sous la forme d'un data.frame oracle lazy.
 #' @param conn DBI connection Optionnel Une connexion à la base de données
 #' Oracle. Si non fournie, une connexion est établie par défaut.
 #' @return A partir d'une table avec `BEN_IDT_ANO`, la fonction retournera
@@ -300,8 +305,8 @@ retrieve_all_psa_from_idt <- function(
 #' dans une table dédoublonnée.
 #' La table en sortie est une copie de(s) référentiel(s) `IR_BEN_R`
 #' (et `IR_BEN_R_ARC`) relatifs aux `BEN_IDT_ANO` impliqués et enregistrée
-#' sous Oracle ou retournée sous la forme d'un data.frame(/tibble).
-#' Si output_table_name est `NULL`, retourne un data.frame(/tibble).
+#' sous Oracle ou retournée sous la forme d'un data.frame lazy.
+#' Si output_table_name est `NULL`, retourne un data.frame lazy.
 #' Si output_table_name est fourni, sauvegarde les résultats dans la table
 #' spécifiée dans Oracle et retourne `NULL` de manière invisible.
 #' Dans les deux cas les colonnes de la table de sortie sont celles

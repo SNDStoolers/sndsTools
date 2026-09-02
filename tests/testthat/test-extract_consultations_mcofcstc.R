@@ -57,10 +57,12 @@ test_that("extract_consultations_mcofcstc works", {
     start_date = start_date,
     end_date = end_date,
     spe_codes_filter = spe_codes_filter,
-    patient_ids_filter = patients_ids_filter,
+    patients_ids_filter = patients_ids_filter,
     conn = conn
-  )
+  ) |>
+    dplyr::collect()
 
+  # nolint start
   expected <- tibble::tribble(
     ~BEN_IDT_ANO , ~NIR_ANO_17 , ~EXE_SOI_DTD , ~CCAM_COD , ~ACT_COD , ~EXE_SPE ,
                1 ,          11 , "2019-01-10" , "ACQK001" , "C"      , "01"     ,
@@ -68,6 +70,7 @@ test_that("extract_consultations_mcofcstc works", {
                4 ,          14 , "2019-01-04" , NA        , "C"      , "01"
   ) |>
     dplyr::mutate(EXE_SOI_DTD = as.Date(EXE_SOI_DTD))
+  # nolint end
 
   expect_equal(
     consultations |> dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD),
@@ -88,16 +91,17 @@ test_that("extract_consultations_mcofcstc works with multiple filters", {
     spe_codes_filter = spe_codes_filter,
     prestation_codes_filter = prestation_codes_filter,
     ccam_codes_filter = ccam_codes_filter,
-    patient_ids_filter = patients_ids_filter,
+    patients_ids_filter = patients_ids_filter,
     conn = conn
-  )
-
+  ) |>
+    dplyr::collect()
+  # nolint start
   expected <- tibble::tribble(
     ~BEN_IDT_ANO , ~NIR_ANO_17 , ~EXE_SOI_DTD , ~CCAM_COD , ~ACT_COD , ~EXE_SPE ,
                1 ,          11 , "2019-01-10" , "ACQK001" , "C"      , "01"
   ) |>
     dplyr::mutate(EXE_SOI_DTD = as.Date(EXE_SOI_DTD))
-
+  # nolint end
   expect_equal(
     consultations |> dplyr::arrange(BEN_IDT_ANO, EXE_SOI_DTD),
     expected

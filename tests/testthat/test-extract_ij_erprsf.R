@@ -26,10 +26,10 @@ test_that("extract_ij_erprsf_works ", {
   end_date <- as.Date("31/12/2019", format = "%d/%m/%Y")
 
   consultations <- extract_ij_erprsf(
+    conn = conn,
     start_date = start_date,
     end_date = end_date,
-    patients_ids_filter = fake_patients_ids,
-    conn = conn
+    patients_ids_filter = fake_patients_ids
   )
 
   expect_equal(
