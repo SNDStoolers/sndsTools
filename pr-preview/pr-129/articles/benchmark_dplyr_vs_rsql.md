@@ -229,7 +229,7 @@ for (i in seq_along(start_dates)) {
 library(sndsTools)
 ```
 
-    ## INFO [2026-09-02 16:10:48] Charge le package sndsTools.
+    ## INFO [2026-09-04 10:01:37] Charge le package sndsTools.
     ## Variables d'environment TZ et ORA_SDTZ fixées à 'Europe/Paris.'
 
 ``` r
