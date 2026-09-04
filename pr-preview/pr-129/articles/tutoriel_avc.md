@@ -70,9 +70,9 @@ if (dir.exists("~/sasdata1")) {
     end_date = as.Date("2024-12-31")
   )
 }
-#> INFO [2026-09-04 10:03:20] Charge le package sndsTools.
+#> INFO [2026-09-04 10:25:11] Charge le package sndsTools.
 #> Variables d'environment TZ et ORA_SDTZ fixées à 'Europe/Paris.'
-#> INFO [2026-09-04 10:03:20] Connection to an existing database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
+#> INFO [2026-09-04 10:25:11] Connection to an existing database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
 # packages utiles pour l'analyse
 library(dplyr)
 library(lubridate)
@@ -116,16 +116,16 @@ extract_stays_mcob(
 #> # Database: DuckDB 1.5.5 [unknown@Linux 6.17.0-1022-azure:R 4.6.1/:memory:]
 #>    ETA_NUM RSA_NUM SEJ_NUM SEJ_NBJ NBR_DGN NBR_RUM NBR_ACT ENT_MOD ENT_PRV
 #>      <int>   <int>   <int>   <int>   <int>   <int>   <int> <chr>   <chr>  
-#>  1  153240       7       7      14       2       2      18 7       5      
-#>  2  807015      12      12       8       2       1       0 6       1      
-#>  3  143041      16      16      15       3       2      10 6       5      
-#>  4  664182      21      21      20       2       2       3 6       5      
+#>  1  807015      12      12       8       2       1       0 6       1      
+#>  2  190076       3       3      10       3       2       6 7       6      
+#>  3  883006      23      23      17       2       2      11 6       2      
+#>  4  190076       3       3      10       3       2       6 7       6      
 #>  5  883006      23      23      17       2       2      11 6       2      
-#>  6  490232      20      20      18       1       1       2 6       2      
-#>  7  883006      23      23      17       2       2      11 6       2      
-#>  8  807015      12      12       8       2       1       0 6       1      
-#>  9  190076       3       3      10       3       2       6 7       6      
-#> 10  883006      23      23      17       2       2      11 6       2      
+#>  6  153240       7       7      14       2       2      18 7       5      
+#>  7  664182      21      21      20       2       2       3 6       5      
+#>  8  143041      16      16      15       3       2      10 6       5      
+#>  9  490232      20      20      18       1       1       2 6       2      
+#> 10  153240       7       7      14       2       2      18 7       5      
 #> # ℹ more rows
 #> # ℹ 16 more variables: SOR_MOD <chr>, SOR_DES <chr>, DGN_PAL <chr>,
 #> #   DGN_REL <chr>, GRG_GHM <chr>, BDI_DEP <chr>, BDI_COD <chr>, COD_SEX <chr>,
@@ -151,10 +151,10 @@ kable(sejours_avc_head)
 | ETA_NUM | RSA_NUM | SEJ_NUM | SEJ_NBJ | NBR_DGN | NBR_RUM | NBR_ACT | ENT_MOD | ENT_PRV | SOR_MOD | SOR_DES | DGN_PAL | DGN_REL | GRG_GHM | BDI_DEP | BDI_COD | COD_SEX | AGE_ANN | AGE_JOU | NIR_ANO_17 | EXE_SOI_DTD | EXE_SOI_DTF | DGN_PAL_UM | DGN_REL_UM | ASS_DGN |
 |---:|---:|---:|---:|---:|---:|---:|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|---:|---:|---:|:---|:---|:---|:---|:---|
 | 883006 | 23 | 23 | 17 | 2 | 2 | 11 | 6 | 2 | 6 | 7 | I62 | NA | 05M30 | 08 | 49331 | 2 | 78 | 37 | 10035 | 2024-06-04 | 2024-06-21 | NA | NA | E78 |
-| 807015 | 12 | 12 | 8 | 2 | 1 | 0 | 6 | 1 | 6 | 3 | I62 | NA | 06C82 | 42 | 30384 | 2 | 33 | 102 | 10089 | 2024-03-27 | 2024-04-04 | I11 | I70 | NA |
 | 190076 | 3 | 3 | 10 | 3 | 2 | 6 | 7 | 6 | 6 | 5 | I62 | NA | 05K76 | 94 | 81924 | 2 | 45 | 36 | 10050 | 2024-06-22 | 2024-07-02 | I25 | NA | NA |
 | 883006 | 23 | 23 | 17 | 2 | 2 | 11 | 6 | 2 | 6 | 7 | I62 | NA | 05M30 | 08 | 49331 | 2 | 78 | 37 | 10035 | 2024-06-04 | 2024-06-21 | I10 | I10 | NA |
 | 190076 | 3 | 3 | 10 | 3 | 2 | 6 | 7 | 6 | 6 | 5 | I62 | NA | 05K76 | 94 | 81924 | 2 | 45 | 36 | 10050 | 2024-06-22 | 2024-07-02 | I50 | I63 | NA |
+| 807015 | 12 | 12 | 8 | 2 | 1 | 0 | 6 | 1 | 6 | 3 | I62 | NA | 06C82 | 42 | 30384 | 2 | 33 | 102 | 10089 | 2024-03-27 | 2024-04-04 | I11 | I70 | NA |
 
 ``` r
 
@@ -182,8 +182,8 @@ kable(avc_par_type)
 |:--------|----:|------------:|
 | I61     |   2 |         9.5 |
 | I62     |  12 |        57.1 |
-| I10     |   3 |        14.3 |
 | I63     |   4 |        19.0 |
+| I10     |   3 |        14.3 |
 
 ### Étape 2 : Identification des patients uniques
 
@@ -318,10 +318,10 @@ kable(ald_avc_head)
 
 | BEN_IDT_ANO | BEN_NIR_PSA | BEN_RNG_GEM | IMB_ALD_NUM | IMB_ALD_DTD | IMB_ALD_DTF | IMB_ETM_NAT | MED_MTF_COD |
 |---:|---:|---:|---:|:---|:---|:---|:---|
-| 87 | 10086 | 1 | 12 | 2023-03-05 | 2025-12-14 | 02 | I25 |
 | 95 | 10094 | 1 | 8 | 2023-05-01 | 2026-02-08 | 03 | I13 |
-| 43 | 10042 | 1 | 5 | 2023-07-28 | 2024-04-25 | 01 | I50 |
+| 43 | 10042 | 1 | 8 | 2023-11-02 | 2026-03-27 | 01 | I60 |
 | 87 | 10086 | 1 | 8 | 2023-06-07 | 2025-10-05 | 01 | I21 |
+| 43 | 10042 | 1 | 5 | 2023-07-28 | 2024-04-25 | 01 | I50 |
 | 72 | 10071 | 1 | 12 | 2023-01-25 | 2024-04-24 | 02 | I70 |
 
 ``` r
@@ -394,6 +394,8 @@ drugs_result <- extract_drugs_erphaf(
 )
 #> Extracting drug dispenses with ATC codes starting with N or C
 #> Extracting drug dispenses for all CIP13 codes
+#> INFO [2026-09-04 10:25:15] Filtre codes médicaments :
+#> (PHA_ATC_CLA LIKE 'N%' OR PHA_ATC_CLA LIKE 'C%')
 
 # Récupérer un aperçu des délivrances
 drugs_avc_head <- drugs_result |>
@@ -404,11 +406,11 @@ kable(drugs_avc_head)
 
 | BEN_IDT_ANO | EXE_SOI_DTD | FLX_DIS_DTD | PHA_ACT_QSN | PHA_ATC_CLA | PHA_PRS_C13 | PSP_SPE_COD | BEN_RNG_GEM |
 |---:|:---|:---|---:|:---|:---|:---|---:|
-| 87 | 2024-11-17 | 2024-07-07 | 1 | C03AA03 | 3400932725847 | 34 | 1 |
-| 36 | 2024-05-22 | 2024-07-18 | 1 | C09CA01 | 3400966666666 | 01 | 1 |
-| 42 | 2024-08-11 | 2024-10-05 | 1 | C09AA02 | 3400955555555 | 32 | 1 |
-| 36 | 2024-06-01 | 2024-02-09 | 1 | C02AC01 | 3400932026555 | 22 | 1 |
-| 42 | 2024-11-01 | 2024-06-08 | 1 | C02AC01 | 3400932026555 | 03 | 1 |
+| 90 | 2024-07-12 | 2024-06-13 | 1 | C07AB07 | 3400977777777 | 02 | 1 |
+| 90 | 2024-11-12 | 2024-03-21 | 1 | C07AB02 | 3400930219874 | 32 | 1 |
+| 36 | 2024-04-17 | 2024-02-02 | 1 | C08CA01 | 3400936267343 | 02 | 1 |
+| 72 | 2024-01-20 | 2024-04-09 | 1 | C07AB07 | 3400977777777 | 03 | 1 |
+| 72 | 2024-03-12 | 2024-02-17 | 1 | C02AC01 | 3400932026555 | 34 | 1 |
 
 ``` r
 
