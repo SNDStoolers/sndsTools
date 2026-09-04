@@ -40,7 +40,7 @@ output_quetiapine_sndstools <- extract_drugs_erphaf(
 
 timed_sndsTool = difftime(Sys.time(), t0, units = "secs")
 print(paste(
-  "Temps de calcul - sndsTools : ", round(timed_sndsTool), "secondes" # 162s
+  "Temps de calcul - sndsTools : ", round(timed_sndsTool), "secondes" # 60s
 ))
 ```
 
@@ -78,12 +78,14 @@ erprsf <- tbl(conn, "ER_PRS_F") |>
       FLX_DIS_DTD < to_date(date_fin_6m, "YYYY-MM-DD") &
       EXE_SOI_DTD >= to_date(date_deb, "YYYY-MM-DD") &
       EXE_SOI_DTD <= to_date(date_fin, "YYYY-MM-DD") &
-      DPN_QLF != 71# & CPL_MAJ_TOP < 2
+      DPN_QLF != 71 & CPL_MAJ_TOP < 2
   ) |>
   select(c(dcir_join_keys, "EXE_SOI_DTD", "BEN_NIR_PSA", "PSP_SPE_COD"))
 
+drug_filter <- glue::glue("PHA_ATC_CLA LIKE '{atc_quetiapine}%'")
+
 irphar_quetiapine <- tbl(conn, "IR_PHA_R") |>
-  filter(PHA_ATC_CLA == atc_quetiapine) |>
+  filter(dbplyr::sql(drug_filter)) |>
   select(PHA_ATC_CLA, PHA_CIP_C13) |>
   distinct()
 
@@ -114,7 +116,7 @@ output_quetiapine_classique <- output_quetiapine_classique |>
 
 timed_classique <- difftime(Sys.time(), t0, units = "secs")
 print(paste(
-  "Temps de calcul - méthode classique : ", round(timed_classique), "secondes" # 39s
+  "Temps de calcul - méthode classique : ", round(timed_classique), "secondes" # 53s
 ))
 ```
 

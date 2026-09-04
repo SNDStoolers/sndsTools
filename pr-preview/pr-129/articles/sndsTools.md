@@ -50,7 +50,7 @@ Puis pour charger le paquet :
 ``` r
 
 library(sndsTools)
-#> INFO [2026-09-04 10:25:07] Charge le package sndsTools.
+#> INFO [2026-09-04 10:28:40] Charge le package sndsTools.
 #> Variables d'environment TZ et ORA_SDTZ fixées à 'Europe/Paris.'
 ```
 
@@ -75,8 +75,8 @@ mises en cache localement.
 
 # Télécharge les données synthétiques du SNDS et les charge dans une base DuckDB.
 conn <- connect_synthetic_snds()
-#> INFO [2026-09-04 10:25:07] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
-#> INFO [2026-09-04 10:25:07] Télécharge la base synthétique du SNDS au chemin /home/runner/.cache/sndsTools/synthetic_snds_parquet.zip
+#> INFO [2026-09-04 10:28:40] Creating database at: /home/runner/.cache/sndsTools/synthetic_snds_parquet
+#> INFO [2026-09-04 10:28:40] Télécharge la base synthétique du SNDS au chemin /home/runner/.cache/sndsTools/synthetic_snds_parquet.zip
 DBI::dbListTables(conn)
 #>   [1] "BE_IDE_R"          "CT_DEP_AAAA_GN"    "CT_IDE_AAAA_GN"   
 #>   [4] "CT_IND_AAAA_GN"    "DA_PRA_R"          "ER_ANO_F"         
