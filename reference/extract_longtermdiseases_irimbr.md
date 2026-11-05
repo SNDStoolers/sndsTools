@@ -59,8 +59,9 @@ extract_longtermdiseases_irimbr(
 
   character vector Un vecteur de codes IMB_ETM_NAT à exclure. Par
   défaut, les ALD de nature 11, 12 et 13 sont exclues car elles
-  correspondent à des exonérations pour accidents du travail ou maladies
-  professionnelles. Voir [la fiche sur les ALD de la documentation du
+  correspondent à des exonérations pour accidents du travail, maladies
+  professionnelles ou invalidité. Voir [la fiche sur les ALD de la
+  documentation du
   SNDS](https://documentation-snds.health-data-hub.fr/snds/fiches/beneficiaires_ald.html).
   et notamment le Programme \#1 pour la référence de ce filtre.
 
